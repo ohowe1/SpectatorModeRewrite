@@ -1,0 +1,24 @@
+name: SpectatorMode
+version: ${project.version}
+main: me.ohowe12.spectatormode.SpectatorMode
+api-version: 1.13
+
+commands:
+  s:
+    description: This command will set your gamemode to spectator or survival.
+    aliases: spectator
+  speed:
+    description: Changes the flying speed in spectator mode of the player.
+    aliases: sp
+
+permissions:
+  spectator-use:
+    default: true
+  spectator-enable:
+    default: op
+  speed-use:
+    default: true
+  spectator-bypass:
+    default: op
+  spectator-force:
+    default: op
