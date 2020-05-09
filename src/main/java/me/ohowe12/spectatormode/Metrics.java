@@ -1,3 +1,11 @@
+/*
+ * SpectatorModeRewrite
+ *
+ * Copyright (c) 2020. Oliver Howe
+ *
+ * MIT License
+ */
+
 package me.ohowe12.spectatormode;
 
 import com.google.gson.JsonArray;

@@ -1,3 +1,11 @@
+/*
+ * SpectatorModeRewrite
+ *
+ * Copyright (c) 2020. Oliver Howe
+ *
+ * MIT License
+ */
+
 package me.ohowe12.spectatormode;
 
 import me.ohowe12.spectatormode.commands.Spectator;
@@ -29,13 +37,12 @@ public final class SpectatorMode extends JavaPlugin {
                 Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_RED + "[SMP SPECTATOR MODE] A new version of SMP SPECTATOR MODE is available!");
             }
         });
-        registerCmds();
+        registerCommands();
         getServer().getPluginManager().registerEvents(new OnMoveListener(), this);
         this.getConfig().addDefault("enforce-worlds", false);
         int pluginId = 7132;
         Metrics metrics = new Metrics(this, pluginId);
         metrics.addCustomChart(new Metrics.SingleLineChart("players", () -> Bukkit.getOnlinePlayers().size()));
-
     }
 
     @Override
@@ -43,7 +50,7 @@ public final class SpectatorMode extends JavaPlugin {
         // Plugin shutdown logic
     }
 
-    public void registerCmds() {
+    public void registerCommands() {
         Objects.requireNonNull(this.getCommand("s")).setExecutor(new Spectator());
         Objects.requireNonNull(this.getCommand("spectator")).setExecutor(new Spectator());
         Objects.requireNonNull(this.getCommand("s")).setTabCompleter(new SpectatorTab());

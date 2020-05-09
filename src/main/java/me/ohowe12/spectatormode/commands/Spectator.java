@@ -1,3 +1,11 @@
+/*
+ * SpectatorModeRewrite
+ *
+ * Copyright (c) 2020. Oliver Howe
+ *
+ * MIT License
+ */
+
 package me.ohowe12.spectatormode.commands;
 
 import me.ohowe12.spectatormode.SpectatorMode;
@@ -29,22 +37,19 @@ public class Spectator implements CommandExecutor {
     @Nullable
     static List<String> worlds;
     private static Spectator instance;
+
     public final Map<String, State> state;
     @NotNull
     final PotionEffect nightVision = new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 10);
     final FileConfiguration data;
 
-    @SuppressWarnings("unchecked")
     public Spectator() {
         instance = this;
         plugin = SpectatorMode.getInstance();
         state = new HashMap<>();
         plugin.saveDefaultConfig();
-        sEnabled = plugin.getConfig().getBoolean("enabled", true);
-        nightVisionEnabled = plugin.getConfig().getBoolean("night-vision", true);
         data = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "data.yml"));
 
-        worlds = (List<String>) plugin.getConfig().getList("worlds-allowed", Arrays.asList("world", "world_nether", "world_the_end"));
     }
 
     public static Spectator getInstance() {
@@ -100,6 +105,9 @@ public class Spectator implements CommandExecutor {
     }
 
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
+        worlds = (List<String>) plugin.getConfig().getList("worlds-allowed", Arrays.asList("world", "world_nether", "world_the_end"));
+        sEnabled = plugin.getConfig().getBoolean("enabled", true);
+        nightVisionEnabled = plugin.getConfig().getBoolean("night-vision", true);
         if (label.equalsIgnoreCase("s") || label.equalsIgnoreCase("spectator")) {
             load();
 
