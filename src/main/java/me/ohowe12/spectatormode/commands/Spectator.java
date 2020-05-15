@@ -124,7 +124,21 @@ public class Spectator implements CommandExecutor {
                 checkIfEligibleForSpectatorMode(player);
                 return true;
             }
-            String argument = args[0];
+            String argument = args[0];            
+            switch (argument.toLowerCase()) {
+                case "disable":
+                    sEnabled = false;
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("disable-message", "&dSpectator mode has been &ldisabled"))));
+                    break;
+                case "enable":
+                    sEnabled = true;
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("enable-message", "&dSpectator mode has been &lenabled"))));
+                    break;
+                case "reload":
+                    plugin.reloadConfig();
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("reload-message", "&bThe config file has been reloaded!"))));
+            }
+            
             if (sender.hasPermission("spectator-force")) {
                 @Nullable Player target = Bukkit.getPlayerExact(argument);
                 if (target == null) {
@@ -139,19 +153,6 @@ public class Spectator implements CommandExecutor {
             if (!sender.hasPermission("spectator-enable")) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("permission-message", "&cYou do not have permission to do that!"))));
                 return true;
-            }
-            switch (argument.toLowerCase()) {
-                case "disable":
-                    sEnabled = false;
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("disable-message", "&dSpectator mode has been &ldisabled"))));
-                    break;
-                case "enable":
-                    sEnabled = true;
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("enable-message", "&dSpectator mode has been &lenabled"))));
-                    break;
-                case "reload":
-                    plugin.reloadConfig();
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("reload-message", "&bThe config file has been reloaded!"))));
             }
             return true;
 
