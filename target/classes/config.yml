@@ -10,7 +10,7 @@
 #If the command /s is enabled (/s enable overrules this)
 enabled: true
 
-#If a player recives the night vision effect while in spectator mode
+#If a player receives the night vision effect while in spectator mode
 night-vision: true
 
 #the max speed a player is allowed to go (Minimum 1)

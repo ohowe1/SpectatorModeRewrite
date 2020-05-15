@@ -16,6 +16,7 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
@@ -27,7 +28,7 @@ public class OnMoveListener implements Listener {
     private final SpectatorMode plugin = SpectatorMode.getInstance();
     private Map<String, State> state;
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onMove(PlayerMoveEvent e) {
         int yLevel = plugin.getConfig().getInt("y-level", 0);
         boolean enforceY = plugin.getConfig().getBoolean("enforce-y", false);

@@ -49,7 +49,7 @@ public class Spectator implements CommandExecutor {
         state = new HashMap<>();
         plugin.saveDefaultConfig();
         data = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "data.yml"));
-
+        sEnabled = plugin.getConfig().getBoolean("enabled", true);
     }
 
     public static Spectator getInstance() {
@@ -106,11 +106,10 @@ public class Spectator implements CommandExecutor {
 
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
         worlds = (List<String>) plugin.getConfig().getList("worlds-allowed", Arrays.asList("world", "world_nether", "world_the_end"));
-        sEnabled = plugin.getConfig().getBoolean("enabled", true);
+
         nightVisionEnabled = plugin.getConfig().getBoolean("night-vision", true);
         if (label.equalsIgnoreCase("s") || label.equalsIgnoreCase("spectator")) {
             load();
-
             if (args.length == 0) {
                 if (!(sender instanceof Player)) {
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("console-message", "&cYou are &lnot &ca player!"))));
@@ -124,19 +123,20 @@ public class Spectator implements CommandExecutor {
                 checkIfEligibleForSpectatorMode(player);
                 return true;
             }
-            String argument = args[0];            
+            String argument = args[0];
             switch (argument.toLowerCase()) {
                 case "disable":
                     sEnabled = false;
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("disable-message", "&dSpectator mode has been &ldisabled"))));
-                    break;
+                    return true;
                 case "enable":
                     sEnabled = true;
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("enable-message", "&dSpectator mode has been &lenabled"))));
-                    break;
+                    return true;
                 case "reload":
                     plugin.reloadConfig();
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("reload-message", "&bThe config file has been reloaded!"))));
+                    return true;
             }
             
             if (sender.hasPermission("spectator-force")) {
