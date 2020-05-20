@@ -11,14 +11,17 @@ package me.ohowe12.spectatormode.listener;
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.State;
 import me.ohowe12.spectatormode.commands.Spectator;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.Map;
 import java.util.Objects;
@@ -38,6 +41,7 @@ public class OnMoveListener implements Listener {
 
         Player player = e.getPlayer();
         Location location = e.getTo();
+        Location eyeLevel = new Location(player.getWorld(), location.getX(), location.getY() + 1, location.getZ());
         state = Spectator.getInstance().state;
 
         if (!(state.containsKey(player.getUniqueId().toString()))) {
@@ -50,7 +54,6 @@ public class OnMoveListener implements Listener {
             return;
         }
 
-        assert location != null;
         if (enforceY) {
             if (location.getY() <= yLevel) {
                 e.setTo(e.getFrom());
@@ -58,12 +61,23 @@ public class OnMoveListener implements Listener {
                 return;
             }
         }
-        Block currentBlock = location.getBlock();
+        Block currentBlock = eyeLevel.getBlock();
         if (enforceAllBlocks) {
             if (!(currentBlock.getType().isAir())) {
-                e.setTo(e.getFrom());
-                e.setCancelled(true);
-                return;
+                if (!currentBlock.getType().equals(Material.RAIL)){
+                    if (!currentBlock.getType().equals(Material.ACTIVATOR_RAIL)) {
+                        if (!currentBlock.getType().equals(Material.DETECTOR_RAIL)) {
+                            if (!currentBlock.getType().equals(Material.POWERED_RAIL)) {
+                                e.setTo(e.getFrom());
+                                e.setCancelled(true);
+                                return;
+                            }
+                        }
+                    }
+
+                }
+
+
             }
         }
         if (enforceNonTransparent) {
@@ -95,4 +109,24 @@ public class OnMoveListener implements Listener {
         return (currentBlock.getType().isOccluding());
     }
 
+    @EventHandler
+    public void onTeleport(PlayerTeleportEvent e) {
+        boolean preventTeleport = plugin.getConfig().getBoolean("prevent-teleport", false);
+        if (e.getPlayer().hasPermission("spectator-bypass")) {
+            return;
+        }
+        if (!(state.containsKey(e.getPlayer().getUniqueId().toString()))) {
+            return;
+        }
+        if (!(e.getPlayer().getGameMode().equals(GameMode.SPECTATOR))) {
+            return;
+        }
+        if (!preventTeleport) {
+            return;
+        }
+        if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.SPECTATE)) {
+            e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("permission-message", "&cYou do not have permission to do that!"))));
+            e.setCancelled(true);
+        }
+    }
 }

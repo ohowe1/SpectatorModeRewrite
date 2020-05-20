@@ -74,3 +74,6 @@ enforce-distance: false
 
 #See above (blocks)
 distance: 64
+
+#Prevents players from using the spectator teleport hotbar
+prevent-teleport: false
