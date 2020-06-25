@@ -10,6 +10,9 @@
 #If the command /s is enabled (/s enable overrules this)
 enabled: true
 
+#if players can change their fly speed in spectator mode
+speed: true
+
 #If a player receives the night vision effect while in spectator mode
 night-vision: true
 
@@ -50,6 +53,12 @@ enable-message: '&dSpectator mode has been &lenabled'
 
 #Message when the config.yml is reloaded
 reload-message: '&bThe config file has been reloaded!'
+
+#Message when the speed is set. Speed is added at the end
+speed-message: '&bSpeed has been set to '
+
+#Message sent when an invalid speed is said
+invalid-message: '&cThat is not a valid speed'
 
 
 #Whether to enforce the worlds

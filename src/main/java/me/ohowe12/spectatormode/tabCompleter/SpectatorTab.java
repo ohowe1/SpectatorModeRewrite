@@ -34,18 +34,7 @@ public class SpectatorTab implements TabCompleter {
             arguments.add("reload");
         }
 
-        List<String> results = new ArrayList<>();
-
-        if (args.length == 1) {
-            for (String a : arguments) {
-                if (a.toLowerCase().startsWith(args[0].toLowerCase())) {
-                    results.add(a);
-                }
-            }
-            return results;
-        }
-
-        return null;
+        return TabCompleteUtil.getStrings(args, arguments);
     }
 }
 

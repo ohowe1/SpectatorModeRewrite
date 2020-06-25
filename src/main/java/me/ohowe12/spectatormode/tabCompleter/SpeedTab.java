@@ -23,23 +23,13 @@ public class SpeedTab implements TabCompleter {
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         List<String> arguments = new ArrayList<>();
         if (sender.hasPermission("speed-use")) {
-            arguments.add("print");
             for (int i = 1; i <= (SpectatorMode.getInstance().getConfig().getInt("max-speed", 5)); i++) {
                 arguments.add(Integer.toString(i));
             }
         }
 
-        List<String> results = new ArrayList<>();
-
-        if (args.length == 1) {
-            for (String a : arguments) {
-                if (a.toLowerCase().startsWith(args[0].toLowerCase())) {
-                    results.add(a);
-                }
-            }
-            return results;
-        }
-
-        return null;
+        return TabCompleteUtil.getStrings(args, arguments);
     }
+
+
 }
