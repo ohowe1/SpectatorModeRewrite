@@ -16,12 +16,15 @@ import me.ohowe12.spectatormode.tabCompleter.SpeedTab;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
 public final class SpectatorMode extends JavaPlugin {
 
     private static SpectatorMode instance;
+
+    private ConfigManager config;
 
     public static SpectatorMode getInstance() {
         return instance;
@@ -30,6 +33,7 @@ public final class SpectatorMode extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        config = new ConfigManager(this.getConfig());
         new UpdateChecker(this, 77267).getVersion(version -> {
             if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
                 Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[SMP SPECTATOR MODE] SMP SPECTATOR MODE is all up to date!");
@@ -60,5 +64,10 @@ public final class SpectatorMode extends JavaPlugin {
         Objects.requireNonNull(this.getCommand("speed")).setTabCompleter(new SpeedTab());
         Objects.requireNonNull(this.getCommand("sp")).setExecutor(new Speed());
         Objects.requireNonNull(this.getCommand("sp")).setTabCompleter(new SpeedTab());
+    }
+
+    @NotNull
+    public ConfigManager getConfigManager() {
+        return config;
     }
 }

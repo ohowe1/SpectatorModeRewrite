@@ -58,7 +58,16 @@ reload-message: '&bThe config file has been reloaded!'
 speed-message: '&bSpeed has been set to '
 
 #Message sent when an invalid speed is said
-invalid-message: '&cThat is not a valid speed'
+invalid-speed-message: '&cThat is not a valid speed'
+
+#Message sent when an invalid player is forced into spectator mode
+invalid-player-message: '&cThat is not a valid player'
+
+#Message when forcing a player was successful. /target/ is the player
+force-success: '&bSuccessfully forced /target/ into /s'
+
+#Message when forcing a player was not successful. /target/ is the player
+force-fail: '&cFailed to force /target/ into /s'
 
 
 #Whether to enforce the worlds
@@ -72,7 +81,7 @@ enforce-y: false
 #see above (players can not go below this level)
 y-level: 0
 
-#If a player is not allowed to go through non-see-throughable blocks in spectator mode
+#If a player is not allowed to go through non-see-through able blocks in spectator mode
 disallow-non-transparent-blocks: false
 
 #If a player is not allowed to go through blocks in spectator mode
@@ -84,5 +93,5 @@ enforce-distance: false
 #See above (blocks)
 distance: 64
 
-#Prevents players from using the spectator teleport hotbar
+#Prevents players from using the spectator teleport hot bar
 prevent-teleport: false

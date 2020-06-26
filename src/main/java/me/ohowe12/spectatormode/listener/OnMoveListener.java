@@ -11,7 +11,6 @@ package me.ohowe12.spectatormode.listener;
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.State;
 import me.ohowe12.spectatormode.commands.Spectator;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -33,15 +32,15 @@ public class OnMoveListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onMove(PlayerMoveEvent e) {
-        int yLevel = plugin.getConfig().getInt("y-level", 0);
-        boolean enforceY = plugin.getConfig().getBoolean("enforce-y", false);
-        boolean enforceDistance = plugin.getConfig().getBoolean("enforce-distance", false);
-        boolean enforceNonTransparent = plugin.getConfig().getBoolean("disallow-non-transparent-blocks", false);
-        boolean enforceAllBlocks = plugin.getConfig().getBoolean("disallow-all-blocks", false);
+        int yLevel = plugin.getConfigManager().getInt("y-level", 0);
+        boolean enforceY = plugin.getConfigManager().getBoolean("enforce-y", false);
+        boolean enforceDistance = plugin.getConfigManager().getBoolean("enforce-distance", false);
+        boolean enforceNonTransparent = plugin.getConfigManager().getBoolean("disallow-non-transparent-blocks", false);
+        boolean enforceAllBlocks = plugin.getConfigManager().getBoolean("disallow-all-blocks", false);
 
         Player player = e.getPlayer();
         Location location = e.getTo();
-        Location eyeLevel = new Location(player.getWorld(), location.getX(), location.getY() + 1, location.getZ());
+        Location eyeLevel = new Location(player.getWorld(), Objects.requireNonNull(location).getX(), location.getY() + 1, location.getZ());
         state = Spectator.getInstance().state;
 
         if (!(state.containsKey(player.getUniqueId().toString()))) {
@@ -100,7 +99,7 @@ public class OnMoveListener implements Listener {
     }
 
     private boolean checkDistance(String player, Location location) {
-        int distance = plugin.getConfig().getInt("distance", 64);
+        int distance = plugin.getConfigManager().getInt("distance", 64);
         Location originalLocation = state.get(player).getPlayerLocation();
         return (originalLocation.distance(location)) > distance;
     }
@@ -111,7 +110,7 @@ public class OnMoveListener implements Listener {
 
     @EventHandler
     public void onTeleport(PlayerTeleportEvent e) {
-        boolean preventTeleport = plugin.getConfig().getBoolean("prevent-teleport", false);
+        boolean preventTeleport = plugin.getConfigManager().getBoolean("prevent-teleport", false);
         if (e.getPlayer().hasPermission("spectator-bypass")) {
             return;
         }
@@ -125,7 +124,7 @@ public class OnMoveListener implements Listener {
             return;
         }
         if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.SPECTATE)) {
-            e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("permission-message", "&cYou do not have permission to do that!"))));
+            e.getPlayer().sendMessage(plugin.getConfigManager().getColorizedString("permission-message", "&cYou do not have permission to do that!"));
             e.setCancelled(true);
         }
     }

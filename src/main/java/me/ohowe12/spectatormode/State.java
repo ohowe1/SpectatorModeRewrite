@@ -81,11 +81,7 @@ public class State {
                     if (living instanceof Mob) {
                         @NotNull Mob m = (Mob) living;
                         try {
-                            if (Objects.equals(m.getTarget(), player)) {
-                                ids.put(m.getUniqueId().toString(), true);
-                            } else {
-                                ids.put(m.getUniqueId().toString(), false);
-                            }
+                            ids.put(m.getUniqueId().toString(), Objects.equals(m.getTarget(), player));
                         } catch (NullPointerException ignored) {
 
                         }
