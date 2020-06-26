@@ -126,14 +126,16 @@ public class Spectator implements CommandExecutor {
             String argument = args[0];
             switch (argument.toLowerCase()) {
                 case "disable":
-                    sEnabled = false;
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("disable-message", "&dSpectator mode has been &ldisabled"))));
+                    changeEnabled(false);
                     return true;
                 case "enable":
-                    sEnabled = true;
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("enable-message", "&dSpectator mode has been &lenabled"))));
+                    changeEnabled(true);
                     return true;
                 case "reload":
+                    if (!sender.hasPermission("spectator-reload") {
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("permission-message", "&cYou do not have permission to do that!"))));
+                        return true;
+                    }
                     plugin.reloadConfig();
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("reload-message", "&bThe config file has been reloaded!"))));
                     return true;
@@ -150,15 +152,25 @@ public class Spectator implements CommandExecutor {
                     checkIfEligibleForSpectatorMode(target);
                 }
             }
-            if (!sender.hasPermission("spectator-enable")) {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("permission-message", "&cYou do not have permission to do that!"))));
-                return true;
-            }
+            
             return true;
 
         }
         return false;
 
+    }
+    
+    private void changeEnabled(boolean status) {
+        if (!sender.hasPermission("spectator-enable")) {
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("permission-message", "&cYou do not have permission to do that!"))));
+                return;
+            }
+         sEnabled = status;
+         if (status) {
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("enable-message", "&dSpectator mode has been &lenabled"))));
+         } else{
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("disable-message", "&dSpectator mode has been &ldisabled"))));
+         }
     }
 
     private void checkIfEligibleForSpectatorMode(@NotNull Player player) {
