@@ -106,8 +106,8 @@ public class Spectator implements CommandExecutor {
 
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
         worlds = (List<String>) plugin.getConfig().getList("worlds-allowed", Arrays.asList("world", "world_nether", "world_the_end"));
-
         nightVisionEnabled = plugin.getConfig().getBoolean("night-vision", true);
+
         if (label.equalsIgnoreCase("s") || label.equalsIgnoreCase("spectator")) {
             load();
             if (args.length == 0) {
@@ -126,13 +126,13 @@ public class Spectator implements CommandExecutor {
             String argument = args[0];
             switch (argument.toLowerCase()) {
                 case "disable":
-                    changeEnabled(false);
+                    changeEnabled(false, sender);
                     return true;
                 case "enable":
-                    changeEnabled(true);
+                    changeEnabled(true, sender);
                     return true;
                 case "reload":
-                    if (!sender.hasPermission("spectator-reload") {
+                    if (!sender.hasPermission("spectator-reload")) {
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("permission-message", "&cYou do not have permission to do that!"))));
                         return true;
                     }
@@ -160,7 +160,7 @@ public class Spectator implements CommandExecutor {
 
     }
     
-    private void changeEnabled(boolean status) {
+    private void changeEnabled(boolean status, CommandSender sender) {
         if (!sender.hasPermission("spectator-enable")) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("permission-message", "&cYou do not have permission to do that!"))));
                 return;
