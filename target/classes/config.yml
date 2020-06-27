@@ -16,11 +16,17 @@ speed: true
 #If a player receives the night vision effect while in spectator mode
 night-vision: true
 
+#If a player receives the conduit effect while in spectator mode
+conduit: true
+
 #the max speed a player is allowed to go (Minimum 1)
 max-speed: 5
 
 #If when a player logs on in spectator mode they will be teleported back
 teleport-back: false
+
+#The ability to toggle the effects in spectator mode
+seffect: true
 
 
 
@@ -68,6 +74,9 @@ force-success: '&bSuccessfully forced /target/ into /s'
 
 #Message when forcing a player was not successful. /target/ is the player
 force-fail: '&cFailed to force /target/ into /s'
+
+#Message sent when a player tries to use the /seffect when not in spectator mode
+no-spectator-message: '&cYou did not preform the /s command'
 
 
 #Whether to enforce the worlds

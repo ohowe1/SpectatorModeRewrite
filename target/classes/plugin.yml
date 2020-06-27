@@ -10,6 +10,8 @@ commands:
   speed:
     description: Changes the flying speed in spectator mode of the player.
     aliases: sp
+  seffect:
+    description: This command will toggle the effects of night vision and conduit while in spectator mode
 
 permissions:
   spectator-use:
@@ -22,3 +24,5 @@ permissions:
     default: op
   spectator-force:
     default: op
+  specator-toggle:
+    default: true
