@@ -31,17 +31,18 @@ import java.util.Map.Entry;
 
 @SuppressWarnings("unchecked")
 public class Spectator implements CommandExecutor {
-    static boolean sEnabled;
-    static boolean nightVisionEnabled;
-    static SpectatorMode plugin;
-    @Nullable
-    static List<String> worlds;
+    private boolean sEnabled;
+    private boolean nightVisionEnabled;
+    private boolean conduitEnabled;
+    private final SpectatorMode plugin;
+    private List<String> worlds;
     private static Spectator instance;
 
     public final @NotNull Map<String, State> state;
     @NotNull
-    final PotionEffect nightVision = new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 10);
-    final @NotNull FileConfiguration data;
+    private final PotionEffect NIGHTVISON = new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 10);
+    private final PotionEffect CONDUIT = new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000000, 10);
+    private final @NotNull FileConfiguration data;
 
     public Spectator() {
         instance = this;
@@ -75,7 +76,8 @@ public class Spectator implements CommandExecutor {
     }
 
     private void load() {
-        if (data.getConfigurationSection("data") == null) { return;
+        if (data.getConfigurationSection("data") == null) {
+            return;
         }
         try {
             Objects.requireNonNull(data.getConfigurationSection("data")).getKeys(false).forEach(key -> {
@@ -106,6 +108,7 @@ public class Spectator implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String @NotNull [] args) {
         worlds = (List<String>) plugin.getConfigManager().getList("worlds-allowed", Arrays.asList("world", "world_nether", "world_the_end"));
         nightVisionEnabled = plugin.getConfigManager().getBoolean("night-vision", true);
+        conduitEnabled = plugin.getConfigManager().getBoolean("conduit", true);
 
         if (label.equalsIgnoreCase("s") || label.equalsIgnoreCase("spectator")) {
             load();
@@ -139,7 +142,7 @@ public class Spectator implements CommandExecutor {
                     sender.sendMessage(plugin.getConfigManager().getColorizedString("reload-message", "&bThe config file has been reloaded!"));
                     return true;
             }
-            
+
             if (sender.hasPermission("spectator-force")) {
                 @Nullable Player target = Bukkit.getPlayerExact(argument);
                 if (target == null) {
@@ -154,25 +157,25 @@ public class Spectator implements CommandExecutor {
                     }
                 }
             }
-            
+
             return true;
 
         }
         return false;
 
     }
-    
+
     private void changeEnabled(boolean status, @NotNull CommandSender sender) {
         if (!sender.hasPermission("spectator-enable")) {
-                sender.sendMessage(plugin.getConfigManager().getColorizedString("permission-message", "&cYou do not have permission to do that!"));
-                return;
-            }
-         sEnabled = status;
-         if (status) {
+            sender.sendMessage(plugin.getConfigManager().getColorizedString("permission-message", "&cYou do not have permission to do that!"));
+            return;
+        }
+        sEnabled = status;
+        if (status) {
             sender.sendMessage(plugin.getConfigManager().getColorizedString("enable-message", "&dSpectator mode has been &lenabled"));
-         } else{
+        } else {
             sender.sendMessage(plugin.getConfigManager().getColorizedString("disable-message", "&dSpectator mode has been &ldisabled"));
-         }
+        }
     }
 
     private boolean checkIfEligibleForSpectatorMode(@NotNull Player player) {
@@ -197,21 +200,28 @@ public class Spectator implements CommandExecutor {
             }
             goIntoSpectatorMode(player);
             return true;
+        } else {
+            if (!state.containsKey(player.getUniqueId().toString())) {
+                playerNotInState(player);
+            } else {
+                goIntoSurvivalMode(player);
+            }
         }
-        if (!state.containsKey(player.getUniqueId().toString())) {
-            player.sendMessage(state.toString());
-            player.sendMessage(ChatColor.DARK_RED + "An error has occurred.");
-
-            player.removePotionEffect(PotionEffectType.NIGHT_VISION);
-            player.setGameMode(GameMode.SURVIVAL);
-            return true;
-        }
-        goIntoSurvivalMode(player);
         return true;
+    }
+
+    private void playerNotInState(@NotNull Player target) {
+        target.sendMessage(state.toString());
+        target.sendMessage(ChatColor.DARK_RED + "An error has occurred.");
+
+        target.removePotionEffect(PotionEffectType.NIGHT_VISION);
+        target.removePotionEffect(PotionEffectType.CONDUIT_POWER);
+        target.setGameMode(GameMode.SURVIVAL);
     }
 
     private void goIntoSurvivalMode(@NotNull Player target) {
         target.removePotionEffect(PotionEffectType.NIGHT_VISION);
+        target.removePotionEffect(PotionEffectType.CONDUIT_POWER);
 
         target.setGameMode(GameMode.SURVIVAL);
 
@@ -234,7 +244,10 @@ public class Spectator implements CommandExecutor {
         target.setGameMode(GameMode.SPECTATOR);
         target.sendMessage(plugin.getConfigManager().getColorizedString("spectator-mode-message", "&9Setting gamemode to &b&lSPECTATOR MODE"));
         if (nightVisionEnabled) {
-            target.addPotionEffect(nightVision);
+            target.addPotionEffect(NIGHTVISON);
+        }
+        if (conduitEnabled) {
+            target.addPotionEffect(CONDUIT);
         }
         save();
     }
@@ -271,12 +284,6 @@ public class Spectator implements CommandExecutor {
 
     private void setState(@NotNull Player player) {
         final String UUID = player.getUniqueId().toString();
-        if (state.get(UUID) == null) {
-            player.sendMessage("null on state");
-        }
-        if (state.get(UUID).getPlayerLocation() == null) {
-            player.sendMessage("null on location");
-        }
         player.teleport(state.get(UUID).getPlayerLocation());
         player.setFireTicks(state.get(UUID).getFireTicks());
         player.addPotionEffects(state.get(UUID).getPotionEffects());

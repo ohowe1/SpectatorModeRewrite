@@ -8,8 +8,10 @@
 
 package me.ohowe12.spectatormode;
 
+import me.ohowe12.spectatormode.commands.Effects;
 import me.ohowe12.spectatormode.commands.Spectator;
 import me.ohowe12.spectatormode.commands.Speed;
+import me.ohowe12.spectatormode.listener.OnLogOnListener;
 import me.ohowe12.spectatormode.listener.OnMoveListener;
 import me.ohowe12.spectatormode.tabCompleter.SpectatorTab;
 import me.ohowe12.spectatormode.tabCompleter.SpeedTab;
@@ -25,7 +27,7 @@ import java.util.Objects;
 
 public final class SpectatorMode extends JavaPlugin {
 
-    private boolean unitTest;
+    private final boolean unitTest;
 
     public SpectatorMode() {
         super();
@@ -75,11 +77,14 @@ public final class SpectatorMode extends JavaPlugin {
         Objects.requireNonNull(this.getCommand("spectator")).setTabCompleter(new SpectatorTab());
 
         Objects.requireNonNull(this.getCommand("speed")).setExecutor(new Speed());
-        Objects.requireNonNull(this.getCommand("speed")).setTabCompleter(new SpeedTab());
         Objects.requireNonNull(this.getCommand("sp")).setExecutor(new Speed());
+        Objects.requireNonNull(this.getCommand("speed")).setTabCompleter(new SpeedTab());
         Objects.requireNonNull(this.getCommand("sp")).setTabCompleter(new SpeedTab());
 
+        Objects.requireNonNull(this.getCommand("seffect")).setExecutor(new Effects());
+
         getServer().getPluginManager().registerEvents(new OnMoveListener(), this);
+        getServer().getPluginManager().registerEvents(new OnLogOnListener(), this);
     }
 
     @NotNull
