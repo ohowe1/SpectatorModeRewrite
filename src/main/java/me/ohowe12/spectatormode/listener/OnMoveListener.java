@@ -21,6 +21,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Objects;
@@ -31,7 +32,7 @@ public class OnMoveListener implements Listener {
     private Map<String, State> state;
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onMove(PlayerMoveEvent e) {
+    public void onMove(@NotNull PlayerMoveEvent e) {
         int yLevel = plugin.getConfigManager().getInt("y-level", 0);
         boolean enforceY = plugin.getConfigManager().getBoolean("enforce-y", false);
         boolean enforceDistance = plugin.getConfigManager().getBoolean("enforce-distance", false);
@@ -98,18 +99,18 @@ public class OnMoveListener implements Listener {
         }
     }
 
-    private boolean checkDistance(String player, Location location) {
+    private boolean checkDistance(String player, @NotNull Location location) {
         int distance = plugin.getConfigManager().getInt("distance", 64);
         Location originalLocation = state.get(player).getPlayerLocation();
         return (originalLocation.distance(location)) > distance;
     }
 
-    private boolean checkBlock(Block currentBlock) {
+    private boolean checkBlock(@NotNull Block currentBlock) {
         return (currentBlock.getType().isOccluding());
     }
 
     @EventHandler
-    public void onTeleport(PlayerTeleportEvent e) {
+    public void onTeleport(@NotNull PlayerTeleportEvent e) {
         boolean preventTeleport = plugin.getConfigManager().getBoolean("prevent-teleport", false);
         if (e.getPlayer().hasPermission("spectator-bypass")) {
             return;

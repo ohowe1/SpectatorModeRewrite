@@ -15,12 +15,27 @@ import me.ohowe12.spectatormode.tabCompleter.SpectatorTab;
 import me.ohowe12.spectatormode.tabCompleter.SpeedTab;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.java.JavaPluginLoader;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.Objects;
 
 public final class SpectatorMode extends JavaPlugin {
+
+    private boolean unitTest;
+
+    public SpectatorMode() {
+        super();
+        unitTest = false;
+    }
+
+    protected SpectatorMode(@NotNull JavaPluginLoader loader, @NotNull PluginDescriptionFile description, File dataFolder, File file) {
+        super(loader, description, dataFolder, file);
+        unitTest = true;
+    }
 
     private static SpectatorMode instance;
 
@@ -34,19 +49,18 @@ public final class SpectatorMode extends JavaPlugin {
     public void onEnable() {
         instance = this;
         config = new ConfigManager(this.getConfig());
-        new UpdateChecker(this, 77267).getVersion(version -> {
-            if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
-                Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[SMP SPECTATOR MODE] SMP SPECTATOR MODE is all up to date!");
-            } else {
-                Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_RED + "[SMP SPECTATOR MODE] A new version of SMP SPECTATOR MODE is available!");
-            }
-        });
         registerCommands();
-        getServer().getPluginManager().registerEvents(new OnMoveListener(), this);
-        this.getConfig().addDefault("enforce-worlds", false);
-        int pluginId = 7132;
-        Metrics metrics = new Metrics(this, pluginId);
-        metrics.addCustomChart(new Metrics.SingleLineChart("players", () -> Bukkit.getOnlinePlayers().size()));
+        if (!unitTest) {
+            int pluginId = 7132;
+            Metrics metrics = new Metrics(this, pluginId);
+            new UpdateChecker(this, 77267).getVersion(version -> {
+                if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[SMP SPECTATOR MODE] SMP SPECTATOR MODE is all up to date!");
+                } else {
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_RED + "[SMP SPECTATOR MODE] A new version of SMP SPECTATOR MODE is available!");
+                }
+            });
+        }
     }
 
     @Override
@@ -64,6 +78,8 @@ public final class SpectatorMode extends JavaPlugin {
         Objects.requireNonNull(this.getCommand("speed")).setTabCompleter(new SpeedTab());
         Objects.requireNonNull(this.getCommand("sp")).setExecutor(new Speed());
         Objects.requireNonNull(this.getCommand("sp")).setTabCompleter(new SpeedTab());
+
+        getServer().getPluginManager().registerEvents(new OnMoveListener(), this);
     }
 
     @NotNull

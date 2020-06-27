@@ -24,7 +24,7 @@ public class Speed implements @Nullable CommandExecutor {
         plugin.saveDefaultConfig();
     }
 
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String @NotNull [] args) {
         int maxSpeed = plugin.getConfigManager().getInt("max-speed", 5);
         boolean speedAllowed = plugin.getConfigManager().getBoolean("speed", true);
         if ((label.equalsIgnoreCase("speed")) || (label.equalsIgnoreCase("sp"))) {

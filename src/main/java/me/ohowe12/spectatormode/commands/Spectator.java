@@ -38,10 +38,10 @@ public class Spectator implements CommandExecutor {
     static List<String> worlds;
     private static Spectator instance;
 
-    public final Map<String, State> state;
+    public final @NotNull Map<String, State> state;
     @NotNull
     final PotionEffect nightVision = new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 10);
-    final FileConfiguration data;
+    final @NotNull FileConfiguration data;
 
     public Spectator() {
         instance = this;
@@ -103,7 +103,7 @@ public class Spectator implements CommandExecutor {
         }
     }
 
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String @NotNull [] args) {
         worlds = (List<String>) plugin.getConfigManager().getList("worlds-allowed", Arrays.asList("world", "world_nether", "world_the_end"));
         nightVisionEnabled = plugin.getConfigManager().getBoolean("night-vision", true);
 
@@ -162,7 +162,7 @@ public class Spectator implements CommandExecutor {
 
     }
     
-    private void changeEnabled(boolean status, CommandSender sender) {
+    private void changeEnabled(boolean status, @NotNull CommandSender sender) {
         if (!sender.hasPermission("spectator-enable")) {
                 sender.sendMessage(plugin.getConfigManager().getColorizedString("permission-message", "&cYou do not have permission to do that!"));
                 return;
@@ -210,7 +210,7 @@ public class Spectator implements CommandExecutor {
         return true;
     }
 
-    private void goIntoSurvivalMode(Player target) {
+    private void goIntoSurvivalMode(@NotNull Player target) {
         target.removePotionEffect(PotionEffectType.NIGHT_VISION);
 
         target.setGameMode(GameMode.SURVIVAL);
@@ -224,7 +224,7 @@ public class Spectator implements CommandExecutor {
         save();
     }
 
-    private void goIntoSpectatorMode(Player target) {
+    private void goIntoSpectatorMode(@NotNull Player target) {
         state.put(target.getUniqueId().toString(), new State(target));
 
         for (@NotNull PotionEffect e : target.getActivePotionEffects()) {

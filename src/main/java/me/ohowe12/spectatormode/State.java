@@ -29,7 +29,7 @@ public class State {
     private int waterBubbles;
     private Map<String, Boolean> mobIds;
 
-    public State(Player player) {
+    public State(@NotNull Player player) {
         playerLocation = player.getLocation();
         fireTicks = player.getFireTicks();
         potionEffects = (ArrayList<PotionEffect>) player.getActivePotionEffects();
@@ -37,7 +37,7 @@ public class State {
         prepareMobs(player);
     }
 
-    public State(Map<String, Object> serialized) {
+    public State(@NotNull Map<String, Object> serialized) {
         deserialize(serialized);
     }
 
@@ -61,7 +61,7 @@ public class State {
         return mobIds;
     }
 
-    private void deserialize(Map<String, Object> serialized) {
+    private void deserialize(@NotNull Map<String, Object> serialized) {
         playerLocation = (Location) serialized.get("Location");
         fireTicks = (int) serialized.get("Fire ticks");
         potionEffects = (ArrayList<PotionEffect>) serialized.get("Potions");
@@ -96,7 +96,7 @@ public class State {
         mobIds = ids;
     }
 
-    public Map<String, Object> serialize() {
+    public @NotNull Map<String, Object> serialize() {
         Map<String, Object> serialized = new HashMap<>();
         serialized.put("Location", playerLocation);
         serialized.put("Fire ticks", fireTicks);
