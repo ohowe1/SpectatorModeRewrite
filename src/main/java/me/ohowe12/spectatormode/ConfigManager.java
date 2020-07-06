@@ -21,7 +21,6 @@ public class ConfigManager {
 
         for (String path : defaults.getKeys(true)) {
             boolean isIn = config.getKeys(true).contains(path);
-            Bukkit.getLogger().info(String.valueOf(isIn));
             if (!isIn) {
                 config.set(path, defaults.get(path));
             }
