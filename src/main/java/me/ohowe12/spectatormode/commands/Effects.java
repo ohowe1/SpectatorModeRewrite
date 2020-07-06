@@ -18,15 +18,15 @@ public class Effects implements CommandExecutor {
         ConfigManager manager = SpectatorMode.getInstance().getConfigManager();
         if (label.equalsIgnoreCase("seffect")) {
             if (!(sender instanceof Player)) {
-                sender.sendMessage(manager.getColorizedString("console-message", "&cYou are &lnot &ca player!"));
+                sender.sendMessage(manager.getColorizedString("console-message"));
                 return true;
             }
-            if (!manager.getBoolean("seffect", true)) {
-                sender.sendMessage(manager.getColorizedString("permission-message", "&cYou do not have permission to do that!"));
+            if (!manager.getBoolean("seffect")) {
+                sender.sendMessage(manager.getColorizedString("permission-message"));
             }
             Player player = (Player) sender;
             if (!inState(player)) {
-                sender.sendMessage(manager.getColorizedString("no-spectator-message", "&cYou did not preform the /s command"));
+                sender.sendMessage(manager.getColorizedString("no-spectator-message"));
                 return true;
             }
             if (player.hasPotionEffect(PotionEffectType.NIGHT_VISION) || player.hasPotionEffect(PotionEffectType.CONDUIT_POWER)) {
@@ -34,10 +34,10 @@ public class Effects implements CommandExecutor {
                 player.removePotionEffect(PotionEffectType.CONDUIT_POWER);
                 return true;
             }
-            if (manager.getBoolean("night-vision", true)) {
+            if (manager.getBoolean("night-vision")) {
                 player.addPotionEffect(NIGHTVISON);
             }
-            if (manager.getBoolean("conduit", true)) {
+            if (manager.getBoolean("conduit")) {
                 player.addPotionEffect(CONDUIT);
             }
             return true;

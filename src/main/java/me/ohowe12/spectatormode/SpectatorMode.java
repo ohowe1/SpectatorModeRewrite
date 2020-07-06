@@ -11,6 +11,7 @@ package me.ohowe12.spectatormode;
 import me.ohowe12.spectatormode.commands.Effects;
 import me.ohowe12.spectatormode.commands.Spectator;
 import me.ohowe12.spectatormode.commands.Speed;
+import me.ohowe12.spectatormode.listener.OnCommandPreprocessListener;
 import me.ohowe12.spectatormode.listener.OnLogOnListener;
 import me.ohowe12.spectatormode.listener.OnMoveListener;
 import me.ohowe12.spectatormode.tabCompleter.SpectatorTab;
@@ -54,12 +55,12 @@ public final class SpectatorMode extends JavaPlugin {
         registerCommands();
         if (!unitTest) {
             int pluginId = 7132;
-            Metrics metrics = new Metrics(this, pluginId);
+            new Metrics(this, pluginId);
             new UpdateChecker(this, 77267).getVersion(version -> {
                 if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
-                    Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[SMP SPECTATOR MODE] SMP SPECTATOR MODE is all up to date!");
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[SMP SPECTATOR MODE] SMP SPECTATOR MODE is all up to date at version " + this.getDescription().getVersion() + '!');
                 } else {
-                    Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_RED + "[SMP SPECTATOR MODE] A new version of SMP SPECTATOR MODE is available!");
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_RED + "[SMP SPECTATOR MODE] A new version of SMP SPECTATOR MODE is available (version " + version + ")! You are on version " + this.getDescription().getVersion() + ".");
                 }
             });
         }
@@ -85,6 +86,7 @@ public final class SpectatorMode extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new OnMoveListener(), this);
         getServer().getPluginManager().registerEvents(new OnLogOnListener(), this);
+        getServer().getPluginManager().registerEvents(new OnCommandPreprocessListener(), this);
     }
 
     @NotNull

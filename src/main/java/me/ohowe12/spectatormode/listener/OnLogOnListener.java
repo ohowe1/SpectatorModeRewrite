@@ -22,12 +22,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 public class OnLogOnListener implements Listener {
-    Map<String, State> state;
+    private Map<String, State> state;
 
     @EventHandler
     public void onLogOn(@NotNull PlayerJoinEvent e) {
         state = Spectator.getInstance().state;
-        boolean teleportBack = SpectatorMode.getInstance().getConfig().getBoolean("teleport-back", false);
+        boolean teleportBack = SpectatorMode.getInstance().getConfigManager().getBoolean("teleport-back");
         Player player = e.getPlayer();
         if (!(teleportBack)) {
             return;

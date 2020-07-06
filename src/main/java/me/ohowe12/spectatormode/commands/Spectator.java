@@ -50,7 +50,7 @@ public class Spectator implements CommandExecutor {
         state = new HashMap<>();
         plugin.saveDefaultConfig();
         data = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "data.yml"));
-        sEnabled = plugin.getConfigManager().getBoolean("enabled", true);
+        sEnabled = plugin.getConfigManager().getBoolean("enabled");
     }
 
     public static Spectator getInstance() {
@@ -106,20 +106,20 @@ public class Spectator implements CommandExecutor {
     }
 
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String @NotNull [] args) {
-        worlds = (List<String>) plugin.getConfigManager().getList("worlds-allowed", Arrays.asList("world", "world_nether", "world_the_end"));
-        nightVisionEnabled = plugin.getConfigManager().getBoolean("night-vision", true);
-        conduitEnabled = plugin.getConfigManager().getBoolean("conduit", true);
+        worlds = (List<String>) plugin.getConfigManager().getList("worlds-allowed");
+        nightVisionEnabled = plugin.getConfigManager().getBoolean("night-vision");
+        conduitEnabled = plugin.getConfigManager().getBoolean("conduit");
 
         if (label.equalsIgnoreCase("s") || label.equalsIgnoreCase("spectator")) {
             load();
             if (args.length == 0) {
                 if (!(sender instanceof Player)) {
-                    sender.sendMessage(plugin.getConfigManager().getColorizedString("console-message", "&cYou are &lnot &ca player!"));
+                    sender.sendMessage(plugin.getConfigManager().getColorizedString("console-message"));
                     return true;
                 }
                 @NotNull Player player = (Player) sender;
                 if (!sEnabled) {
-                    player.sendMessage(plugin.getConfigManager().getColorizedString("disabled-message", "&cSpectator Mode is &lnot &r&cenabled by the server!"));
+                    player.sendMessage(plugin.getConfigManager().getColorizedString("disabled-message"));
                     return true;
                 }
                 checkIfEligibleForSpectatorMode(player);
@@ -135,25 +135,25 @@ public class Spectator implements CommandExecutor {
                     return true;
                 case "reload":
                     if (!sender.hasPermission("spectator-reload")) {
-                        sender.sendMessage(plugin.getConfigManager().getColorizedString("permission-message", "&cYou do not have permission to do that!"));
+                        sender.sendMessage(plugin.getConfigManager().getColorizedString("permission-message"));
                         return true;
                     }
                     plugin.reloadConfig();
-                    sender.sendMessage(plugin.getConfigManager().getColorizedString("reload-message", "&bThe config file has been reloaded!"));
+                    sender.sendMessage(plugin.getConfigManager().getColorizedString("reload-message"));
                     return true;
             }
 
             if (sender.hasPermission("spectator-force")) {
                 @Nullable Player target = Bukkit.getPlayerExact(argument);
                 if (target == null) {
-                    sender.sendMessage(plugin.getConfigManager().getColorizedString("invalid-player-message", "&cThat is not a valid player"));
+                    sender.sendMessage(plugin.getConfigManager().getColorizedString("invalid-player-message"));
                     return true;
                 }
                 if (Bukkit.getOnlinePlayers().contains(target)) {
                     if (checkIfEligibleForSpectatorMode(target)) {
-                        sender.sendMessage(plugin.getConfigManager().getColorizedString("force-success", "&bSuccessfully forced /target/ into /s").replaceAll("/target/", target.getName()));
+                        sender.sendMessage(plugin.getConfigManager().getColorizedString("force-success").replaceAll("/target/", target.getName()));
                     } else {
-                        sender.sendMessage(plugin.getConfigManager().getColorizedString("force-fail", "&cFailed to force /target/ into /s").replaceAll("/target/", target.getName()));
+                        sender.sendMessage(plugin.getConfigManager().getColorizedString("force-fail").replaceAll("/target/", target.getName()));
                     }
                 }
             }
@@ -167,31 +167,31 @@ public class Spectator implements CommandExecutor {
 
     private void changeEnabled(boolean status, @NotNull CommandSender sender) {
         if (!sender.hasPermission("spectator-enable")) {
-            sender.sendMessage(plugin.getConfigManager().getColorizedString("permission-message", "&cYou do not have permission to do that!"));
+            sender.sendMessage(plugin.getConfigManager().getColorizedString("permission-message"));
             return;
         }
         sEnabled = status;
         if (status) {
-            sender.sendMessage(plugin.getConfigManager().getColorizedString("enable-message", "&dSpectator mode has been &lenabled"));
+            sender.sendMessage(plugin.getConfigManager().getColorizedString("enable-message"));
         } else {
-            sender.sendMessage(plugin.getConfigManager().getColorizedString("disable-message", "&dSpectator mode has been &ldisabled"));
+            sender.sendMessage(plugin.getConfigManager().getColorizedString("disable-message"));
         }
     }
 
     private boolean checkIfEligibleForSpectatorMode(@NotNull Player player) {
         if (!player.hasPermission("spectator-use")) {
-            player.sendMessage(plugin.getConfigManager().getColorizedString("permission-message", "&cYou do not have permission to do that!"));
+            player.sendMessage(plugin.getConfigManager().getColorizedString("permission-message"));
             return false;
         }
         @NotNull GameMode gm = player.getGameMode();
         if (!gm.equals(GameMode.SPECTATOR)) {
             assert worlds != null;
-            if ((!worlds.contains(player.getWorld().getName())) && plugin.getConfigManager().getBoolean("enforce-worlds", false)) {
-                player.sendMessage(plugin.getConfigManager().getColorizedString("world-message", "&cHey you&l can't &r&cdo that in that world!"));
+            if ((!worlds.contains(player.getWorld().getName())) && plugin.getConfigManager().getBoolean("enforce-worlds")) {
+                player.sendMessage(plugin.getConfigManager().getColorizedString("world-message"));
                 return false;
             }
             if (!player.isOnGround()) {
-                player.sendMessage(plugin.getConfigManager().getColorizedString("falling-message", "&cHey you &lcan't &r&cdo that while falling!"));
+                player.sendMessage(plugin.getConfigManager().getColorizedString("falling-message"));
                 return false;
             }
             if (state.containsKey(player.getUniqueId().toString())) {
@@ -230,7 +230,7 @@ public class Spectator implements CommandExecutor {
         setMobs(target);
 
         state.remove(target.getUniqueId().toString());
-        target.sendMessage(plugin.getConfigManager().getColorizedString("survival-mode-message", "&9Setting gamemode to &b&lSURVIVAL MODE"));
+        target.sendMessage(plugin.getConfigManager().getColorizedString("survival-mode-message"));
         save();
     }
 
@@ -242,7 +242,7 @@ public class Spectator implements CommandExecutor {
         }
 
         target.setGameMode(GameMode.SPECTATOR);
-        target.sendMessage(plugin.getConfigManager().getColorizedString("spectator-mode-message", "&9Setting gamemode to &b&lSPECTATOR MODE"));
+        target.sendMessage(plugin.getConfigManager().getColorizedString("spectator-mode-message"));
         if (nightVisionEnabled) {
             target.addPotionEffect(NIGHTVISON);
         }

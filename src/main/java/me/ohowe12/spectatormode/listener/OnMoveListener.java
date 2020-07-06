@@ -33,11 +33,11 @@ public class OnMoveListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onMove(@NotNull PlayerMoveEvent e) {
-        int yLevel = plugin.getConfigManager().getInt("y-level", 0);
-        boolean enforceY = plugin.getConfigManager().getBoolean("enforce-y", false);
-        boolean enforceDistance = plugin.getConfigManager().getBoolean("enforce-distance", false);
-        boolean enforceNonTransparent = plugin.getConfigManager().getBoolean("disallow-non-transparent-blocks", false);
-        boolean enforceAllBlocks = plugin.getConfigManager().getBoolean("disallow-all-blocks", false);
+        int yLevel = plugin.getConfigManager().getInt("y-level");
+        boolean enforceY = plugin.getConfigManager().getBoolean("enforce-y");
+        boolean enforceDistance = plugin.getConfigManager().getBoolean("enforce-distance");
+        boolean enforceNonTransparent = plugin.getConfigManager().getBoolean("disallow-non-transparent-blocks");
+        boolean enforceAllBlocks = plugin.getConfigManager().getBoolean("disallow-all-blocks");
 
         Player player = e.getPlayer();
         Location location = e.getTo();
@@ -100,7 +100,7 @@ public class OnMoveListener implements Listener {
     }
 
     private boolean checkDistance(String player, @NotNull Location location) {
-        int distance = plugin.getConfigManager().getInt("distance", 64);
+        int distance = plugin.getConfigManager().getInt("distance");
         Location originalLocation = state.get(player).getPlayerLocation();
         return (originalLocation.distance(location)) > distance;
     }
@@ -111,7 +111,7 @@ public class OnMoveListener implements Listener {
 
     @EventHandler
     public void onTeleport(@NotNull PlayerTeleportEvent e) {
-        boolean preventTeleport = plugin.getConfigManager().getBoolean("prevent-teleport", false);
+        boolean preventTeleport = plugin.getConfigManager().getBoolean("prevent-teleport");
         if (e.getPlayer().hasPermission("spectator-bypass")) {
             return;
         }
@@ -125,7 +125,7 @@ public class OnMoveListener implements Listener {
             return;
         }
         if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.SPECTATE)) {
-            e.getPlayer().sendMessage(plugin.getConfigManager().getColorizedString("permission-message", "&cYou do not have permission to do that!"));
+            e.getPlayer().sendMessage(plugin.getConfigManager().getColorizedString("permission-message"));
             e.setCancelled(true);
         }
     }

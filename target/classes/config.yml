@@ -28,6 +28,34 @@ teleport-back: false
 #The ability to toggle the effects in spectator mode
 seffect: true
 
+#Whether to enforce the worlds
+enforce-worlds: false
+#The names of the worlds spectator mode is allowed in
+worlds-allowed: [world, world_nether, world_the_end]
+
+#If the y level is limited to the number in y-level in spectator mode
+enforce-y: false
+
+#see above (players can not go below this level)
+y-level: 0
+
+#If a player is not allowed to go through non-see-through able blocks in spectator mode
+disallow-non-transparent-blocks: false
+
+#If a player is not allowed to go through blocks in spectator mode
+disallow-all-blocks: false
+
+#Whether to make it so players can not go past a certain distance in spectator mode. The permission spectator-bypass bypasses this
+enforce-distance: false
+
+#See above (blocks)
+distance: 64
+
+#Prevents players from using the spectator teleport hot bar
+prevent-teleport: false
+#Prevents these commands from being executed unless you have the spectator-bypass permission. Example list: [back, return, home, homes, tpaccept, tpyes, warp, warps]
+bad-commands: []
+
 
 
 #Message when gamemode set to spectator mode
@@ -78,29 +106,5 @@ force-fail: '&cFailed to force /target/ into /s'
 #Message sent when a player tries to use the /seffect when not in spectator mode
 no-spectator-message: '&cYou did not preform the /s command'
 
-
-#Whether to enforce the worlds
-enforce-worlds: false
-#The names of the worlds spectator mode is allowed in
-worlds-allowed: [world, world_nether, world_the_end]
-
-#If the y level is limited to the number in y-level in spectator mode
-enforce-y: false
-
-#see above (players can not go below this level)
-y-level: 0
-
-#If a player is not allowed to go through non-see-through able blocks in spectator mode
-disallow-non-transparent-blocks: false
-
-#If a player is not allowed to go through blocks in spectator mode
-disallow-all-blocks: false
-
-#Whether to make it so players can not go past a certain distance in spectator mode. The permission spectator-bypass bypasses this
-enforce-distance: false
-
-#See above (blocks)
-distance: 64
-
-#Prevents players from using the spectator teleport hot bar
-prevent-teleport: false
+#Message sent when a player tries to execute a command not allowed in spectator mode
+bad-command-message: '&cYou can not execute that command while in spectator mode'
