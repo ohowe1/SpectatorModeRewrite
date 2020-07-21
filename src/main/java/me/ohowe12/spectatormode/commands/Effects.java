@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class Effects implements CommandExecutor {
     private final PotionEffect NIGHTVISON = new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 10);
     private final PotionEffect CONDUIT = new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000000, 10);
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         ConfigManager manager = SpectatorMode.getInstance().getConfigManager();
@@ -46,6 +47,6 @@ public class Effects implements CommandExecutor {
     }
 
     private boolean inState(Player player) {
-        return Spectator.getInstance().state.containsKey(player.getUniqueId().toString());
+        return SpectatorMode.getInstance().spectatorCommand.inState(player.getUniqueId().toString());
     }
 }

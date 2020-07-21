@@ -8,6 +8,7 @@
 
 package me.ohowe12.spectatormode.commands;
 
+import me.ohowe12.spectatormode.DataSaver;
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.State;
 import org.bukkit.*;
@@ -31,78 +32,36 @@ import java.util.Map.Entry;
 
 @SuppressWarnings("unchecked")
 public class Spectator implements CommandExecutor {
+    // For testing
+    public boolean issEnabled() {
+        return sEnabled;
+    }
+
     private boolean sEnabled;
     private boolean nightVisionEnabled;
     private boolean conduitEnabled;
     private final SpectatorMode plugin;
     private List<String> worlds;
-    private static Spectator instance;
 
-    public final @NotNull Map<String, State> state;
+    private final @NotNull Map<String, State> state;
     @NotNull
     private final PotionEffect NIGHTVISON = new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 10);
     private final PotionEffect CONDUIT = new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000000, 10);
-    private final @NotNull FileConfiguration data;
 
-    public Spectator() {
-        instance = this;
-        plugin = SpectatorMode.getInstance();
+    public Spectator(SpectatorMode plugin) {
+        this.plugin = plugin;
         state = new HashMap<>();
         plugin.saveDefaultConfig();
-        data = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "data.yml"));
         sEnabled = plugin.getConfigManager().getBoolean("enabled");
     }
 
-    public static Spectator getInstance() {
-        return instance;
+
+    public boolean inState(String uuid) {
+        return this.state.containsKey(uuid);
     }
 
-    public void save() {
-        if (data.getConfigurationSection("data") != null) {
-            Objects.requireNonNull(data.getConfigurationSection("data")).getKeys(false).forEach(key -> {
-                if (!state.containsKey(key)) {
-                    data.set("data." + key, null);
-                }
-            });
-        }
-        for (@NotNull Entry<String, State> entry : state.entrySet()) {
-            data.set("data." + entry.getKey(), entry.getValue().serialize());
-        }
-        try {
-            data.save(new File(plugin.getDataFolder(), "data.yml"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void load() {
-        if (data.getConfigurationSection("data") == null) {
-            return;
-        }
-        try {
-            Objects.requireNonNull(data.getConfigurationSection("data")).getKeys(false).forEach(key -> {
-                @Nullable Map<String, Object> value = new HashMap<>();
-
-                ArrayList<PotionEffect> potions = (ArrayList<PotionEffect>) data.getList("data." + key + ".Potions");
-                value.put("Potions", potions);
-
-                int waterBubbles = data.getInt("data." + key + ".Water bubbles");
-                value.put("Water bubbles", waterBubbles);
-
-                Map<String, Boolean> mobs = new HashMap<>();
-                Objects.requireNonNull(data.getConfigurationSection("data." + key + ".Mobs")).getKeys(false).forEach(mobKey -> mobs.put(mobKey, data.getBoolean("data." + key + ".Mobs" + mobKey)));
-                value.put("Mobs", mobs);
-
-                int fireTicks = data.getInt("data." + key + ".Fire ticks");
-                value.put("Fire ticks", fireTicks);
-
-                Location location = data.getLocation("data." + key + ".Location");
-                value.put("Location", location);
-
-                state.put(key, new State(value));
-            });
-        } catch (NullPointerException ignored) {
-        }
+    public State getState(String uuid) {
+        return this.state.get(uuid);
     }
 
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String @NotNull [] args) {
@@ -111,7 +70,9 @@ public class Spectator implements CommandExecutor {
         conduitEnabled = plugin.getConfigManager().getBoolean("conduit");
 
         if (label.equalsIgnoreCase("s") || label.equalsIgnoreCase("spectator")) {
-            load();
+            if (!plugin.getUnitTest()) {
+                DataSaver.load(state);
+            }
             if (args.length == 0) {
                 if (!(sender instanceof Player)) {
                     sender.sendMessage(plugin.getConfigManager().getColorizedString("console-message"));
@@ -156,6 +117,8 @@ public class Spectator implements CommandExecutor {
                         sender.sendMessage(plugin.getConfigManager().getColorizedString("force-fail").replaceAll("/target/", target.getName()));
                     }
                 }
+            } else {
+                sender.sendMessage(plugin.getConfigManager().getColorizedString("permission-message"));
             }
 
             return true;
@@ -211,7 +174,6 @@ public class Spectator implements CommandExecutor {
     }
 
     private void playerNotInState(@NotNull Player target) {
-        target.sendMessage(state.toString());
         target.sendMessage(ChatColor.DARK_RED + "An error has occurred.");
 
         target.removePotionEffect(PotionEffectType.NIGHT_VISION);
@@ -231,7 +193,9 @@ public class Spectator implements CommandExecutor {
 
         state.remove(target.getUniqueId().toString());
         target.sendMessage(plugin.getConfigManager().getColorizedString("survival-mode-message"));
-        save();
+        if (!plugin.getUnitTest()) {
+            DataSaver.save(state);
+        }
     }
 
     private void goIntoSpectatorMode(@NotNull Player target) {
@@ -249,7 +213,9 @@ public class Spectator implements CommandExecutor {
         if (conduitEnabled) {
             target.addPotionEffect(CONDUIT);
         }
-        save();
+        if (!plugin.getUnitTest()) {
+            DataSaver.save(state);
+        }
     }
 
 

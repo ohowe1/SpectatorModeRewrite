@@ -22,18 +22,18 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 public class OnLogOnListener implements Listener {
-    private Map<String, State> state;
+
+    SpectatorMode plugin = SpectatorMode.getInstance();
 
     @EventHandler
     public void onLogOn(@NotNull PlayerJoinEvent e) {
-        state = Spectator.getInstance().state;
         boolean teleportBack = SpectatorMode.getInstance().getConfigManager().getBoolean("teleport-back");
         Player player = e.getPlayer();
         if (!(teleportBack)) {
             return;
         }
         try {
-            if (state.containsKey(player.getUniqueId().toString())) {
+            if (plugin.spectatorCommand.inState(player.getUniqueId().toString())) {
                 teleportPlayerBack(player);
             }
         } catch (NullPointerException ignored) {
@@ -41,8 +41,7 @@ public class OnLogOnListener implements Listener {
     }
 
     private void teleportPlayerBack(@NotNull Player player) {
-        Location location = state.get(player.getUniqueId().toString()).getPlayerLocation();
+        Location location = plugin.spectatorCommand.getState(player.getUniqueId().toString()).getPlayerLocation();
         player.teleport(location);
-        player.removePotionEffect(PotionEffectType.NIGHT_VISION);
     }
 }

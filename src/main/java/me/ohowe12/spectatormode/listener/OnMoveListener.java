@@ -29,7 +29,6 @@ import java.util.Objects;
 
 public class OnMoveListener implements Listener {
     private final SpectatorMode plugin = SpectatorMode.getInstance();
-    private Map<String, State> state;
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onMove(@NotNull PlayerMoveEvent e) {
@@ -42,9 +41,8 @@ public class OnMoveListener implements Listener {
         Player player = e.getPlayer();
         Location location = e.getTo();
         Location eyeLevel = new Location(player.getWorld(), Objects.requireNonNull(location).getX(), location.getY() + 1, location.getZ());
-        state = Spectator.getInstance().state;
 
-        if (!(state.containsKey(player.getUniqueId().toString()))) {
+        if (!(plugin.spectatorCommand.inState(player.getUniqueId().toString()))) {
             return;
         }
         if (player.hasPermission("spectator-bypass")) {
@@ -101,7 +99,7 @@ public class OnMoveListener implements Listener {
 
     private boolean checkDistance(String player, @NotNull Location location) {
         int distance = plugin.getConfigManager().getInt("distance");
-        Location originalLocation = state.get(player).getPlayerLocation();
+        Location originalLocation = plugin.spectatorCommand.getState(player).getPlayerLocation();
         return (originalLocation.distance(location)) > distance;
     }
 
@@ -115,7 +113,7 @@ public class OnMoveListener implements Listener {
         if (e.getPlayer().hasPermission("spectator-bypass")) {
             return;
         }
-        if (!(state.containsKey(e.getPlayer().getUniqueId().toString()))) {
+        if (!(plugin.spectatorCommand.inState(e.getPlayer().getUniqueId().toString()))) {
             return;
         }
         if (!(e.getPlayer().getGameMode().equals(GameMode.SPECTATOR))) {

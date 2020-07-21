@@ -1,13 +1,10 @@
 package me.ohowe12.spectatormode;
 
-import me.ohowe12.spectatormode.commands.Spectator;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,7 +16,7 @@ public class ConfigManager {
         this.config = config;
         this.defaults = config.getDefaults();
 
-        for (String path : defaults.getKeys(true)) {
+        for (String path : Objects.requireNonNull(defaults).getKeys(true)) {
             boolean isIn = config.getKeys(true).contains(path);
             if (!isIn) {
                 config.set(path, defaults.get(path));

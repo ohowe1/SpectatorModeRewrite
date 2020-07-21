@@ -26,19 +26,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.Objects;
 
-public final class SpectatorMode extends JavaPlugin {
+public class SpectatorMode extends JavaPlugin {
 
-    private final boolean unitTest;
-
-    public SpectatorMode() {
-        super();
-        unitTest = false;
-    }
-
-    protected SpectatorMode(@NotNull JavaPluginLoader loader, @NotNull PluginDescriptionFile description, File dataFolder, File file) {
-        super(loader, description, dataFolder, file);
-        unitTest = true;
-    }
+    public Spectator spectatorCommand;
 
     private static SpectatorMode instance;
 
@@ -53,7 +43,7 @@ public final class SpectatorMode extends JavaPlugin {
         instance = this;
         config = new ConfigManager(this.getConfig());
         registerCommands();
-        if (!unitTest) {
+        if (!this.getUnitTest()) {
             int pluginId = 7132;
             new Metrics(this, pluginId);
             new UpdateChecker(this, 77267).getVersion(version -> {
@@ -66,21 +56,22 @@ public final class SpectatorMode extends JavaPlugin {
         }
     }
 
+    public boolean getUnitTest() {
+        return false;
+    }
+
     @Override
     public void onDisable() {
         // Plugin shutdown logic
     }
 
     public void registerCommands() {
-        Objects.requireNonNull(this.getCommand("s")).setExecutor(new Spectator());
-        Objects.requireNonNull(this.getCommand("spectator")).setExecutor(new Spectator());
+        spectatorCommand = new Spectator(this);
+        Objects.requireNonNull(this.getCommand("s")).setExecutor(spectatorCommand);
         Objects.requireNonNull(this.getCommand("s")).setTabCompleter(new SpectatorTab());
-        Objects.requireNonNull(this.getCommand("spectator")).setTabCompleter(new SpectatorTab());
 
         Objects.requireNonNull(this.getCommand("speed")).setExecutor(new Speed());
-        Objects.requireNonNull(this.getCommand("sp")).setExecutor(new Speed());
         Objects.requireNonNull(this.getCommand("speed")).setTabCompleter(new SpeedTab());
-        Objects.requireNonNull(this.getCommand("sp")).setTabCompleter(new SpeedTab());
 
         Objects.requireNonNull(this.getCommand("seffect")).setExecutor(new Effects());
 
