@@ -33,7 +33,7 @@ public class OnLogOnListener implements Listener {
             return;
         }
         try {
-            if (plugin.spectatorCommand.inState(player.getUniqueId().toString())) {
+            if (plugin.getSpectatorCommand().inState(player.getUniqueId().toString())) {
                 teleportPlayerBack(player);
             }
         } catch (NullPointerException ignored) {
@@ -41,7 +41,7 @@ public class OnLogOnListener implements Listener {
     }
 
     private void teleportPlayerBack(@NotNull Player player) {
-        Location location = plugin.spectatorCommand.getState(player.getUniqueId().toString()).getPlayerLocation();
+        Location location = plugin.getSpectatorCommand().getState(player.getUniqueId().toString()).getPlayerLocation();
         player.teleport(location);
     }
 }

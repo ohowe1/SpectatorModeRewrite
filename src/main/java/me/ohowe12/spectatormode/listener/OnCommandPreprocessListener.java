@@ -17,7 +17,7 @@ public class OnCommandPreprocessListener implements Listener {
         if (player.hasPermission("spectator-bypass")) {
             return;
         }
-        if (!plugin.spectatorCommand.inState(player.getUniqueId().toString())) {
+        if (!plugin.getSpectatorCommand().inState(player.getUniqueId().toString())) {
             return;
         }
         if (plugin.getConfigManager().getList("bad-commands").contains(e.getMessage().substring(1))) {

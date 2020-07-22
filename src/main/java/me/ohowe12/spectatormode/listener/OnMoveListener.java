@@ -28,7 +28,11 @@ import java.util.Objects;
 
 
 public class OnMoveListener implements Listener {
-    private final SpectatorMode plugin = SpectatorMode.getInstance();
+    private final SpectatorMode plugin;
+
+    public OnMoveListener(SpectatorMode plugin) {
+        this.plugin = plugin;
+    }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onMove(@NotNull PlayerMoveEvent e) {
@@ -37,12 +41,13 @@ public class OnMoveListener implements Listener {
         boolean enforceDistance = plugin.getConfigManager().getBoolean("enforce-distance");
         boolean enforceNonTransparent = plugin.getConfigManager().getBoolean("disallow-non-transparent-blocks");
         boolean enforceAllBlocks = plugin.getConfigManager().getBoolean("disallow-all-blocks");
+        boolean enforceWorldBorder = plugin.getConfigManager().getBoolean("enforce-world-border");
 
         Player player = e.getPlayer();
         Location location = e.getTo();
         Location eyeLevel = new Location(player.getWorld(), Objects.requireNonNull(location).getX(), location.getY() + 1, location.getZ());
 
-        if (!(plugin.spectatorCommand.inState(player.getUniqueId().toString()))) {
+        if (!(plugin.getSpectatorCommand().inState(player.getUniqueId().toString()))) {
             return;
         }
         if (player.hasPermission("spectator-bypass")) {
@@ -59,13 +64,14 @@ public class OnMoveListener implements Listener {
                 return;
             }
         }
+
         Block currentBlock = eyeLevel.getBlock();
         if (enforceAllBlocks) {
             if (!(currentBlock.getType().isAir())) {
-                if (!currentBlock.getType().equals(Material.RAIL)){
-                    if (!currentBlock.getType().equals(Material.ACTIVATOR_RAIL)) {
-                        if (!currentBlock.getType().equals(Material.DETECTOR_RAIL)) {
-                            if (!currentBlock.getType().equals(Material.POWERED_RAIL)) {
+                if (!(currentBlock.getType() == Material.RAIL)) {
+                    if (!(currentBlock.getType() == Material.ACTIVATOR_RAIL)) {
+                        if (!(currentBlock.getType() == Material.DETECTOR_RAIL)) {
+                            if (!(currentBlock.getType() == Material.POWERED_RAIL)) {
                                 e.setTo(e.getFrom());
                                 e.setCancelled(true);
                                 return;
@@ -82,6 +88,7 @@ public class OnMoveListener implements Listener {
             if (checkBlock(currentBlock)) {
                 e.setTo(e.getFrom());
                 e.setCancelled(true);
+                return;
             }
         }
         if (enforceDistance) {
@@ -91,15 +98,17 @@ public class OnMoveListener implements Listener {
                 return;
             }
         }
-        if (!(Objects.requireNonNull(location.getWorld()).getWorldBorder().isInside(location))) {
-            e.setTo(e.getFrom());
-            e.setCancelled(true);
+        if (enforceWorldBorder) {
+            if (!(Objects.requireNonNull(location.getWorld()).getWorldBorder().isInside(location))) {
+                e.setTo(e.getFrom());
+                e.setCancelled(true);
+            }
         }
     }
 
     private boolean checkDistance(String player, @NotNull Location location) {
         int distance = plugin.getConfigManager().getInt("distance");
-        Location originalLocation = plugin.spectatorCommand.getState(player).getPlayerLocation();
+        Location originalLocation = plugin.getSpectatorCommand().getState(player).getPlayerLocation();
         return (originalLocation.distance(location)) > distance;
     }
 
@@ -113,7 +122,7 @@ public class OnMoveListener implements Listener {
         if (e.getPlayer().hasPermission("spectator-bypass")) {
             return;
         }
-        if (!(plugin.spectatorCommand.inState(e.getPlayer().getUniqueId().toString()))) {
+        if (!(plugin.getSpectatorCommand().inState(e.getPlayer().getUniqueId().toString()))) {
             return;
         }
         if (!(e.getPlayer().getGameMode().equals(GameMode.SPECTATOR))) {

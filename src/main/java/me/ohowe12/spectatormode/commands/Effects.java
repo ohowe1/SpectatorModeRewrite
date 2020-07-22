@@ -47,6 +47,6 @@ public class Effects implements CommandExecutor {
     }
 
     private boolean inState(Player player) {
-        return SpectatorMode.getInstance().spectatorCommand.inState(player.getUniqueId().toString());
+        return SpectatorMode.getInstance().getSpectatorCommand().inState(player.getUniqueId().toString());
     }
 }

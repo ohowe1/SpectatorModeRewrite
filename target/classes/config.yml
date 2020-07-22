@@ -56,6 +56,9 @@ prevent-teleport: false
 #Prevents these commands from being executed unless you have the spectator-bypass permission. Example list: [back, return, home, homes, tpaccept, tpyes, warp, warps]
 bad-commands: []
 
+#Prevents players from going past the world border in spectator mode
+enforce-world-border: true
+
 
 
 #Message when gamemode set to spectator mode

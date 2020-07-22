@@ -241,7 +241,7 @@ public class Spectator implements CommandExecutor {
             e.setRemoveWhenFarAway(true);
 
             if (entry.getValue() && e instanceof Mob) {
-                @NotNull Mob m = (Mob) e;
+                Mob m = (Mob) e;
                 m.setTarget(player);
             }
         }

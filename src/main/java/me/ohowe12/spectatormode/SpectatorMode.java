@@ -28,7 +28,11 @@ import java.util.Objects;
 
 public class SpectatorMode extends JavaPlugin {
 
-    public Spectator spectatorCommand;
+    public Spectator getSpectatorCommand() {
+        return spectatorCommand;
+    }
+
+    private Spectator spectatorCommand;
 
     private static SpectatorMode instance;
 
@@ -75,7 +79,7 @@ public class SpectatorMode extends JavaPlugin {
 
         Objects.requireNonNull(this.getCommand("seffect")).setExecutor(new Effects());
 
-        getServer().getPluginManager().registerEvents(new OnMoveListener(), this);
+        getServer().getPluginManager().registerEvents(new OnMoveListener(this), this);
         getServer().getPluginManager().registerEvents(new OnLogOnListener(), this);
         getServer().getPluginManager().registerEvents(new OnCommandPreprocessListener(), this);
     }

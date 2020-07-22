@@ -3,7 +3,6 @@ package me.ohowe12.spectatormode;
 
 import me.ohowe12.spectatormode.commands.Spectator;
 import org.bukkit.GameMode;
-import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.junit.Before;
