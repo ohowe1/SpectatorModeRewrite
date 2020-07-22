@@ -163,6 +163,22 @@ public class OnMoveListenerTest {
         assertEquals(e.getTo(), to);
     }
 
+    @Test
+    public void testSurvivalMode() {
+        Player tempPlayer = mock(Player.class);
+        when(tempPlayer.getGameMode()).thenReturn(GameMode.SURVIVAL);
+        when(tempPlayer.getWorld()).thenReturn(world);
+
+        Location from = new Location(world, 0, 0, 0);
+        Location to = new Location(world, 0, -10, 0);
+
+        PlayerMoveEvent e = new PlayerMoveEvent(player, from, to);
+        new OnMoveListener(plugin).onMove(e);
+
+        assertFalse(e.isCancelled());
+        assertEquals(e.getTo(), to);
+    }
+
     private void setAll(boolean value) {
         when(configManager.getBoolean("enforce-y")).thenReturn(value);
         when(configManager.getBoolean("enforce-distance")).thenReturn(value);
