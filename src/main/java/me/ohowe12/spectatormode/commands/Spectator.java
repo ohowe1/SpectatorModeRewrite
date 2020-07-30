@@ -203,7 +203,7 @@ public class Spectator implements CommandExecutor {
     }
 
     private void playerNotInState(@NotNull Player target) {
-        target.sendMessage(ChatColor.DARK_RED + "An error has occurred.");
+        target.sendMessage(plugin.getConfigManager().getColorizedString("not-in-state-message"));
 
         target.removePotionEffect(PotionEffectType.NIGHT_VISION);
         target.removePotionEffect(PotionEffectType.CONDUIT_POWER);

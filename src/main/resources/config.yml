@@ -111,3 +111,6 @@ no-spectator-message: '&cYou did not preform the /s command'
 
 #Message sent when a player tries to execute a command not allowed in spectator mode
 bad-command-message: '&cYou can not execute that command while in spectator mode'
+
+#Message sent when a player executes /s while in spectator mode but did not use it to get into spectator mode
+not-in-state-message: '&cYou did not use this command to get into spectator mode! Setting gamemode to SURVIVAL MODE'
