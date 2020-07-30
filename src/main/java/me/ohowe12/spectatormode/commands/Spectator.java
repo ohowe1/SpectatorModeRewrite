@@ -15,8 +15,6 @@ import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -25,28 +23,60 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
-import java.util.Map.Entry;
 
 @SuppressWarnings("unchecked")
 public class Spectator implements CommandExecutor {
+    private final SpectatorMode plugin;
+    private final @NotNull Map<String, State> state;
+    @NotNull
+    private final PotionEffect NIGHTVISON = new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 10);
+    private final PotionEffect CONDUIT = new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000000, 10);
+    private boolean sEnabled;
+    private boolean nightVisionEnabled;
+    private boolean conduitEnabled;
+    private List<String> worlds;
+
     // For testing
     public boolean issEnabled() {
         return sEnabled;
     }
 
-    private boolean sEnabled;
-    private boolean nightVisionEnabled;
-    private boolean conduitEnabled;
-    private final SpectatorMode plugin;
-    private List<String> worlds;
+    private void setMobs(@NotNull Player player) {
+        @NotNull Location loc = state.get(player.getUniqueId().toString()).getPlayerLocation();
+        World world = loc.getWorld();
+        assert world != null;
+        @NotNull Chunk defaultChunk = world.getChunkAt(loc);
 
-    private final @NotNull Map<String, State> state;
-    @NotNull
-    private final PotionEffect NIGHTVISON = new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 10);
-    private final PotionEffect CONDUIT = new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000000, 10);
+        for (int x = 0; x <= 4; x++) {
+            for (int z = 0; z <= 4; z++) {
+                world.getChunkAt(defaultChunk.getX() + x, defaultChunk.getZ() + z);
+            }
+        }
+
+        for (@NotNull HashMap.Entry<String, Boolean> entry : state.get(player.getUniqueId().toString()).getMobIds().entrySet()) {
+            UUID key = UUID.fromString(entry.getKey());
+            if ((!(Bukkit.getEntity(key) instanceof LivingEntity))) {
+                return;
+            }
+            LivingEntity e = (LivingEntity) Objects.requireNonNull(Bukkit.getEntity(key));
+
+            e.setRemoveWhenFarAway(true);
+
+            if (entry.getValue() && e instanceof Mob) {
+                Mob m = (Mob) e;
+                m.setTarget(player);
+            }
+        }
+    }
+
+    private void setState(@NotNull Player player) {
+        final String UUID = player.getUniqueId().toString();
+        player.teleport(state.get(UUID).getPlayerLocation());
+        player.setFireTicks(state.get(UUID).getFireTicks());
+        player.addPotionEffects(state.get(UUID).getPotionEffects());
+        player.setRemainingAir(state.get(UUID).getWaterBubbles());
+    }
 
     public Spectator(SpectatorMode plugin) {
         this.plugin = plugin;
@@ -54,7 +84,6 @@ public class Spectator implements CommandExecutor {
         plugin.saveDefaultConfig();
         sEnabled = plugin.getConfigManager().getBoolean("enabled");
     }
-
 
     public boolean inState(String uuid) {
         return this.state.containsKey(uuid);
@@ -216,44 +245,6 @@ public class Spectator implements CommandExecutor {
         if (!plugin.getUnitTest()) {
             DataSaver.save(state);
         }
-    }
-
-
-    private void setMobs(@NotNull Player player) {
-        @NotNull Location loc = state.get(player.getUniqueId().toString()).getPlayerLocation();
-        @Nullable World world = loc.getWorld();
-        assert world != null;
-        @NotNull Chunk defaultChunk = world.getChunkAt(loc);
-
-        for (int x = 0; x <= 4; x++) {
-            for (int z = 0; z <= 4; z++) {
-                world.getChunkAt(defaultChunk.getX() + x, defaultChunk.getZ() + z);
-            }
-        }
-
-        for (@NotNull HashMap.Entry<String, Boolean> entry : state.get(player.getUniqueId().toString()).getMobIds().entrySet()) {
-            UUID key = UUID.fromString(entry.getKey());
-            if ((!(Bukkit.getEntity(key) instanceof LivingEntity))) {
-                return;
-            }
-            LivingEntity e = (LivingEntity) Objects.requireNonNull(Bukkit.getEntity(key));
-
-            e.setRemoveWhenFarAway(true);
-
-            if (entry.getValue() && e instanceof Mob) {
-                Mob m = (Mob) e;
-                m.setTarget(player);
-            }
-        }
-    }
-
-
-    private void setState(@NotNull Player player) {
-        final String UUID = player.getUniqueId().toString();
-        player.teleport(state.get(UUID).getPlayerLocation());
-        player.setFireTicks(state.get(UUID).getFireTicks());
-        player.addPotionEffects(state.get(UUID).getPotionEffects());
-        player.setRemainingAir(state.get(UUID).getWaterBubbles());
     }
 
 }

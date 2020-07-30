@@ -2,13 +2,10 @@ package me.ohowe12.spectatormode;
 
 
 import me.ohowe12.spectatormode.commands.Spectator;
-import org.bukkit.Chunk;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.junit.Before;
@@ -27,7 +24,7 @@ public class SpectatorTest {
     private final Command cmd = mock(Command.class);
 
     @Before
-    public void beforeClass() throws Exception {
+    public void beforeClass() {
         when(plugin.getConfigManager()).thenReturn(configManager);
         when(plugin.getUnitTest()).thenReturn(true);
 

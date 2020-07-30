@@ -31,7 +31,7 @@ public class OnMoveListenerTest {
     private final State state = mock(State.class);
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         when(plugin.getConfigManager()).thenReturn(configManager);
         when(plugin.getSpectatorCommand()).thenReturn(spectator);
         when(plugin.getUnitTest()).thenReturn(true);
@@ -179,15 +179,15 @@ public class OnMoveListenerTest {
         assertEquals(e.getTo(), to);
     }
 
-    private void setAll(boolean value) {
-        when(configManager.getBoolean("enforce-y")).thenReturn(value);
-        when(configManager.getBoolean("enforce-distance")).thenReturn(value);
-        when(configManager.getBoolean("disallow-non-transparent-blocks")).thenReturn(value);
-        when(configManager.getBoolean("disallow-all-blocks")).thenReturn(value);
-        when(configManager.getBoolean("enforce-world-border")).thenReturn(value);
+    private void setAll() {
+        when(configManager.getBoolean("enforce-y")).thenReturn(false);
+        when(configManager.getBoolean("enforce-distance")).thenReturn(false);
+        when(configManager.getBoolean("disallow-non-transparent-blocks")).thenReturn(false);
+        when(configManager.getBoolean("disallow-all-blocks")).thenReturn(false);
+        when(configManager.getBoolean("enforce-world-border")).thenReturn(false);
     }
 
     private void resetAll() {
-        setAll(false);
+        setAll();
     }
 }
