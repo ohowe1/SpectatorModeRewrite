@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="SpectatorMode">
-    <output-path>$USER_HOME$/Desktop/Servers/TestServer/plugins</output-path>
-    <root id="archive" name="SpectatorMode.jar">
-      <element id="module-output" name="SpectatorMode" />
-    </root>
-  </artifact>
-</component>
