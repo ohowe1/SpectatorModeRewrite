@@ -1,14 +1,15 @@
 package me.ohowe12.spectatormode.tabCompleter;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class TabCompleteUtil {
+
     @Nullable
-    public static List<String> getStrings(@NotNull String @NotNull [] args, @NotNull List<String> arguments) {
+    public static List<String> getStrings(@NotNull String @NotNull [] args,
+        @NotNull List<String> arguments) {
         List<String> results = new ArrayList<>();
 
         if (args.length == 1) {

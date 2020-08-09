@@ -22,7 +22,8 @@ public class OnLogOnListener implements Listener {
 
     @EventHandler
     public void onLogOn(@NotNull PlayerJoinEvent e) {
-        boolean teleportBack = SpectatorMode.getInstance().getConfigManager().getBoolean("teleport-back");
+        boolean teleportBack = SpectatorMode.getInstance().getConfigManager()
+            .getBoolean("teleport-back");
         Player player = e.getPlayer();
         if (!(teleportBack)) {
             return;
@@ -36,7 +37,8 @@ public class OnLogOnListener implements Listener {
     }
 
     private void teleportPlayerBack(@NotNull Player player) {
-        Location location = plugin.getSpectatorCommand().getState(player.getUniqueId().toString()).getPlayerLocation();
+        Location location = plugin.getSpectatorCommand().getState(player.getUniqueId().toString())
+            .getPlayerLocation();
         player.teleport(location);
     }
 }

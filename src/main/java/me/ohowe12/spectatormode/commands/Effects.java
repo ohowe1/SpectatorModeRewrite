@@ -11,11 +11,15 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 public class Effects implements CommandExecutor {
-    private final PotionEffect NIGHTVISON = new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 10);
-    private final PotionEffect CONDUIT = new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000000, 10);
+
+    private final PotionEffect NIGHTVISON = new PotionEffect(PotionEffectType.NIGHT_VISION,
+        10000000, 10);
+    private final PotionEffect CONDUIT = new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000000,
+        10);
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
+        @NotNull String label, @NotNull String[] args) {
         ConfigManager manager = SpectatorMode.getInstance().getConfigManager();
         if (label.equalsIgnoreCase("seffect")) {
             if (!(sender instanceof Player)) {
@@ -30,7 +34,8 @@ public class Effects implements CommandExecutor {
                 sender.sendMessage(manager.getColorizedString("no-spectator-message"));
                 return true;
             }
-            if (player.hasPotionEffect(PotionEffectType.NIGHT_VISION) || player.hasPotionEffect(PotionEffectType.CONDUIT_POWER)) {
+            if (player.hasPotionEffect(PotionEffectType.NIGHT_VISION) || player
+                .hasPotionEffect(PotionEffectType.CONDUIT_POWER)) {
                 player.removePotionEffect(PotionEffectType.NIGHT_VISION);
                 player.removePotionEffect(PotionEffectType.CONDUIT_POWER);
                 return true;
@@ -47,6 +52,7 @@ public class Effects implements CommandExecutor {
     }
 
     private boolean inState(Player player) {
-        return SpectatorMode.getInstance().getSpectatorCommand().inState(player.getUniqueId().toString());
+        return SpectatorMode.getInstance().getSpectatorCommand()
+            .inState(player.getUniqueId().toString());
     }
 }

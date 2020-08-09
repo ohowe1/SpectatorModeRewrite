@@ -8,6 +8,7 @@
 
 package me.ohowe12.spectatormode;
 
+import java.util.Objects;
 import me.ohowe12.spectatormode.commands.Effects;
 import me.ohowe12.spectatormode.commands.Spectator;
 import me.ohowe12.spectatormode.commands.Speed;
@@ -21,22 +22,18 @@ import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 public class SpectatorMode extends JavaPlugin {
 
-    public Spectator getSpectatorCommand() {
-        return spectatorCommand;
-    }
-
-    private Spectator spectatorCommand;
-
     private static SpectatorMode instance;
-
+    private Spectator spectatorCommand;
     private ConfigManager config;
 
     public static SpectatorMode getInstance() {
         return instance;
+    }
+
+    public Spectator getSpectatorCommand() {
+        return spectatorCommand;
     }
 
     @Override
@@ -47,13 +44,18 @@ public class SpectatorMode extends JavaPlugin {
         if (!this.getUnitTest()) {
             int pluginId = 7132;
             new Metrics(this, pluginId);
-            new UpdateChecker(this, 77267).getVersion(version -> {
+            UpdateChecker.getVersion(version -> {
                 if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
-                    Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA + "[SMP SPECTATOR MODE] SMP SPECTATOR MODE is all up to date at version " + this.getDescription().getVersion() + '!');
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA
+                        + "[SMP SPECTATOR MODE] SMP SPECTATOR MODE is all up to date at version "
+                        + this.getDescription().getVersion() + '!');
                 } else {
-                    Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_RED + "[SMP SPECTATOR MODE] A new version of SMP SPECTATOR MODE is available (version " + version + ")! You are on version " + this.getDescription().getVersion() + ".");
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_RED
+                        + "[SMP SPECTATOR MODE] A new version of SMP SPECTATOR MODE is available (version "
+                        + version + ")! You are on version " + this.getDescription().getVersion()
+                        + ".");
                 }
-            });
+            }, this);
         }
     }
 

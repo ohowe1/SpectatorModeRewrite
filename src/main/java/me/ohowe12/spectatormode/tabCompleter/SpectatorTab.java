@@ -8,6 +8,8 @@
 
 package me.ohowe12.spectatormode.tabCompleter;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -16,12 +18,11 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class SpectatorTab implements TabCompleter {
+
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender,
+        @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         List<String> arguments = new ArrayList<>();
         if (sender.hasPermission("spectator-force")) {
             for (Player p : Bukkit.getOnlinePlayers()) {

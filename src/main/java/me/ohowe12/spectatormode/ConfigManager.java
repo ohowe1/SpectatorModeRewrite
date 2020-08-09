@@ -1,14 +1,14 @@
 package me.ohowe12.spectatormode;
 
+import java.util.List;
+import java.util.Objects;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Objects;
-
 public class ConfigManager {
+
     private final FileConfiguration config;
     private final Configuration defaults;
 
@@ -24,8 +24,10 @@ public class ConfigManager {
         }
         SpectatorMode.getInstance().saveConfig();
     }
+
     public @NotNull String getColorizedString(@NotNull String path) {
-        return ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString(path, defaults.getString(path))));
+        return ChatColor.translateAlternateColorCodes('&',
+            Objects.requireNonNull(config.getString(path, defaults.getString(path))));
     }
 
     public boolean getBoolean(@NotNull String path) {

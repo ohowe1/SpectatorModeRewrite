@@ -1,5 +1,13 @@
 package me.ohowe12.spectatormode.listener;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Objects;
+import java.util.UUID;
 import me.ohowe12.spectatormode.ConfigManager;
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.State;
@@ -14,13 +22,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Objects;
-import java.util.UUID;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
 public class OnMoveListenerTest {
+
     private final SpectatorMode plugin = mock(SpectatorMode.class);
     private final ConfigManager configManager = mock(ConfigManager.class);
     private final Spectator spectator = mock(Spectator.class);
@@ -43,7 +46,8 @@ public class OnMoveListenerTest {
         when(spectator.inState("28295962-bed5-494a-8457-05d44feb2652")).thenReturn(true);
         when(spectator.getState("28295962-bed5-494a-8457-05d44feb2652")).thenReturn(state);
 
-        when(player.getUniqueId()).thenReturn(UUID.fromString("28295962-bed5-494a-8457-05d44feb2652"));
+        when(player.getUniqueId())
+            .thenReturn(UUID.fromString("28295962-bed5-494a-8457-05d44feb2652"));
         when(player.getGameMode()).thenReturn(GameMode.SPECTATOR);
         when(player.getWorld()).thenReturn(world);
 
@@ -76,7 +80,8 @@ public class OnMoveListenerTest {
 
         Location from = new Location(world, 0, 2, 0);
         Location to = new Location(world, 0, 1, 0);
-        Location eyeLevel = new Location(world, Objects.requireNonNull(to).getX(), to.getY() + 1, to.getZ());
+        Location eyeLevel = new Location(world, Objects.requireNonNull(to).getX(), to.getY() + 1,
+            to.getZ());
 
         when(world.getBlockAt(eyeLevel)).thenReturn(stone);
         PlayerMoveEvent e = new PlayerMoveEvent(player, from, to);
@@ -95,7 +100,8 @@ public class OnMoveListenerTest {
 
         Location from = new Location(world, 0, 2, 0);
         Location to = new Location(world, 0, 1, 0);
-        Location eyeLevel = new Location(world, Objects.requireNonNull(to).getX(), to.getY() + 1, to.getZ());
+        Location eyeLevel = new Location(world, Objects.requireNonNull(to).getX(), to.getY() + 1,
+            to.getZ());
 
         when(world.getBlockAt(eyeLevel)).thenReturn(stone);
         PlayerMoveEvent e = new PlayerMoveEvent(player, from, to);
@@ -114,7 +120,8 @@ public class OnMoveListenerTest {
 
         Location from = new Location(world, 0, 2, 0);
         Location to = new Location(world, 0, 1, 0);
-        Location eyeLevel = new Location(world, Objects.requireNonNull(to).getX(), to.getY() + 1, to.getZ());
+        Location eyeLevel = new Location(world, Objects.requireNonNull(to).getX(), to.getY() + 1,
+            to.getZ());
 
         when(world.getBlockAt(eyeLevel)).thenReturn(air);
         PlayerMoveEvent e = new PlayerMoveEvent(player, from, to);

@@ -8,6 +8,10 @@
 
 package me.ohowe12.spectatormode;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -16,13 +20,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 @SuppressWarnings("unchecked")
 public class State {
+
     private Location playerLocation;
     private int fireTicks;
     private ArrayList<PotionEffect> potionEffects;
@@ -81,7 +81,8 @@ public class State {
                     if (living instanceof Mob) {
                         @NotNull Mob m = (Mob) living;
                         try {
-                            ids.put(m.getUniqueId().toString(), Objects.equals(m.getTarget(), player));
+                            ids.put(m.getUniqueId().toString(),
+                                Objects.equals(m.getTarget(), player));
                         } catch (NullPointerException ignored) {
 
                         }

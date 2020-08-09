@@ -8,6 +8,7 @@
 
 package me.ohowe12.spectatormode.listener;
 
+import java.util.Objects;
 import me.ohowe12.spectatormode.SpectatorMode;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -21,10 +22,9 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 
 public class OnMoveListener implements Listener {
+
     private final SpectatorMode plugin;
 
     public OnMoveListener(SpectatorMode plugin) {
@@ -36,13 +36,15 @@ public class OnMoveListener implements Listener {
         int yLevel = plugin.getConfigManager().getInt("y-level");
         boolean enforceY = plugin.getConfigManager().getBoolean("enforce-y");
         boolean enforceDistance = plugin.getConfigManager().getBoolean("enforce-distance");
-        boolean enforceNonTransparent = plugin.getConfigManager().getBoolean("disallow-non-transparent-blocks");
+        boolean enforceNonTransparent = plugin.getConfigManager()
+            .getBoolean("disallow-non-transparent-blocks");
         boolean enforceAllBlocks = plugin.getConfigManager().getBoolean("disallow-all-blocks");
         boolean enforceWorldBorder = plugin.getConfigManager().getBoolean("enforce-world-border");
 
         Player player = e.getPlayer();
         Location location = e.getTo();
-        Location eyeLevel = new Location(player.getWorld(), Objects.requireNonNull(location).getX(), location.getY() + 1, location.getZ());
+        Location eyeLevel = new Location(player.getWorld(), Objects.requireNonNull(location).getX(),
+            location.getY() + 1, location.getZ());
 
         if (!(plugin.getSpectatorCommand().inState(player.getUniqueId().toString()))) {
             return;
@@ -96,7 +98,8 @@ public class OnMoveListener implements Listener {
             }
         }
         if (enforceWorldBorder) {
-            if (!(Objects.requireNonNull(location.getWorld()).getWorldBorder().isInside(location))) {
+            if (!(Objects.requireNonNull(location.getWorld()).getWorldBorder()
+                .isInside(location))) {
                 e.setTo(e.getFrom());
                 e.setCancelled(true);
             }
@@ -105,7 +108,8 @@ public class OnMoveListener implements Listener {
 
     private boolean checkDistance(String player, @NotNull Location location) {
         int distance = plugin.getConfigManager().getInt("distance");
-        Location originalLocation = plugin.getSpectatorCommand().getState(player).getPlayerLocation();
+        Location originalLocation = plugin.getSpectatorCommand().getState(player)
+            .getPlayerLocation();
         return (originalLocation.distance(location)) > distance;
     }
 
@@ -129,7 +133,8 @@ public class OnMoveListener implements Listener {
             return;
         }
         if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.SPECTATE)) {
-            e.getPlayer().sendMessage(plugin.getConfigManager().getColorizedString("permission-message"));
+            e.getPlayer()
+                .sendMessage(plugin.getConfigManager().getColorizedString("permission-message"));
             e.setCancelled(true);
         }
     }

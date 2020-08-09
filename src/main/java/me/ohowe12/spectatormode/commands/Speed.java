@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Speed implements @Nullable CommandExecutor {
+
     final SpectatorMode plugin;
 
     public Speed() {
@@ -24,13 +25,15 @@ public class Speed implements @Nullable CommandExecutor {
         plugin.saveDefaultConfig();
     }
 
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String @NotNull [] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd,
+        @NotNull String label, @NotNull String @NotNull [] args) {
         int maxSpeed = plugin.getConfigManager().getInt("max-speed");
         boolean speedAllowed = plugin.getConfigManager().getBoolean("speed");
         if ((label.equalsIgnoreCase("speed")) || (label.equalsIgnoreCase("sp"))) {
             float speed;
             if (!speedAllowed) {
-                sender.sendMessage(plugin.getConfigManager().getColorizedString("permission-message"));
+                sender.sendMessage(
+                    plugin.getConfigManager().getColorizedString("permission-message"));
             }
             if (!(sender instanceof Player)) {
                 sender.sendMessage(plugin.getConfigManager().getColorizedString("console-message"));
@@ -38,7 +41,8 @@ public class Speed implements @Nullable CommandExecutor {
 
             }
             if (!sender.hasPermission("speed-use")) {
-                sender.sendMessage(plugin.getConfigManager().getColorizedString("permission-message"));
+                sender.sendMessage(
+                    plugin.getConfigManager().getColorizedString("permission-message"));
                 return true;
             }
             Player player = (Player) sender;
@@ -49,7 +53,8 @@ public class Speed implements @Nullable CommandExecutor {
                     speed = 2;
                 }
                 player.setFlySpeed(speed / 10);
-                player.sendMessage(plugin.getConfigManager().getColorizedString("speed-message") + speed);
+                player.sendMessage(
+                    plugin.getConfigManager().getColorizedString("speed-message") + speed);
                 return true;
 
             }
@@ -57,15 +62,18 @@ public class Speed implements @Nullable CommandExecutor {
             try {
                 speed = Float.parseFloat(args[0]);
             } catch (NumberFormatException e) {
-                player.sendMessage(plugin.getConfigManager().getColorizedString("invalid-speed-message"));
+                player.sendMessage(
+                    plugin.getConfigManager().getColorizedString("invalid-speed-message"));
                 return true;
             }
 
             if (speed > (float) maxSpeed || speed < 0f) {
-                player.sendMessage(plugin.getConfigManager().getColorizedString("invalid-speed-message"));
+                player.sendMessage(
+                    plugin.getConfigManager().getColorizedString("invalid-speed-message"));
             } else {
                 player.setFlySpeed(speed / 10);
-                player.sendMessage(plugin.getConfigManager().getColorizedString("speed-message") + speed);
+                player.sendMessage(
+                    plugin.getConfigManager().getColorizedString("speed-message") + speed);
             }
             return true;
 

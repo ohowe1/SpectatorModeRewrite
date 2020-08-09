@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 
 public class OnCommandPreprocessListener implements Listener {
+
     private final SpectatorMode plugin = SpectatorMode.getInstance();
 
     @EventHandler
@@ -20,7 +21,8 @@ public class OnCommandPreprocessListener implements Listener {
         if (!plugin.getSpectatorCommand().inState(player.getUniqueId().toString())) {
             return;
         }
-        if (plugin.getConfigManager().getList("bad-commands").contains(e.getMessage().substring(1))) {
+        if (plugin.getConfigManager().getList("bad-commands")
+            .contains(e.getMessage().substring(1))) {
             player.sendMessage(plugin.getConfigManager().getColorizedString("bad-command-message"));
             e.setCancelled(true);
         }
