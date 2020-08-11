@@ -232,7 +232,7 @@ public class Spectator implements CommandExecutor {
         target.setGameMode(GameMode.SURVIVAL);
     }
 
-    private void goIntoSurvivalMode(@NotNull Player target) {
+    public void goIntoSurvivalMode(@NotNull Player target) {
         target.removePotionEffect(PotionEffectType.NIGHT_VISION);
         target.removePotionEffect(PotionEffectType.CONDUIT_POWER);
 

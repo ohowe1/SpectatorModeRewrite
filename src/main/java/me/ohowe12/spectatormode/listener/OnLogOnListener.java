@@ -37,9 +37,6 @@ public class OnLogOnListener implements Listener {
     }
 
     private void teleportPlayerBack(@NotNull Player player) {
-        Location location = plugin.getSpectatorCommand().getState(player.getUniqueId().toString())
-            .getPlayerLocation();
-        player.teleport(location);
-        player.setGameMode(GameMode.SURVIVAL);
+        plugin.getSpectatorCommand().goIntoSurvivalMode(player);
     }
 }
