@@ -8,12 +8,12 @@ import org.jetbrains.annotations.Nullable;
 public class TabCompleteUtil {
 
     @Nullable
-    public static List<String> getStrings(@NotNull String @NotNull [] args,
-        @NotNull List<String> arguments) {
-        List<String> results = new ArrayList<>();
+    public static List<String> getStrings(@NotNull final String @NotNull [] args,
+            @NotNull final List<String> arguments) {
+        final List<String> results = new ArrayList<>();
 
         if (args.length == 1) {
-            for (String a : arguments) {
+            for (final String a : arguments) {
                 if (a.toLowerCase().startsWith(args[0].toLowerCase())) {
                     results.add(a);
                 }

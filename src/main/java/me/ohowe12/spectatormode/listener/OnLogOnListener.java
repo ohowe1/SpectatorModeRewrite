@@ -9,8 +9,6 @@
 package me.ohowe12.spectatormode.listener;
 
 import me.ohowe12.spectatormode.SpectatorMode;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,21 +20,20 @@ public class OnLogOnListener implements Listener {
     final SpectatorMode plugin = SpectatorMode.getInstance();
 
     @EventHandler
-    public void onLogOn(@NotNull PlayerJoinEvent e) {
-        boolean teleportBack = SpectatorMode.getInstance().getConfigManager()
-            .getBoolean("teleport-back");
+    public void onLogOn(@NotNull final PlayerJoinEvent e) {
+        final boolean teleportBack = SpectatorMode.getInstance().getConfigManager().getBoolean("teleport-back");
         if (teleportBack) {
-            Player player = e.getPlayer();
+            final Player player = e.getPlayer();
             try {
                 if (plugin.getSpectatorCommand().inState(player.getUniqueId().toString())) {
                     teleportPlayerBack(player);
                 }
-            } catch (NullPointerException ignored) {
+            } catch (final NullPointerException ignored) {
             }
         }
     }
 
-    private void teleportPlayerBack(@NotNull Player player) {
+    private void teleportPlayerBack(@NotNull final Player player) {
         plugin.getSpectatorCommand().goIntoSurvivalMode(player);
     }
 }

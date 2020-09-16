@@ -12,12 +12,12 @@ public class ConfigManager {
     private final FileConfiguration config;
     private final Configuration defaults;
 
-    public ConfigManager(FileConfiguration config) {
+    public ConfigManager(final FileConfiguration config) {
         this.config = config;
         this.defaults = config.getDefaults();
 
-        for (String path : Objects.requireNonNull(defaults).getKeys(true)) {
-            boolean isIn = config.getKeys(true).contains(path);
+        for (final String path : Objects.requireNonNull(defaults).getKeys(true)) {
+            final boolean isIn = config.getKeys(true).contains(path);
             if (!isIn) {
                 config.set(path, defaults.get(path));
             }
@@ -25,20 +25,20 @@ public class ConfigManager {
         SpectatorMode.getInstance().saveConfig();
     }
 
-    public @NotNull String getColorizedString(@NotNull String path) {
+    public @NotNull String getColorizedString(@NotNull final String path) {
         return ChatColor.translateAlternateColorCodes('&',
-            Objects.requireNonNull(config.getString(path, defaults.getString(path))));
+                Objects.requireNonNull(config.getString(path, defaults.getString(path))));
     }
 
-    public boolean getBoolean(@NotNull String path) {
+    public boolean getBoolean(@NotNull final String path) {
         return config.getBoolean(path, defaults.getBoolean(path));
     }
 
-    public List<?> getList(@NotNull String path) {
+    public List<?> getList(@NotNull final String path) {
         return Objects.requireNonNull(config.getList(path, defaults.getList(path)));
     }
 
-    public int getInt(@NotNull String path) {
+    public int getInt(@NotNull final String path) {
         return config.getInt(path, defaults.getInt(path));
     }
 }

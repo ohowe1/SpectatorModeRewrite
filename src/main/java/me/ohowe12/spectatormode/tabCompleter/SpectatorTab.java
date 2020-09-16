@@ -21,11 +21,11 @@ import org.jetbrains.annotations.Nullable;
 public class SpectatorTab implements TabCompleter {
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender,
-        @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        List<String> arguments = new ArrayList<>();
+    public @Nullable List<String> onTabComplete(@NotNull final CommandSender sender, @NotNull final Command command,
+            @NotNull final String alias, @NotNull final String[] args) {
+        final List<String> arguments = new ArrayList<>();
         if (sender.hasPermission("spectator-force")) {
-            for (Player p : Bukkit.getOnlinePlayers()) {
+            for (final Player p : Bukkit.getOnlinePlayers()) {
                 arguments.add(p.getName());
             }
         }

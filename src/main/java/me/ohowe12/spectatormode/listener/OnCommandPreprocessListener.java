@@ -12,8 +12,8 @@ public class OnCommandPreprocessListener implements Listener {
     private final SpectatorMode plugin = SpectatorMode.getInstance();
 
     @EventHandler
-    public void onCommandEvent(PlayerCommandPreprocessEvent e) {
-        Player player = e.getPlayer();
+    public void onCommandEvent(final PlayerCommandPreprocessEvent e) {
+        final Player player = e.getPlayer();
 
         if (player.hasPermission("spectator-bypass")) {
             return;

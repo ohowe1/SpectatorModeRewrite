@@ -27,24 +27,23 @@ public class OnMoveListener implements Listener {
 
     private final SpectatorMode plugin;
 
-    public OnMoveListener(SpectatorMode plugin) {
+    public OnMoveListener(final SpectatorMode plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onMove(@NotNull PlayerMoveEvent e) {
-        int yLevel = plugin.getConfigManager().getInt("y-level");
-        boolean enforceY = plugin.getConfigManager().getBoolean("enforce-y");
-        boolean enforceDistance = plugin.getConfigManager().getBoolean("enforce-distance");
-        boolean enforceNonTransparent = plugin.getConfigManager()
-            .getBoolean("disallow-non-transparent-blocks");
-        boolean enforceAllBlocks = plugin.getConfigManager().getBoolean("disallow-all-blocks");
-        boolean enforceWorldBorder = plugin.getConfigManager().getBoolean("enforce-world-border");
+    public void onMove(@NotNull final PlayerMoveEvent e) {
+        final int yLevel = plugin.getConfigManager().getInt("y-level");
+        final boolean enforceY = plugin.getConfigManager().getBoolean("enforce-y");
+        final boolean enforceDistance = plugin.getConfigManager().getBoolean("enforce-distance");
+        final boolean enforceNonTransparent = plugin.getConfigManager().getBoolean("disallow-non-transparent-blocks");
+        final boolean enforceAllBlocks = plugin.getConfigManager().getBoolean("disallow-all-blocks");
+        final boolean enforceWorldBorder = plugin.getConfigManager().getBoolean("enforce-world-border");
 
-        Player player = e.getPlayer();
-        Location location = e.getTo();
-        Location eyeLevel = new Location(player.getWorld(), Objects.requireNonNull(location).getX(),
-            location.getY() + 1, location.getZ());
+        final Player player = e.getPlayer();
+        final Location location = e.getTo();
+        final Location eyeLevel = new Location(player.getWorld(), Objects.requireNonNull(location).getX(),
+                location.getY() + 1, location.getZ());
 
         if (!(plugin.getSpectatorCommand().inState(player.getUniqueId().toString()))) {
             return;
@@ -64,7 +63,7 @@ public class OnMoveListener implements Listener {
             }
         }
 
-        Block currentBlock = eyeLevel.getBlock();
+        final Block currentBlock = eyeLevel.getBlock();
         if (enforceAllBlocks) {
             if (!(currentBlock.getType().isAir())) {
                 if (!(currentBlock.getType() == Material.RAIL)) {
@@ -79,7 +78,6 @@ public class OnMoveListener implements Listener {
                     }
 
                 }
-
 
             }
         }
@@ -98,28 +96,26 @@ public class OnMoveListener implements Listener {
             }
         }
         if (enforceWorldBorder) {
-            if (!(Objects.requireNonNull(location.getWorld()).getWorldBorder()
-                .isInside(location))) {
+            if (!(Objects.requireNonNull(location.getWorld()).getWorldBorder().isInside(location))) {
                 e.setTo(e.getFrom());
                 e.setCancelled(true);
             }
         }
     }
 
-    private boolean checkDistance(String player, @NotNull Location location) {
-        int distance = plugin.getConfigManager().getInt("distance");
-        Location originalLocation = plugin.getSpectatorCommand().getState(player)
-            .getPlayerLocation();
+    private boolean checkDistance(final String player, @NotNull final Location location) {
+        final int distance = plugin.getConfigManager().getInt("distance");
+        final Location originalLocation = plugin.getSpectatorCommand().getState(player).getPlayerLocation();
         return (originalLocation.distance(location)) > distance;
     }
 
-    private boolean checkBlock(@NotNull Block currentBlock) {
+    private boolean checkBlock(@NotNull final Block currentBlock) {
         return (currentBlock.getType().isOccluding());
     }
 
     @EventHandler
-    public void onTeleport(@NotNull PlayerTeleportEvent e) {
-        boolean preventTeleport = plugin.getConfigManager().getBoolean("prevent-teleport");
+    public void onTeleport(@NotNull final PlayerTeleportEvent e) {
+        final boolean preventTeleport = plugin.getConfigManager().getBoolean("prevent-teleport");
         if (e.getPlayer().hasPermission("spectator-bypass")) {
             return;
         }
