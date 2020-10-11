@@ -32,15 +32,12 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("unchecked")
 public class Spectator implements CommandExecutor {
 
     private final SpectatorMode plugin;
     private final Map<String, State> state;
-    private final PotionEffect NIGHTVISON = new PotionEffect(PotionEffectType.NIGHT_VISION,
-        10000000, 10);
-    private final PotionEffect CONDUIT = new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000000,
-        10);
+    private final PotionEffect NIGHTVISON = new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 10);
+    private final PotionEffect CONDUIT = new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000000, 10);
     private boolean sEnabled;
     private boolean nightVisionEnabled;
     private boolean conduitEnabled;
@@ -59,10 +56,12 @@ public class Spectator implements CommandExecutor {
     }
 
     private void setMobs(@NotNull Player player) {
-        @NotNull Location loc = state.get(player.getUniqueId().toString()).getPlayerLocation();
+        @NotNull
+        Location loc = state.get(player.getUniqueId().toString()).getPlayerLocation();
         World world = loc.getWorld();
         assert world != null;
-        @NotNull Chunk defaultChunk = world.getChunkAt(loc);
+        @NotNull
+        Chunk defaultChunk = world.getChunkAt(loc);
 
         for (int x = 0; x <= 4; x++) {
             for (int z = 0; z <= 4; z++) {
@@ -70,8 +69,8 @@ public class Spectator implements CommandExecutor {
             }
         }
 
-        for (@NotNull HashMap.Entry<String, Boolean> entry : state
-            .get(player.getUniqueId().toString()).getMobIds().entrySet()) {
+        for (@NotNull
+        HashMap.Entry<String, Boolean> entry : state.get(player.getUniqueId().toString()).getMobIds().entrySet()) {
             UUID key = UUID.fromString(entry.getKey());
             if ((!(Bukkit.getEntity(key) instanceof LivingEntity))) {
                 return;
@@ -103,8 +102,8 @@ public class Spectator implements CommandExecutor {
         return this.state.get(uuid);
     }
 
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd,
-        @NotNull String label, @NotNull String @NotNull [] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label,
+            @NotNull String @NotNull [] args) {
         worlds = (List<String>) plugin.getConfigManager().getList("worlds-allowed");
         nightVisionEnabled = plugin.getConfigManager().getBoolean("night-vision");
         conduitEnabled = plugin.getConfigManager().getBoolean("conduit");
@@ -115,14 +114,13 @@ public class Spectator implements CommandExecutor {
             }
             if (args.length == 0) {
                 if (!(sender instanceof Player)) {
-                    sender.sendMessage(
-                        plugin.getConfigManager().getColorizedString("console-message"));
+                    sender.sendMessage(plugin.getConfigManager().getColorizedString("console-message"));
                     return true;
                 }
-                @NotNull Player player = (Player) sender;
+                @NotNull
+                Player player = (Player) sender;
                 if (!sEnabled) {
-                    player.sendMessage(
-                        plugin.getConfigManager().getColorizedString("disabled-message"));
+                    player.sendMessage(plugin.getConfigManager().getColorizedString("disabled-message"));
                     return true;
                 }
                 checkIfEligibleForSpectatorMode(player);
@@ -138,37 +136,32 @@ public class Spectator implements CommandExecutor {
                     return true;
                 case "reload":
                     if (!sender.hasPermission("spectator-reload")) {
-                        sender.sendMessage(
-                            plugin.getConfigManager().getColorizedString("permission-message"));
+                        sender.sendMessage(plugin.getConfigManager().getColorizedString("permission-message"));
                         return true;
                     }
-                    plugin.reloadConfig();
-                    sender.sendMessage(
-                        plugin.getConfigManager().getColorizedString("reload-message"));
+                    plugin.reloadConfigManager();
+                    sender.sendMessage(plugin.getConfigManager().getColorizedString("reload-message"));
                     return true;
             }
 
             if (sender.hasPermission("spectator-force")) {
-                @Nullable Player target = Bukkit.getPlayerExact(argument);
+                @Nullable
+                Player target = Bukkit.getPlayerExact(argument);
                 if (target == null) {
-                    sender.sendMessage(
-                        plugin.getConfigManager().getColorizedString("invalid-player-message"));
+                    sender.sendMessage(plugin.getConfigManager().getColorizedString("invalid-player-message"));
                     return true;
                 }
                 if (Bukkit.getOnlinePlayers().contains(target)) {
                     if (checkIfEligibleForSpectatorMode(target)) {
-                        sender.sendMessage(
-                            plugin.getConfigManager().getColorizedString("force-success")
+                        sender.sendMessage(plugin.getConfigManager().getColorizedString("force-success")
                                 .replaceAll("/target/", target.getName()));
                     } else {
-                        sender.sendMessage(
-                            plugin.getConfigManager().getColorizedString("force-fail")
+                        sender.sendMessage(plugin.getConfigManager().getColorizedString("force-fail")
                                 .replaceAll("/target/", target.getName()));
                     }
                 }
             } else {
-                sender.sendMessage(
-                    plugin.getConfigManager().getColorizedString("permission-message"));
+                sender.sendMessage(plugin.getConfigManager().getColorizedString("permission-message"));
             }
 
             return true;
@@ -196,11 +189,12 @@ public class Spectator implements CommandExecutor {
             player.sendMessage(plugin.getConfigManager().getColorizedString("permission-message"));
             return false;
         }
-        @NotNull GameMode gm = player.getGameMode();
+        @NotNull
+        GameMode gm = player.getGameMode();
         if (!gm.equals(GameMode.SPECTATOR)) {
             assert worlds != null;
-            if ((!worlds.contains(player.getWorld().getName())) && plugin.getConfigManager()
-                .getBoolean("enforce-worlds")) {
+            if ((!worlds.contains(player.getWorld().getName()))
+                    && plugin.getConfigManager().getBoolean("enforce-worlds")) {
                 player.sendMessage(plugin.getConfigManager().getColorizedString("world-message"));
                 return false;
             }
@@ -243,7 +237,7 @@ public class Spectator implements CommandExecutor {
         setMobs(target);
 
         state.remove(target.getUniqueId().toString());
-        target.sendMessage(plugin.getConfigManager().getColorizedString("survival-mode-message"));
+        sendSurvivalMessage(target);
         if (!plugin.getUnitTest()) {
             DataSaver.save(state);
         }
@@ -252,12 +246,13 @@ public class Spectator implements CommandExecutor {
     private void goIntoSpectatorMode(@NotNull Player target) {
         state.put(target.getUniqueId().toString(), new State(target));
 
-        for (@NotNull PotionEffect e : target.getActivePotionEffects()) {
+        for (@NotNull
+        PotionEffect e : target.getActivePotionEffects()) {
             target.removePotionEffect(e.getType());
         }
 
         target.setGameMode(GameMode.SPECTATOR);
-        target.sendMessage(plugin.getConfigManager().getColorizedString("spectator-mode-message"));
+        sendSpectatorMessage(target);
         if (nightVisionEnabled) {
             target.addPotionEffect(NIGHTVISON);
         }
@@ -266,6 +261,18 @@ public class Spectator implements CommandExecutor {
         }
         if (!plugin.getUnitTest()) {
             DataSaver.save(state);
+        }
+    }
+
+    private void sendSurvivalMessage(Player target) {
+        if (!plugin.getConfigManager().getBoolean("disable-switching-message")) {
+            target.sendMessage(plugin.getConfigManager().getColorizedString("survival-mode-message"));
+        }
+    }
+
+    private void sendSpectatorMessage(Player target) {
+        if (!plugin.getConfigManager().getBoolean("disable-switching-message")) {
+            target.sendMessage(plugin.getConfigManager().getColorizedString("spectator-mode-message"));
         }
     }
 

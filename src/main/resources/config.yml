@@ -59,7 +59,8 @@ bad-commands: []
 #Prevents players from going past the world border in spectator mode
 enforce-world-border: true
 
-
+#If this is true, players will not see the Setting gamemode messages
+disable-switching-message: false
 
 #Message when gamemode set to spectator mode
 spectator-mode-message: '&9Setting gamemode to &b&lSPECTATOR MODE'

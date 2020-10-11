@@ -46,14 +46,15 @@ public class SpectatorMode extends JavaPlugin {
             new Metrics(this, pluginId);
             UpdateChecker.getVersion(version -> {
                 if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
-                    Bukkit.getConsoleSender().sendMessage(ChatColor.AQUA
-                        + "[SMP SPECTATOR MODE] SMP SPECTATOR MODE is all up to date at version "
-                        + this.getDescription().getVersion() + '!');
+                    Bukkit.getConsoleSender()
+                            .sendMessage(ChatColor.AQUA
+                                    + "[SMP SPECTATOR MODE] SMP SPECTATOR MODE is all up to date at version "
+                                    + this.getDescription().getVersion() + '!');
                 } else {
-                    Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_RED
-                        + "[SMP SPECTATOR MODE] A new version of SMP SPECTATOR MODE is available (version "
-                        + version + ")! You are on version " + this.getDescription().getVersion()
-                        + ".");
+                    Bukkit.getConsoleSender()
+                            .sendMessage(ChatColor.DARK_RED
+                                    + "[SMP SPECTATOR MODE] A new version of SMP SPECTATOR MODE is available (version "
+                                    + version + ")! You are on version " + this.getDescription().getVersion() + ".");
                 }
             }, this);
         }
@@ -81,10 +82,17 @@ public class SpectatorMode extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new OnMoveListener(this), this);
         getServer().getPluginManager().registerEvents(new OnLogOnListener(), this);
         getServer().getPluginManager().registerEvents(new OnCommandPreprocessListener(), this);
+
     }
 
     @NotNull
     public ConfigManager getConfigManager() {
+        return config;
+    }
+
+    public ConfigManager reloadConfigManager() {
+        this.reloadConfig();
+        config = new ConfigManager(this.getConfig());
         return config;
     }
 }

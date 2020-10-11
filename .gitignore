@@ -45,3 +45,5 @@ out/
 *.iws
 
 .settings/
+
+.vscode/
