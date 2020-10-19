@@ -84,7 +84,7 @@ public class OnMoveListener implements Listener {
         }
     }
 
-    public boolean isColliding(PlayerMoveEvent e){
+    public boolean isColliding(@NotNull PlayerMoveEvent e){
         final boolean enforceNonTransparent = plugin.getConfigManager().getBoolean("disallow-non-transparent-blocks");
         final boolean enforceAllBlocks = plugin.getConfigManager().getBoolean("disallow-all-blocks");
         final float bubbleSize = plugin.getConfigManager().getInt("bubble-size") / 100.0f;
