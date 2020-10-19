@@ -65,6 +65,9 @@ enforce-world-border: true
 #If this is true, players will not see the Setting gamemode messages
 disable-switching-message: false
 
+#If this is true, you won't get the survival-mode-message on join, if the server sent you back into survival
+silence-survival-mode-message-on-join: true
+
 #Message when gamemode set to spectator mode
 spectator-mode-message: '&9Setting gamemode to &b&lSPECTATOR MODE'
 

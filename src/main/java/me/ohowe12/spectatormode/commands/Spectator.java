@@ -227,7 +227,11 @@ public class Spectator implements CommandExecutor {
         target.setGameMode(GameMode.SURVIVAL);
     }
 
-    public void goIntoSurvivalMode(@NotNull Player target) {
+    public void goIntoSurvivalMode(@NotNull Player target){
+        goIntoSurvivalMode(target, false);
+    }
+
+    public void goIntoSurvivalMode(@NotNull Player target, boolean silent) {
         target.removePotionEffect(PotionEffectType.NIGHT_VISION);
         target.removePotionEffect(PotionEffectType.CONDUIT_POWER);
 
@@ -238,7 +242,9 @@ public class Spectator implements CommandExecutor {
         setMobs(target);
 
         state.remove(target.getUniqueId().toString());
-        sendSurvivalMessage(target);
+        if(!silent){
+            sendSurvivalMessage(target);
+        }
         if (!plugin.getUnitTest()) {
             DataSaver.save(state);
         }

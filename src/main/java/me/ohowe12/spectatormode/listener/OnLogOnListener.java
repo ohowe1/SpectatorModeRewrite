@@ -34,6 +34,7 @@ public class OnLogOnListener implements Listener {
     }
 
     private void teleportPlayerBack(@NotNull final Player player) {
-        plugin.getSpectatorCommand().goIntoSurvivalMode(player);
+        final boolean silent = plugin.getConfigManager().getBoolean("silence-survival-mode-message-on-join");
+        plugin.getSpectatorCommand().goIntoSurvivalMode(player, silent);
     }
 }
