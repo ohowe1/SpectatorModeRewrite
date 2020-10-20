@@ -20,6 +20,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -36,8 +38,6 @@ public class OnMoveListener implements Listener {
         final int yLevel = plugin.getConfigManager().getInt("y-level");
         final boolean enforceY = plugin.getConfigManager().getBoolean("enforce-y");
         final boolean enforceDistance = plugin.getConfigManager().getBoolean("enforce-distance");
-        final boolean enforceNonTransparent = plugin.getConfigManager().getBoolean("disallow-non-transparent-blocks");
-        final boolean enforceAllBlocks = plugin.getConfigManager().getBoolean("disallow-all-blocks");
         final boolean enforceWorldBorder = plugin.getConfigManager().getBoolean("enforce-world-border");
 
         final Player player = e.getPlayer();
@@ -63,31 +63,12 @@ public class OnMoveListener implements Listener {
             }
         }
 
-        final Block currentBlock = eyeLevel.getBlock();
-        if (enforceAllBlocks) {
-            if (!(currentBlock.getType().isAir())) {
-                if (!(currentBlock.getType() == Material.RAIL)) {
-                    if (!(currentBlock.getType() == Material.ACTIVATOR_RAIL)) {
-                        if (!(currentBlock.getType() == Material.DETECTOR_RAIL)) {
-                            if (!(currentBlock.getType() == Material.POWERED_RAIL)) {
-                                e.setTo(e.getFrom());
-                                e.setCancelled(true);
-                                return;
-                            }
-                        }
-                    }
-
-                }
-
-            }
+        if (isColliding(e)) {
+            e.setTo(e.getFrom());
+            e.setCancelled(true);
+            return;
         }
-        if (enforceNonTransparent) {
-            if (checkBlock(currentBlock)) {
-                e.setTo(e.getFrom());
-                e.setCancelled(true);
-                return;
-            }
-        }
+
         if (enforceDistance) {
             if (checkDistance(player.getUniqueId().toString(), location)) {
                 e.setTo(e.getFrom());
@@ -103,14 +84,33 @@ public class OnMoveListener implements Listener {
         }
     }
 
+    public boolean isColliding(@NotNull PlayerMoveEvent e){
+        final boolean enforceNonTransparent = plugin.getConfigManager().getBoolean("disallow-non-transparent-blocks");
+        final boolean enforceAllBlocks = plugin.getConfigManager().getBoolean("disallow-all-blocks");
+        final float bubbleSize = plugin.getConfigManager().getInt("bubble-size") / 100.0f;
+        if(e.getTo() == null || !(enforceNonTransparent || enforceAllBlocks)) return false;
+        for (int x = -1; x < 2; x++) {
+            for (int y = 0; y < 3; y++){
+                for (int z = -1; z < 2; z++){
+                    Block block = e.getTo().getBlock().getRelative(x, y, z);
+                    BoundingBox bb = block.getBoundingBox().clone().expand(bubbleSize);
+                    Material mat = block.getType();
+                    Vector tovect = e.getTo().toVector().clone().add(new Vector(0, 1.6, 0));
+                    if(mat.isSolid()){
+                        if(tovect.isInAABB(bb.getMin(), bb.getMax())){
+                            return enforceAllBlocks || mat.isOccluding();
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     private boolean checkDistance(final String player, @NotNull final Location location) {
         final int distance = plugin.getConfigManager().getInt("distance");
         final Location originalLocation = plugin.getSpectatorCommand().getState(player).getPlayerLocation();
         return (originalLocation.distance(location)) > distance;
-    }
-
-    private boolean checkBlock(@NotNull final Block currentBlock) {
-        return (currentBlock.getType().isOccluding());
     }
 
     @EventHandler

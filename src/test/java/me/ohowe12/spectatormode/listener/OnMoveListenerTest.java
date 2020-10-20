@@ -92,45 +92,45 @@ public class OnMoveListenerTest {
         assertEquals(e.getTo(), to);
     }
 
-    @Test
-    public void testPositiveEnforceBlocks() {
-        resetAll();
+    // @Test
+    // public void testPositiveEnforceBlocks() {
+    //     resetAll();
 
-        when(configManager.getBoolean("disallow-all-blocks")).thenReturn(true);
+    //     when(configManager.getBoolean("disallow-all-blocks")).thenReturn(true);
 
-        Location from = new Location(world, 0, 2, 0);
-        Location to = new Location(world, 0, 1, 0);
-        Location eyeLevel = new Location(world, Objects.requireNonNull(to).getX(), to.getY() + 1,
-            to.getZ());
+    //     Location from = new Location(world, 0, 2, 0);
+    //     Location to = new Location(world, 0, 1, 0);
+    //     Location eyeLevel = new Location(world, Objects.requireNonNull(to).getX(), to.getY() + 1,
+    //         to.getZ());
 
-        when(world.getBlockAt(eyeLevel)).thenReturn(stone);
-        PlayerMoveEvent e = new PlayerMoveEvent(player, from, to);
+    //     when(world.getBlockAt(eyeLevel)).thenReturn(stone);
+    //     PlayerMoveEvent e = new PlayerMoveEvent(player, from, to);
 
-        new OnMoveListener(plugin).onMove(e);
+    //     new OnMoveListener(plugin).onMove(e);
 
-        assertTrue(e.isCancelled());
-        assertEquals(e.getTo(), from);
-    }
+    //     assertTrue(e.isCancelled());
+    //     assertEquals(e.getTo(), from);
+    // }
 
-    @Test
-    public void testNegativeEnforceBlocks() {
-        resetAll();
+    // @Test
+    // public void testNegativeEnforceBlocks() {
+    //     resetAll();
 
-        when(configManager.getBoolean("disallow-all-blocks")).thenReturn(true);
+    //     when(configManager.getBoolean("disallow-all-blocks")).thenReturn(true);
 
-        Location from = new Location(world, 0, 2, 0);
-        Location to = new Location(world, 0, 1, 0);
-        Location eyeLevel = new Location(world, Objects.requireNonNull(to).getX(), to.getY() + 1,
-            to.getZ());
+    //     Location from = new Location(world, 0, 2, 0);
+    //     Location to = new Location(world, 0, 1, 0);
+    //     Location eyeLevel = new Location(world, Objects.requireNonNull(to).getX(), to.getY() + 1,
+    //         to.getZ());
 
-        when(world.getBlockAt(eyeLevel)).thenReturn(air);
-        PlayerMoveEvent e = new PlayerMoveEvent(player, from, to);
+    //     when(world.getBlockAt(eyeLevel)).thenReturn(air);
+    //     PlayerMoveEvent e = new PlayerMoveEvent(player, from, to);
 
-        new OnMoveListener(plugin).onMove(e);
+    //     new OnMoveListener(plugin).onMove(e);
 
-        assertFalse(e.isCancelled());
-        assertEquals(e.getTo(), to);
-    }
+    //     assertFalse(e.isCancelled());
+    //     assertEquals(e.getTo(), to);
+    // }
 
     @Test
     public void testPositiveDistance() {
@@ -186,15 +186,12 @@ public class OnMoveListenerTest {
         assertEquals(e.getTo(), to);
     }
 
-    private void setAll() {
+
+    private void resetAll() {
         when(configManager.getBoolean("enforce-y")).thenReturn(false);
         when(configManager.getBoolean("enforce-distance")).thenReturn(false);
         when(configManager.getBoolean("disallow-non-transparent-blocks")).thenReturn(false);
         when(configManager.getBoolean("disallow-all-blocks")).thenReturn(false);
         when(configManager.getBoolean("enforce-world-border")).thenReturn(false);
-    }
-
-    private void resetAll() {
-        setAll();
     }
 }
