@@ -147,7 +147,7 @@ public class Spectator implements CommandExecutor {
                     return true;
             }
 
-            if (sender.hasPermission("spectator-force")) {
+            if (sender.hasPermission("smpspectator.force")) {
                 @Nullable
                 Player target = Bukkit.getPlayerExact(argument);
                 if (target == null) {
@@ -175,7 +175,7 @@ public class Spectator implements CommandExecutor {
     }
 
     private void changeEnabled(boolean status, @NotNull CommandSender sender) {
-        if (!sender.hasPermission("spectator-enable")) {
+        if (!sender.hasPermission("smpspectator.enable")) {
             sender.sendMessage(plugin.getConfigManager().getColorizedString("permission-message"));
             return;
         }
@@ -192,7 +192,7 @@ public class Spectator implements CommandExecutor {
     }
 
     private boolean checkIfEligibleForSpectatorMode(@NotNull Player player, boolean force) {
-        if (!player.hasPermission("spectator-use") && !force) {
+        if (!player.hasPermission("smpspectator.use") && !force) {
             player.sendMessage(plugin.getConfigManager().getColorizedString("permission-message"));
             return false;
         }

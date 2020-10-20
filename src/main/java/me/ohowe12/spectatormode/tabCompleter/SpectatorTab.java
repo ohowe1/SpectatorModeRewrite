@@ -24,12 +24,12 @@ public class SpectatorTab implements TabCompleter {
     public @Nullable List<String> onTabComplete(@NotNull final CommandSender sender, @NotNull final Command command,
             @NotNull final String alias, @NotNull final String[] args) {
         final List<String> arguments = new ArrayList<>();
-        if (sender.hasPermission("spectator-force")) {
+        if (sender.hasPermission("smpspectator.force")) {
             for (final Player p : Bukkit.getOnlinePlayers()) {
                 arguments.add(p.getName());
             }
         }
-        if (sender.hasPermission("spectator-enable")) {
+        if (sender.hasPermission("smpspectator.enable")) {
             arguments.add("enable");
             arguments.add("disable");
             arguments.add("reload");

@@ -15,7 +15,7 @@ public class OnCommandPreprocessListener implements Listener {
     public void onCommandEvent(final PlayerCommandPreprocessEvent e) {
         final Player player = e.getPlayer();
 
-        if (player.hasPermission("spectator-bypass")) {
+        if (player.hasPermission("smpspectator.bypass")) {
             return;
         }
         if (!plugin.getSpectatorCommand().inState(player.getUniqueId().toString())) {

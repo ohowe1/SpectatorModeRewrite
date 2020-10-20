@@ -46,7 +46,7 @@ public class SpectatorTest {
     @Test
     public void testNoPermissionEnable() {
         final Player player = mock(Player.class);
-        when(player.hasPermission("spectator-enable")).thenReturn(false);
+        when(player.hasPermission("smpspectator.enable")).thenReturn(false);
 
         final Spectator s = new Spectator(plugin);
         s.onCommand(player, cmd, "s", new String[]{"enable"});
@@ -58,7 +58,7 @@ public class SpectatorTest {
     @Test
     public void testNoPermissionDisable() {
         final Player player = mock(Player.class);
-        when(player.hasPermission("spectator-enable")).thenReturn(false);
+        when(player.hasPermission("smpspectator.enable")).thenReturn(false);
 
         final Spectator s = new Spectator(plugin);
         s.onCommand(player, cmd, "s", new String[]{"disable"});
@@ -70,7 +70,7 @@ public class SpectatorTest {
     @Test
     public void testNoPermissionUse() {
         final Player player = mock(Player.class);
-        when(player.hasPermission("spectator-use")).thenReturn(false);
+        when(player.hasPermission("smpspectator.use")).thenReturn(false);
         when(player.getUniqueId())
             .thenReturn(UUID.fromString("e7a9396a-634c-4f25-a66f-1e5ce18dfae7"));
 
@@ -85,7 +85,7 @@ public class SpectatorTest {
     @Test
     public void testInSurvival() {
         final Player player = mock(Player.class);
-        when(player.hasPermission("spectator-use")).thenReturn(true);
+        when(player.hasPermission("smpspectator.use")).thenReturn(true);
         when(player.getGameMode()).thenReturn(GameMode.SURVIVAL);
         when(player.isOnGround()).thenReturn(true);
         when(player.getUniqueId())

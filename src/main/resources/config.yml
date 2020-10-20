@@ -48,7 +48,7 @@ disallow-all-blocks: false
 #How close a player can get to a block, to be used with disallow-all-blocks (percentage of block), adjust according to ping
 bubble-size: 35
 
-#Whether to make it so players can not go past a certain distance in spectator mode. The permission spectator-bypass bypasses this
+#Whether to make it so players can not go past a certain distance in spectator mode. The permission smpspectator.bypass bypasses this
 enforce-distance: false
 
 #See above (blocks)
@@ -56,7 +56,7 @@ distance: 64
 
 #Prevents players from using the spectator teleport hot bar
 prevent-teleport: false
-#Prevents these commands from being executed unless you have the spectator-bypass permission. Example list: [back, return, home, homes, tpaccept, tpyes, warp, warps]
+#Prevents these commands from being executed unless you have the smpspectator.bypass permission. Example list: [back, return, home, homes, tpaccept, tpyes, warp, warps]
 bad-commands: []
 
 #Prevents players from going past the world border in spectator mode
