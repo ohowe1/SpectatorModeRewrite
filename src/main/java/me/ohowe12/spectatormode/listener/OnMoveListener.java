@@ -42,13 +42,11 @@ public class OnMoveListener implements Listener {
 
         final Player player = e.getPlayer();
         final Location location = e.getTo();
-        final Location eyeLevel = new Location(player.getWorld(), Objects.requireNonNull(location).getX(),
-                location.getY() + 1, location.getZ());
 
         if (!(plugin.getSpectatorCommand().inState(player.getUniqueId().toString()))) {
             return;
         }
-        if (player.hasPermission("spectator-bypass")) {
+        if (player.hasPermission("smpspectator.bypass")) {
             return;
         }
         if (!(player.getGameMode().equals(GameMode.SPECTATOR))) {
@@ -116,7 +114,7 @@ public class OnMoveListener implements Listener {
     @EventHandler
     public void onTeleport(@NotNull final PlayerTeleportEvent e) {
         final boolean preventTeleport = plugin.getConfigManager().getBoolean("prevent-teleport");
-        if (e.getPlayer().hasPermission("spectator-bypass")) {
+        if (e.getPlayer().hasPermission("smpspectator.bypass")) {
             return;
         }
         if (!(plugin.getSpectatorCommand().inState(e.getPlayer().getUniqueId().toString()))) {

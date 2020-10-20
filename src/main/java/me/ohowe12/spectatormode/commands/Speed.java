@@ -40,7 +40,7 @@ public class Speed implements @Nullable CommandExecutor {
                 return true;
 
             }
-            if (!sender.hasPermission("speed-use")) {
+            if (!sender.hasPermission("smpspectator.speed")) {
                 sender.sendMessage(
                     plugin.getConfigManager().getColorizedString("permission-message"));
                 return true;
