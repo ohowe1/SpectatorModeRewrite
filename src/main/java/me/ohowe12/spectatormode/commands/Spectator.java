@@ -46,7 +46,9 @@ public class Spectator implements CommandExecutor {
     public Spectator(SpectatorMode plugin) {
         this.plugin = plugin;
         state = new HashMap<>();
-        DataSaver.load(state);
+        if (!plugin.getUnitTest()) {
+            DataSaver.load(state);
+        }
         plugin.saveDefaultConfig();
         sEnabled = plugin.getConfigManager().getBoolean("enabled");
     }

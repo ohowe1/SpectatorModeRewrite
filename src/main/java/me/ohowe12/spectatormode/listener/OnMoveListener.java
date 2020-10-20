@@ -92,7 +92,7 @@ public class OnMoveListener implements Listener {
         for (int x = -1; x < 2; x++) {
             for (int y = 0; y < 3; y++){
                 for (int z = -1; z < 2; z++){
-                    Block block = e.getTo().getBlock().getRelative(x ,y, z);
+                    Block block = e.getTo().getBlock().getRelative(x, y, z);
                     BoundingBox bb = block.getBoundingBox().clone().expand(bubbleSize);
                     Material mat = block.getType();
                     Vector tovect = e.getTo().toVector().clone().add(new Vector(0, 1.6, 0));
