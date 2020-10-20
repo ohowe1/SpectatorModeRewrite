@@ -42,8 +42,6 @@ public class OnMoveListener implements Listener {
 
         final Player player = e.getPlayer();
         final Location location = e.getTo();
-        final Location eyeLevel = new Location(player.getWorld(), Objects.requireNonNull(location).getX(),
-                location.getY() + 1, location.getZ());
 
         if (!(plugin.getSpectatorCommand().inState(player.getUniqueId().toString()))) {
             return;
