@@ -155,7 +155,7 @@ public class Spectator implements CommandExecutor {
                     return true;
                 }
                 if (Bukkit.getOnlinePlayers().contains(target)) {
-                    if (checkIfEligibleForSpectatorMode(target)) {
+                    if (checkIfEligibleForSpectatorMode(target, true)) {
                         sender.sendMessage(plugin.getConfigManager().getColorizedString("force-success")
                                 .replaceAll("/target/", target.getName()));
                     } else {
@@ -187,8 +187,12 @@ public class Spectator implements CommandExecutor {
         }
     }
 
-    private boolean checkIfEligibleForSpectatorMode(@NotNull Player player) {
-        if (!player.hasPermission("spectator-use")) {
+    private boolean checkIfEligibleForSpectatorMode(@NotNull Player player){
+        return checkIfEligibleForSpectatorMode(player, false);
+    }
+
+    private boolean checkIfEligibleForSpectatorMode(@NotNull Player player, boolean force) {
+        if (!player.hasPermission("spectator-use") && !force) {
             player.sendMessage(plugin.getConfigManager().getColorizedString("permission-message"));
             return false;
         }
