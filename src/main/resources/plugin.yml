@@ -39,3 +39,6 @@ permissions:
   smpspectator.toggle:
     description: Be able to use the /seffect command
     default: true
+  smpspectator.reload:
+    description: Be able to reload the config
+    default: op
