@@ -138,7 +138,7 @@ public class Spectator implements CommandExecutor {
                     changeEnabled(true, sender);
                     return true;
                 case "reload":
-                    if (!sender.hasPermission("spectator-reload")) {
+                    if (!sender.hasPermission("smpspectator.reload")) {
                         sender.sendMessage(plugin.getConfigManager().getColorizedString("permission-message"));
                         return true;
                     }
