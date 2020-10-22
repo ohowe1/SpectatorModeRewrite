@@ -18,11 +18,10 @@ import org.jetbrains.annotations.Nullable;
 
 public class Speed implements @Nullable CommandExecutor {
 
-    final SpectatorMode plugin;
+    private final SpectatorMode plugin;
 
-    public Speed() {
-        plugin = SpectatorMode.getInstance();
-        plugin.saveDefaultConfig();
+    public Speed(SpectatorMode plugin) {
+        this.plugin = plugin;
     }
 
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd,

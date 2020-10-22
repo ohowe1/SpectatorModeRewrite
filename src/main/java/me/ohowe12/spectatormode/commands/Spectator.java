@@ -111,6 +111,7 @@ public class Spectator implements CommandExecutor {
         return this.state;
     }
 
+    @SuppressWarnings("unchecked")
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label,
             @NotNull String @NotNull [] args) {
         worlds = (List<String>) plugin.getConfigManager().getList("worlds-allowed");

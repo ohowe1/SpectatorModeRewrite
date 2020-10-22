@@ -15,9 +15,15 @@ import org.jetbrains.annotations.Nullable;
 
 public class DataSaver {
 
-    private static final SpectatorMode plugin = SpectatorMode.getInstance();
-    private static final FileConfiguration data = YamlConfiguration
-        .loadConfiguration(new File(plugin.getDataFolder(), "data.yml"));
+    private static File dataFolder;
+
+    private static FileConfiguration data;
+
+    public static void init(File dataFolder) {
+        DataSaver.dataFolder = dataFolder;
+        data = YamlConfiguration
+        .loadConfiguration(new File(dataFolder, "data.yml"));
+    }
 
     public static void save(final Map<String, State> state) {
         if (data.getConfigurationSection("data") != null) {
@@ -32,12 +38,13 @@ public class DataSaver {
             data.set("data." + entry.getKey(), entry.getValue().serialize());
         }
         try {
-            data.save(new File(plugin.getDataFolder(), "data.yml"));
+            data.save(new File(dataFolder, "data.yml"));
         } catch (final IOException e) {
             e.printStackTrace();
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static void load(final Map<String, State> state) {
         if (data.getConfigurationSection("data") == null) {
             return;

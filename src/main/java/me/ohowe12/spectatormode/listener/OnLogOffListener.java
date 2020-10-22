@@ -10,7 +10,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class OnLogOffListener implements Listener {
 
-    final SpectatorMode plugin = SpectatorMode.getInstance();
+    private final SpectatorMode plugin;
+
+    public OnLogOffListener(SpectatorMode plugin) {
+        this.plugin = plugin;
+    }
 
     @EventHandler
     public void onLogOut(@NotNull final PlayerQuitEvent e){

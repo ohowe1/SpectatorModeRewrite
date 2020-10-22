@@ -18,11 +18,15 @@ import org.jetbrains.annotations.NotNull;
 
 public class OnLogOnListener implements Listener {
 
-    final SpectatorMode plugin = SpectatorMode.getInstance();
+    private final SpectatorMode plugin;
+
+    public OnLogOnListener(SpectatorMode plugin) {
+        this.plugin = plugin;
+    }
 
     @EventHandler
     public void onLogOn(@NotNull final PlayerJoinEvent e) {
-        final boolean teleportBack = SpectatorMode.getInstance().getConfigManager().getBoolean("teleport-back");
+        final boolean teleportBack = plugin.getConfigManager().getBoolean("teleport-back");
         final Player player = e.getPlayer();
         try {
             if (plugin.getSpectatorCommand().inState(player.getUniqueId().toString())) {

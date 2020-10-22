@@ -9,7 +9,11 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 public class OnCommandPreprocessListener implements Listener {
 
-    private final SpectatorMode plugin = SpectatorMode.getInstance();
+    private final SpectatorMode plugin;
+
+    public OnCommandPreprocessListener(SpectatorMode plugin) {
+        this.plugin = plugin;
+    }
 
     @EventHandler
     public void onCommandEvent(final PlayerCommandPreprocessEvent e) {

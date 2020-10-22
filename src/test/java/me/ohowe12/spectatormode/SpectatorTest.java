@@ -41,6 +41,8 @@ public class SpectatorTest {
         when(configManager.getBoolean("night-vision")).thenReturn(true);
         when(configManager.getBoolean("conduit")).thenReturn(true);
         when(configManager.getList("worlds-allowed")).thenReturn(new ArrayList<>());
+        when(configManager.getBoolean("placeholder-mob")).thenReturn(false);
+        PlaceholderEntity.init(plugin);
     }
 
     @Test

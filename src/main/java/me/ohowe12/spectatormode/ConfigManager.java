@@ -12,7 +12,7 @@ public class ConfigManager {
     private final FileConfiguration config;
     private final Configuration defaults;
 
-    public ConfigManager(final FileConfiguration config) {
+    public ConfigManager(final SpectatorMode plugin, final FileConfiguration config) {
         this.config = config;
         this.defaults = config.getDefaults();
 
@@ -22,7 +22,7 @@ public class ConfigManager {
                 config.set(path, defaults.get(path));
             }
         }
-        SpectatorMode.getInstance().saveConfig();
+        plugin.saveConfig();
     }
 
     public @NotNull String getColorizedString(@NotNull final String path) {

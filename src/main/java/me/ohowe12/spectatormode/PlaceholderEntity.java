@@ -1,7 +1,7 @@
 package me.ohowe12.spectatormode;
 
-import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -12,13 +12,22 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public abstract class PlaceholderEntity {
 
-    public static void create(@NotNull Player target){
-        if(!SpectatorMode.getInstance().getConfigManager().getBoolean("placeholder-mob")) return;
+    private static SpectatorMode plugin = null;
 
-        Zombie placeholder = (Zombie) target.getWorld().spawnEntity(getStateOfPlayer(target).getPlayerLocation(), EntityType.ZOMBIE);
+    public static void init(SpectatorMode plugin) {
+        PlaceholderEntity.plugin = plugin;
+    }
+
+    public static void create(@NotNull Player target) {
+        if (!plugin.getConfigManager().getBoolean("placeholder-mob"))
+            return;
+
+        Zombie placeholder = (Zombie) target.getWorld().spawnEntity(getStateOfPlayer(target).getPlayerLocation(),
+                EntityType.ZOMBIE);
         placeholder.setAI(false);
         placeholder.setInvulnerable(true);
         placeholder.setCanPickupItems(false);
@@ -27,7 +36,11 @@ public abstract class PlaceholderEntity {
         placeholder.setCustomName(target.getDisplayName());
         placeholder.setCustomNameVisible(true);
         placeholder.setBaby(true);
-
+        if (placeholder.isInsideVehicle()) {
+            Entity vehicle = placeholder.getVehicle();
+            placeholder.leaveVehicle();
+            vehicle.remove();
+        }
         EntityEquipment placeholderEquip = Objects.requireNonNull(placeholder.getEquipment());
         EntityEquipment playerEquip = Objects.requireNonNull(target.getEquipment());
         placeholderEquip.setArmorContents(playerEquip.getArmorContents());
@@ -38,13 +51,12 @@ public abstract class PlaceholderEntity {
         getStateOfPlayer(target).setPlaceholder(placeholder);
     }
 
-    private static State getStateOfPlayer(@NotNull Player target){
-        SpectatorMode plugin = SpectatorMode.getInstance();
+    private static State getStateOfPlayer(@NotNull Player target) {
         String id = target.getUniqueId().toString();
         return plugin.getSpectatorCommand().getState(id);
     }
 
-    private static ItemStack getPlayerHead(@NotNull Player target){
+    private static ItemStack getPlayerHead(@NotNull Player target) {
         ItemStack skull = new ItemStack(Material.PLAYER_HEAD, 1);
         SkullMeta meta = ((SkullMeta) Objects.requireNonNull(skull.getItemMeta()));
         meta.setOwningPlayer(target);
@@ -52,8 +64,17 @@ public abstract class PlaceholderEntity {
         return skull;
     }
 
-    public static void remove(@NotNull Player target){
+    public static void remove(@NotNull Player target) {
         LivingEntity placeholder = getStateOfPlayer(target).getPlaceholder();
-        if(placeholder != null) placeholder.remove();
+        if (placeholder != null)
+            placeholder.remove();
+    }
+
+    public static void shutdown() {
+        plugin.getSpectatorCommand().getAllStates().keySet().stream()
+                .map(UUID::fromString)
+                .map(plugin.getServer()::getPlayer)
+                .filter(Objects::nonNull)
+                .forEach(PlaceholderEntity::remove);
     }
 }

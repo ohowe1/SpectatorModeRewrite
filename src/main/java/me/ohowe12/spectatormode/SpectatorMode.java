@@ -9,7 +9,6 @@
 package me.ohowe12.spectatormode;
 
 import java.util.Objects;
-import java.util.UUID;
 
 import me.ohowe12.spectatormode.commands.Effects;
 import me.ohowe12.spectatormode.commands.Spectator;
@@ -31,6 +30,7 @@ public class SpectatorMode extends JavaPlugin {
     private Spectator spectatorCommand;
     private ConfigManager config;
 
+    @Deprecated
     public static SpectatorMode getInstance() {
         return instance;
     }
@@ -42,7 +42,8 @@ public class SpectatorMode extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        config = new ConfigManager(this.getConfig());
+        PlaceholderEntity.init(this);
+        config = new ConfigManager(this, this.getConfig());
         registerCommands();
         if (!this.getUnitTest()) {
             int pluginId = 7132;
@@ -62,18 +63,15 @@ public class SpectatorMode extends JavaPlugin {
             }, this);
         }
     }
-
+    
+    // This will be mocked to be true in tests
     public boolean getUnitTest() {
         return false;
     }
 
     @Override
     public void onDisable() {
-        spectatorCommand.getAllStates().keySet().stream()
-                .map(UUID::fromString)
-                .map(Bukkit::getPlayer)
-                .filter(Objects::nonNull)
-                .forEach(PlaceholderEntity::remove);
+        PlaceholderEntity.shutdown();
     }
 
     public void registerCommands() {
@@ -81,15 +79,15 @@ public class SpectatorMode extends JavaPlugin {
         Objects.requireNonNull(this.getCommand("s")).setExecutor(spectatorCommand);
         Objects.requireNonNull(this.getCommand("s")).setTabCompleter(new SpectatorTab());
 
-        Objects.requireNonNull(this.getCommand("speed")).setExecutor(new Speed());
+        Objects.requireNonNull(this.getCommand("speed")).setExecutor(new Speed(this));
         Objects.requireNonNull(this.getCommand("speed")).setTabCompleter(new SpeedTab());
 
-        Objects.requireNonNull(this.getCommand("seffect")).setExecutor(new Effects());
+        Objects.requireNonNull(this.getCommand("seffect")).setExecutor(new Effects(this));
 
         getServer().getPluginManager().registerEvents(new OnMoveListener(this), this);
-        getServer().getPluginManager().registerEvents(new OnLogOnListener(), this);
-        getServer().getPluginManager().registerEvents(new OnLogOffListener(), this);
-        getServer().getPluginManager().registerEvents(new OnCommandPreprocessListener(), this);
+        getServer().getPluginManager().registerEvents(new OnLogOnListener(this), this);
+        getServer().getPluginManager().registerEvents(new OnLogOffListener(this), this);
+        getServer().getPluginManager().registerEvents(new OnCommandPreprocessListener(this), this);
     }
 
     @NotNull
@@ -99,7 +97,7 @@ public class SpectatorMode extends JavaPlugin {
 
     public ConfigManager reloadConfigManager() {
         this.reloadConfig();
-        config = new ConfigManager(this.getConfig());
+        config = new ConfigManager(this, this.getConfig());
         return config;
     }
 }
