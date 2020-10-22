@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+
 import me.ohowe12.spectatormode.DataSaver;
+import me.ohowe12.spectatormode.PlaceholderEntity;
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.State;
 import org.bukkit.Bukkit;
@@ -103,6 +105,10 @@ public class Spectator implements CommandExecutor {
 
     public State getState(String uuid) {
         return this.state.get(uuid);
+    }
+
+    public Map<String, State> getAllStates(){
+        return this.state;
     }
 
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label,
@@ -238,6 +244,7 @@ public class Spectator implements CommandExecutor {
     }
 
     public void goIntoSurvivalMode(@NotNull Player target, boolean silent) {
+        PlaceholderEntity.remove(target);
         target.removePotionEffect(PotionEffectType.NIGHT_VISION);
         target.removePotionEffect(PotionEffectType.CONDUIT_POWER);
 
@@ -258,6 +265,7 @@ public class Spectator implements CommandExecutor {
 
     private void goIntoSpectatorMode(@NotNull Player target) {
         state.put(target.getUniqueId().toString(), new State(target));
+        PlaceholderEntity.create(target);
 
         for (@NotNull
         PotionEffect e : target.getActivePotionEffects()) {

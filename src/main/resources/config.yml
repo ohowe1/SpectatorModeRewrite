@@ -68,6 +68,9 @@ disable-switching-message: false
 #If this is true, you won't get the survival-mode-message on join, if the server sent you back into survival
 silence-survival-mode-message-on-join: true
 
+#If this is true, the player will get temporarily replaced by a baby zombie, resembling them, when they go into spectator mode
+placeholder-mob: false
+
 #Message when gamemode set to spectator mode
 spectator-mode-message: '&9Setting gamemode to &b&lSPECTATOR MODE'
 

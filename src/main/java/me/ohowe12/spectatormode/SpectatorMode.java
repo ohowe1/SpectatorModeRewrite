@@ -9,11 +9,14 @@
 package me.ohowe12.spectatormode;
 
 import java.util.Objects;
+import java.util.UUID;
+
 import me.ohowe12.spectatormode.commands.Effects;
 import me.ohowe12.spectatormode.commands.Spectator;
 import me.ohowe12.spectatormode.commands.Speed;
 import me.ohowe12.spectatormode.listener.OnCommandPreprocessListener;
 import me.ohowe12.spectatormode.listener.OnLogOnListener;
+import me.ohowe12.spectatormode.listener.OnLogOffListener;
 import me.ohowe12.spectatormode.listener.OnMoveListener;
 import me.ohowe12.spectatormode.tabCompleter.SpectatorTab;
 import me.ohowe12.spectatormode.tabCompleter.SpeedTab;
@@ -66,7 +69,11 @@ public class SpectatorMode extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        spectatorCommand.getAllStates().keySet().stream()
+                .map(UUID::fromString)
+                .map(Bukkit::getPlayer)
+                .filter(Objects::nonNull)
+                .forEach(PlaceholderEntity::remove);
     }
 
     public void registerCommands() {
@@ -81,8 +88,8 @@ public class SpectatorMode extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new OnMoveListener(this), this);
         getServer().getPluginManager().registerEvents(new OnLogOnListener(), this);
+        getServer().getPluginManager().registerEvents(new OnLogOffListener(), this);
         getServer().getPluginManager().registerEvents(new OnCommandPreprocessListener(), this);
-
     }
 
     @NotNull
