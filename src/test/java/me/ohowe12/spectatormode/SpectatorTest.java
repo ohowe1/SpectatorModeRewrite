@@ -42,6 +42,7 @@ public class SpectatorTest {
         when(configManager.getBoolean("conduit")).thenReturn(true);
         when(configManager.getList("worlds-allowed")).thenReturn(new ArrayList<>());
         when(configManager.getBoolean("placeholder-mob")).thenReturn(false);
+        Messenger.init(plugin);
         PlaceholderEntity.init(plugin);
     }
 
