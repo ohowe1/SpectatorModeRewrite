@@ -160,9 +160,9 @@ public class Spectator implements CommandExecutor {
                 }
                 if (Bukkit.getOnlinePlayers().contains(target)) {
                     if (checkIfEligibleForSpectatorMode(target, true)) {
-                        Messenger.send(sender,"force-success");
+                        Messenger.send(sender, target,"force-success");
                     } else {
-                        Messenger.send(sender,"force-fail");
+                        Messenger.send(sender, target,"force-fail");
                     }
                 }
             } else {

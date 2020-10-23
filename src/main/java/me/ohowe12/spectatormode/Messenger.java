@@ -16,20 +16,28 @@ public abstract class Messenger {
         Messenger.plugin = plugin;
     }
 
-    public static void send(@NotNull CommandSender target, @NotNull String msgkey) {
-        send(target, msgkey, "");
+    public static void send(@NotNull CommandSender sender, @NotNull String msgkey) {
+        send(sender, sender, msgkey, "");
     }
 
-    public static void send(@NotNull CommandSender target, @NotNull String msgkey, @NotNull String extra) {
+    public static void send(@NotNull CommandSender sender, @NotNull CommandSender target, @NotNull String msgkey) {
+        send(sender, target, msgkey, "");
+    }
+
+    public static void send(@NotNull CommandSender sender, @NotNull String msgkey, @NotNull String extra) {
+        send(sender, sender, msgkey, extra);
+    }
+
+    public static void send(@NotNull CommandSender sender, @NotNull CommandSender target, @NotNull String msgkey, @NotNull String extra) {
         String cfgmsg = Objects.requireNonNull(plugin.getConfigManager(), "Messenger not initialized")
                 .getColorizedString(msgkey)
                 .replaceAll("/target/", target.getName());
         ChatMessageType type = cfgmsg.startsWith("/actionbar/") ? ChatMessageType.ACTION_BAR : ChatMessageType.CHAT;
         cfgmsg = cfgmsg.replace("/actionbar/", "");
         cfgmsg += extra;
-        if (!(target instanceof Player) || plugin.getUnitTest())
-            target.sendMessage(cfgmsg);
+        if (!(sender instanceof Player) || plugin.getUnitTest())
+            sender.sendMessage(cfgmsg);
         else
-            ((Player)target).spigot().sendMessage(type, new TextComponent(cfgmsg));
+            ((Player)sender).spigot().sendMessage(type, new TextComponent(cfgmsg));
     }
 }
