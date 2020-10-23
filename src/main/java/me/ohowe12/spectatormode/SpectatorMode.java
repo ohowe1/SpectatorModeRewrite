@@ -44,6 +44,7 @@ public class SpectatorMode extends JavaPlugin {
         instance = this;
         PlaceholderEntity.init(this);
         config = new ConfigManager(this, this.getConfig());
+        DataSaver.init(this.getDataFolder());
         registerCommands();
         if (!this.getUnitTest()) {
             int pluginId = 7132;
