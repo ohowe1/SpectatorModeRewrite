@@ -1,6 +1,7 @@
 package me.ohowe12.spectatormode.commands;
 
 import me.ohowe12.spectatormode.ConfigManager;
+import me.ohowe12.spectatormode.Messenger;
 import me.ohowe12.spectatormode.SpectatorMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -26,15 +27,15 @@ public class Effects implements CommandExecutor {
         ConfigManager manager = plugin.getConfigManager();
         if (label.equalsIgnoreCase("seffect")) {
             if (!(sender instanceof Player)) {
-                sender.sendMessage(manager.getColorizedString("console-message"));
+                Messenger.sendChat(sender,"console-message");
                 return true;
             }
             if (!manager.getBoolean("seffect")) {
-                sender.sendMessage(manager.getColorizedString("permission-message"));
+                Messenger.sendChat(sender,"permission-message");
             }
             Player player = (Player) sender;
             if (!plugin.getSpectatorCommand().inState(player.getUniqueId().toString())) {
-                sender.sendMessage(manager.getColorizedString("no-spectator-message"));
+                Messenger.sendChat(sender,"no-spectator-message");
                 return true;
             }
             if (player.hasPotionEffect(PotionEffectType.NIGHT_VISION)

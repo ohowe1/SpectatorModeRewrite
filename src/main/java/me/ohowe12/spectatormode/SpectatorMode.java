@@ -44,6 +44,7 @@ public class SpectatorMode extends JavaPlugin {
         instance = this;
         PlaceholderEntity.init(this);
         config = new ConfigManager(this, this.getConfig());
+        Messenger.init(config);
         DataSaver.init(this.getDataFolder());
         registerCommands();
         if (!this.getUnitTest()) {

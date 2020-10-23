@@ -14,10 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-import me.ohowe12.spectatormode.DataSaver;
-import me.ohowe12.spectatormode.PlaceholderEntity;
-import me.ohowe12.spectatormode.SpectatorMode;
-import me.ohowe12.spectatormode.State;
+import me.ohowe12.spectatormode.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.GameMode;
@@ -124,13 +121,13 @@ public class Spectator implements CommandExecutor {
             }
             if (args.length == 0) {
                 if (!(sender instanceof Player)) {
-                    sender.sendMessage(plugin.getConfigManager().getColorizedString("console-message"));
+                    Messenger.sendChat(sender,"console-message");
                     return true;
                 }
                 @NotNull
                 Player player = (Player) sender;
                 if (!sEnabled) {
-                    player.sendMessage(plugin.getConfigManager().getColorizedString("disabled-message"));
+                    Messenger.sendChat(sender,"disabled-message");
                     return true;
                 }
                 checkIfEligibleForSpectatorMode(player);
@@ -146,11 +143,11 @@ public class Spectator implements CommandExecutor {
                     return true;
                 case "reload":
                     if (!sender.hasPermission("smpspectator.reload")) {
-                        sender.sendMessage(plugin.getConfigManager().getColorizedString("permission-message"));
+                        Messenger.sendChat(sender,"permission-message");
                         return true;
                     }
                     plugin.reloadConfigManager();
-                    sender.sendMessage(plugin.getConfigManager().getColorizedString("reload-message"));
+                    Messenger.sendChat(sender,"reload-message");
                     return true;
             }
 
@@ -158,20 +155,18 @@ public class Spectator implements CommandExecutor {
                 @Nullable
                 Player target = Bukkit.getPlayerExact(argument);
                 if (target == null) {
-                    sender.sendMessage(plugin.getConfigManager().getColorizedString("invalid-player-message"));
+                    Messenger.sendChat(sender,"invalid-player-message");
                     return true;
                 }
                 if (Bukkit.getOnlinePlayers().contains(target)) {
                     if (checkIfEligibleForSpectatorMode(target, true)) {
-                        sender.sendMessage(plugin.getConfigManager().getColorizedString("force-success")
-                                .replaceAll("/target/", target.getName()));
+                        Messenger.sendChat(sender,"force-success");
                     } else {
-                        sender.sendMessage(plugin.getConfigManager().getColorizedString("force-fail")
-                                .replaceAll("/target/", target.getName()));
+                        Messenger.sendChat(sender,"force-fail");
                     }
                 }
             } else {
-                sender.sendMessage(plugin.getConfigManager().getColorizedString("permission-message"));
+                Messenger.sendChat(sender,"permission-message");
             }
 
             return true;
@@ -183,14 +178,14 @@ public class Spectator implements CommandExecutor {
 
     private void changeEnabled(boolean status, @NotNull CommandSender sender) {
         if (!sender.hasPermission("smpspectator.enable")) {
-            sender.sendMessage(plugin.getConfigManager().getColorizedString("permission-message"));
+            Messenger.sendChat(sender,"permission-message");
             return;
         }
         sEnabled = status;
         if (status) {
-            sender.sendMessage(plugin.getConfigManager().getColorizedString("enable-message"));
+            Messenger.sendChat(sender,"enable-message");
         } else {
-            sender.sendMessage(plugin.getConfigManager().getColorizedString("disable-message"));
+            Messenger.sendChat(sender,"disable-message");
         }
     }
 
@@ -200,7 +195,7 @@ public class Spectator implements CommandExecutor {
 
     private boolean checkIfEligibleForSpectatorMode(@NotNull Player player, boolean force) {
         if (!player.hasPermission("smpspectator.use") && !force) {
-            player.sendMessage(plugin.getConfigManager().getColorizedString("permission-message"));
+            Messenger.sendChat(player,"permission-message");
             return false;
         }
         @NotNull
@@ -209,11 +204,11 @@ public class Spectator implements CommandExecutor {
             assert worlds != null;
             if ((!worlds.contains(player.getWorld().getName()))
                     && plugin.getConfigManager().getBoolean("enforce-worlds")) {
-                player.sendMessage(plugin.getConfigManager().getColorizedString("world-message"));
+                Messenger.sendChat(player,"world-message");
                 return false;
             }
             if (!player.isOnGround()) {
-                player.sendMessage(plugin.getConfigManager().getColorizedString("falling-message"));
+                Messenger.sendChat(player,"falling-message");
                 return false;
             }
             if (state.containsKey(player.getUniqueId().toString())) {
@@ -233,7 +228,7 @@ public class Spectator implements CommandExecutor {
     }
 
     private void playerNotInState(@NotNull Player target) {
-        target.sendMessage(plugin.getConfigManager().getColorizedString("not-in-state-message"));
+        Messenger.sendChat(target,"not-in-state-message");
 
         target.removePotionEffect(PotionEffectType.NIGHT_VISION);
         target.removePotionEffect(PotionEffectType.CONDUIT_POWER);
@@ -288,13 +283,13 @@ public class Spectator implements CommandExecutor {
 
     private void sendSurvivalMessage(Player target) {
         if (!plugin.getConfigManager().getBoolean("disable-switching-message")) {
-            target.sendMessage(plugin.getConfigManager().getColorizedString("survival-mode-message"));
+            Messenger.sendChat(target,"survival-mode-message");
         }
     }
 
     private void sendSpectatorMessage(Player target) {
         if (!plugin.getConfigManager().getBoolean("disable-switching-message")) {
-            target.sendMessage(plugin.getConfigManager().getColorizedString("spectator-mode-message"));
+            Messenger.sendChat(target,"spectator-mode-message");
         }
     }
 

@@ -1,5 +1,6 @@
 package me.ohowe12.spectatormode.listener;
 
+import me.ohowe12.spectatormode.Messenger;
 import me.ohowe12.spectatormode.SpectatorMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,7 +28,7 @@ public class OnCommandPreprocessListener implements Listener {
         }
         if (plugin.getConfigManager().getList("bad-commands")
             .contains(e.getMessage().substring(1))) {
-            player.sendMessage(plugin.getConfigManager().getColorizedString("bad-command-message"));
+            Messenger.sendChat(player,"bad-command-message");
             e.setCancelled(true);
         }
     }
