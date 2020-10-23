@@ -48,7 +48,7 @@ public class State {
         deserialize(serialized);
     }
 
-    public void setPlaceholder(LivingEntity placeholder){this.placeholder = placeholder;}
+    public void setPlaceholder(@Nullable LivingEntity placeholder){this.placeholder = placeholder;}
 
     public Location getPlayerLocation() {
         return playerLocation;
