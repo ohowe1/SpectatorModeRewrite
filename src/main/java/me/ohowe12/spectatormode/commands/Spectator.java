@@ -68,7 +68,7 @@ public class Spectator implements CommandExecutor {
 
         for (int x = 0; x <= 4; x++) {
             for (int z = 0; z <= 4; z++) {
-                world.getChunkAt(defaultChunk.getX() + x, defaultChunk.getZ() + z);
+                world.getChunkAt(defaultChunk.getX() + x, defaultChunk.getZ() + z).addPluginChunkTicket(plugin);
             }
         }
 
@@ -85,6 +85,11 @@ public class Spectator implements CommandExecutor {
             if (entry.getValue() && e instanceof Mob) {
                 Mob m = (Mob) e;
                 m.setTarget(player);
+            }
+        }
+        for (int x = 0; x <= 4; x++) {
+            for (int z = 0; z <= 4; z++) {
+                world.getChunkAt(defaultChunk.getX() + x, defaultChunk.getZ() + z).removePluginChunkTicket(plugin);
             }
         }
     }
