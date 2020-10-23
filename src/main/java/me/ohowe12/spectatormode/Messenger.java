@@ -12,15 +12,15 @@ public abstract class Messenger {
 
     private static SpectatorMode plugin;
 
-    public static void init(@NotNull SpectatorMode plugin){
+    public static void init(@NotNull SpectatorMode plugin) {
         Messenger.plugin = plugin;
     }
 
-    public static void send(@NotNull CommandSender target, @NotNull String msgkey){
+    public static void send(@NotNull CommandSender target, @NotNull String msgkey) {
         send(target, msgkey, "");
     }
 
-    public static void send(@NotNull CommandSender target, @NotNull String msgkey, @NotNull String extra){
+    public static void send(@NotNull CommandSender target, @NotNull String msgkey, @NotNull String extra) {
         String cfgmsg = Objects.requireNonNull(plugin.getConfigManager(), "Messenger not initialized")
                 .getColorizedString(msgkey)
                 .replaceAll("/target/", target.getName());
