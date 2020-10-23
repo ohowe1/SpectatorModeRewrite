@@ -160,9 +160,9 @@ public class Spectator implements CommandExecutor {
                 }
                 if (Bukkit.getOnlinePlayers().contains(target)) {
                     if (checkIfEligibleForSpectatorMode(target, true)) {
-                        Messenger.send(sender, target,"force-success");
+                        Messenger.send(sender, target,"force-success", target.getGameMode().name());
                     } else {
-                        Messenger.send(sender, target,"force-fail");
+                        Messenger.send(sender, target,"force-fail", target.getGameMode() == GameMode.SPECTATOR ? GameMode.SURVIVAL.name() : GameMode.SPECTATOR.name());
                     }
                 }
             } else {
