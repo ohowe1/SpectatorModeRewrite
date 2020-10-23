@@ -16,11 +16,11 @@ public abstract class Messenger {
         Messenger.plugin = plugin;
     }
 
-    public static void sendChat(@NotNull CommandSender target, @NotNull String msgkey){
-        sendChat(target, msgkey, "");
+    public static void send(@NotNull CommandSender target, @NotNull String msgkey){
+        send(target, msgkey, "");
     }
 
-    public static void sendChat(@NotNull CommandSender target, @NotNull String msgkey, @NotNull String extra){
+    public static void send(@NotNull CommandSender target, @NotNull String msgkey, @NotNull String extra){
         String cfgmsg = Objects.requireNonNull(plugin.getConfigManager(), "Messenger not initialized")
                 .getColorizedString(msgkey)
                 .replaceAll("/target/", target.getName());

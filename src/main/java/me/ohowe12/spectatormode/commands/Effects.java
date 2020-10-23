@@ -27,15 +27,15 @@ public class Effects implements CommandExecutor {
         ConfigManager manager = plugin.getConfigManager();
         if (label.equalsIgnoreCase("seffect")) {
             if (!(sender instanceof Player)) {
-                Messenger.sendChat(sender,"console-message");
+                Messenger.send(sender,"console-message");
                 return true;
             }
             if (!manager.getBoolean("seffect")) {
-                Messenger.sendChat(sender,"permission-message");
+                Messenger.send(sender,"permission-message");
             }
             Player player = (Player) sender;
             if (!plugin.getSpectatorCommand().inState(player.getUniqueId().toString())) {
-                Messenger.sendChat(sender,"no-spectator-message");
+                Messenger.send(sender,"no-spectator-message");
                 return true;
             }
             if (player.hasPotionEffect(PotionEffectType.NIGHT_VISION)

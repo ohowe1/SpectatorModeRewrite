@@ -129,7 +129,7 @@ public class OnMoveListener implements Listener {
             return;
         }
         if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.SPECTATE)) {
-            Messenger.sendChat(e.getPlayer(),"permission-message");
+            Messenger.send(e.getPlayer(),"permission-message");
             e.setCancelled(true);
         }
     }

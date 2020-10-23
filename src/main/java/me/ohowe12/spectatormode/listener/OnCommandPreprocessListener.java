@@ -28,7 +28,7 @@ public class OnCommandPreprocessListener implements Listener {
         }
         if (plugin.getConfigManager().getList("bad-commands")
             .contains(e.getMessage().substring(1))) {
-            Messenger.sendChat(player,"bad-command-message");
+            Messenger.send(player,"bad-command-message");
             e.setCancelled(true);
         }
     }
