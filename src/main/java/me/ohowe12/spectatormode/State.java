@@ -70,26 +70,25 @@ public class State {
     }
 
     private void prepareMobs(@NotNull Player player) {
-        @NotNull Map<String, Boolean> ids = new HashMap<>();
+        @NotNull
+        Map<String, Boolean> ids = new HashMap<>();
 
         for (Entity e : player.getNearbyEntities(64, 64, 64)) {
             if (e instanceof LivingEntity) {
-                @NotNull LivingEntity living = (LivingEntity) e;
+                @NotNull
+                LivingEntity living = (LivingEntity) e;
 
                 if (living.getRemoveWhenFarAway()) {
                     living.setRemoveWhenFarAway(false);
+                    boolean targeted = false;
                     if (living instanceof Mob) {
-                        @NotNull Mob m = (Mob) living;
-                        try {
-                            ids.put(m.getUniqueId().toString(),
-                                Objects.equals(m.getTarget(), player));
-                        } catch (NullPointerException ignored) {
-
+                        @NotNull
+                        Mob m = (Mob) living;
+                        if (m.getTarget() instanceof Player) {
+                            targeted = player.equals((Player) m.getTarget());
                         }
-                    } else {
-                        ids.put(living.getUniqueId().toString(), false);
+                        ids.put(living.getUniqueId().toString(), targeted);
                     }
-
                 }
             }
 

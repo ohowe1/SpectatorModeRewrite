@@ -68,23 +68,28 @@ public class Spectator implements CommandExecutor {
 
         for (int x = 0; x <= 4; x++) {
             for (int z = 0; z <= 4; z++) {
-                world.getChunkAt(defaultChunk.getX() + x, defaultChunk.getZ() + z);
+                world.getChunkAt(defaultChunk.getX() + x, defaultChunk.getZ() + z).addPluginChunkTicket(plugin);
             }
         }
 
         for (@NotNull
         HashMap.Entry<String, Boolean> entry : state.get(player.getUniqueId().toString()).getMobIds().entrySet()) {
             UUID key = UUID.fromString(entry.getKey());
-            if ((!(Bukkit.getEntity(key) instanceof LivingEntity))) {
-                return;
+            if (!(Bukkit.getEntity(key) instanceof LivingEntity)) {
+                continue;
             }
-            LivingEntity e = (LivingEntity) Objects.requireNonNull(Bukkit.getEntity(key));
+            LivingEntity e = (LivingEntity) Bukkit.getEntity(key);
 
             e.setRemoveWhenFarAway(true);
 
             if (entry.getValue() && e instanceof Mob) {
                 Mob m = (Mob) e;
                 m.setTarget(player);
+            }
+        }
+        for (int x = 0; x <= 4; x++) {
+            for (int z = 0; z <= 4; z++) {
+                world.getChunkAt(defaultChunk.getX() + x, defaultChunk.getZ() + z).removePluginChunkTicket(plugin);
             }
         }
     }
