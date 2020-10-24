@@ -75,10 +75,10 @@ public class Spectator implements CommandExecutor {
         for (@NotNull
         HashMap.Entry<String, Boolean> entry : state.get(player.getUniqueId().toString()).getMobIds().entrySet()) {
             UUID key = UUID.fromString(entry.getKey());
-            if ((!(Bukkit.getEntity(key) instanceof LivingEntity))) {
-                return;
+            if (!(Bukkit.getEntity(key) instanceof LivingEntity)) {
+                continue;
             }
-            LivingEntity e = (LivingEntity) Objects.requireNonNull(Bukkit.getEntity(key));
+            LivingEntity e = (LivingEntity) Bukkit.getEntity(key);
 
             e.setRemoveWhenFarAway(true);
 
