@@ -95,11 +95,11 @@ public class Spectator implements CommandExecutor {
     }
 
     private void setState(@NotNull Player player) {
-        final String UUID = player.getUniqueId().toString();
-        player.teleport(state.get(UUID).getPlayerLocation());
-        player.setFireTicks(state.get(UUID).getFireTicks());
-        player.addPotionEffects(state.get(UUID).getPotionEffects());
-        player.setRemainingAir(state.get(UUID).getWaterBubbles());
+        final String uuid = player.getUniqueId().toString();
+        player.teleport(state.get(uuid).getPlayerLocation());
+        player.setFireTicks(state.get(uuid).getFireTicks());
+        player.addPotionEffects(state.get(uuid).getPotionEffects());
+        player.setRemainingAir(state.get(uuid).getWaterBubbles());
     }
 
     public boolean inState(String uuid) {
