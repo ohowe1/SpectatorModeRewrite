@@ -8,6 +8,7 @@
 
 package me.ohowe12.spectatormode.commands;
 
+import me.ohowe12.spectatormode.Messenger;
 import me.ohowe12.spectatormode.SpectatorMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,11 +19,10 @@ import org.jetbrains.annotations.Nullable;
 
 public class Speed implements @Nullable CommandExecutor {
 
-    final SpectatorMode plugin;
+    private final SpectatorMode plugin;
 
-    public Speed() {
-        plugin = SpectatorMode.getInstance();
-        plugin.saveDefaultConfig();
+    public Speed(SpectatorMode plugin) {
+        this.plugin = plugin;
     }
 
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd,
@@ -32,17 +32,15 @@ public class Speed implements @Nullable CommandExecutor {
         if ((label.equalsIgnoreCase("speed")) || (label.equalsIgnoreCase("sp"))) {
             float speed;
             if (!speedAllowed) {
-                sender.sendMessage(
-                    plugin.getConfigManager().getColorizedString("permission-message"));
+                Messenger.send(sender,"permission-message");
             }
             if (!(sender instanceof Player)) {
-                sender.sendMessage(plugin.getConfigManager().getColorizedString("console-message"));
+                Messenger.send(sender,"console-message");
                 return true;
 
             }
             if (!sender.hasPermission("smpspectator.speed")) {
-                sender.sendMessage(
-                    plugin.getConfigManager().getColorizedString("permission-message"));
+                Messenger.send(sender,"permission-message");
                 return true;
             }
             Player player = (Player) sender;
@@ -53,8 +51,7 @@ public class Speed implements @Nullable CommandExecutor {
                     speed = 2;
                 }
                 player.setFlySpeed(speed / 10);
-                player.sendMessage(
-                    plugin.getConfigManager().getColorizedString("speed-message") + speed);
+                Messenger.send(sender,"speed-message", String.valueOf(speed));
                 return true;
 
             }
@@ -62,18 +59,15 @@ public class Speed implements @Nullable CommandExecutor {
             try {
                 speed = Float.parseFloat(args[0]);
             } catch (NumberFormatException e) {
-                player.sendMessage(
-                    plugin.getConfigManager().getColorizedString("invalid-speed-message"));
+                Messenger.send(sender,"invalid-speed-message");
                 return true;
             }
 
             if (speed > (float) maxSpeed || speed < 0f) {
-                player.sendMessage(
-                    plugin.getConfigManager().getColorizedString("invalid-speed-message"));
+                Messenger.send(sender,"invalid-speed-message");
             } else {
                 player.setFlySpeed(speed / 10);
-                player.sendMessage(
-                    plugin.getConfigManager().getColorizedString("speed-message") + speed);
+                Messenger.send(sender,"speed-message", String.valueOf(speed));
             }
             return true;
 

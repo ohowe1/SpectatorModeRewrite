@@ -9,11 +9,13 @@
 package me.ohowe12.spectatormode;
 
 import java.util.Objects;
+
 import me.ohowe12.spectatormode.commands.Effects;
 import me.ohowe12.spectatormode.commands.Spectator;
 import me.ohowe12.spectatormode.commands.Speed;
 import me.ohowe12.spectatormode.listener.OnCommandPreprocessListener;
 import me.ohowe12.spectatormode.listener.OnLogOnListener;
+import me.ohowe12.spectatormode.listener.OnLogOffListener;
 import me.ohowe12.spectatormode.listener.OnMoveListener;
 import me.ohowe12.spectatormode.tabCompleter.SpectatorTab;
 import me.ohowe12.spectatormode.tabCompleter.SpeedTab;
@@ -28,6 +30,7 @@ public class SpectatorMode extends JavaPlugin {
     private Spectator spectatorCommand;
     private ConfigManager config;
 
+    @Deprecated
     public static SpectatorMode getInstance() {
         return instance;
     }
@@ -39,7 +42,10 @@ public class SpectatorMode extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        config = new ConfigManager(this.getConfig());
+        PlaceholderEntity.init(this);
+        config = new ConfigManager(this, this.getConfig());
+        Messenger.init(this);
+        DataSaver.init(this.getDataFolder());
         registerCommands();
         if (!this.getUnitTest()) {
             int pluginId = 7132;
@@ -59,14 +65,15 @@ public class SpectatorMode extends JavaPlugin {
             }, this);
         }
     }
-
+    
+    // This will be mocked to be true in tests
     public boolean getUnitTest() {
         return false;
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        PlaceholderEntity.shutdown();
     }
 
     public void registerCommands() {
@@ -74,15 +81,15 @@ public class SpectatorMode extends JavaPlugin {
         Objects.requireNonNull(this.getCommand("s")).setExecutor(spectatorCommand);
         Objects.requireNonNull(this.getCommand("s")).setTabCompleter(new SpectatorTab());
 
-        Objects.requireNonNull(this.getCommand("speed")).setExecutor(new Speed());
+        Objects.requireNonNull(this.getCommand("speed")).setExecutor(new Speed(this));
         Objects.requireNonNull(this.getCommand("speed")).setTabCompleter(new SpeedTab());
 
-        Objects.requireNonNull(this.getCommand("seffect")).setExecutor(new Effects());
+        Objects.requireNonNull(this.getCommand("seffect")).setExecutor(new Effects(this));
 
         getServer().getPluginManager().registerEvents(new OnMoveListener(this), this);
-        getServer().getPluginManager().registerEvents(new OnLogOnListener(), this);
-        getServer().getPluginManager().registerEvents(new OnCommandPreprocessListener(), this);
-
+        getServer().getPluginManager().registerEvents(new OnLogOnListener(this), this);
+        getServer().getPluginManager().registerEvents(new OnLogOffListener(this), this);
+        getServer().getPluginManager().registerEvents(new OnCommandPreprocessListener(this), this);
     }
 
     @NotNull
@@ -92,7 +99,7 @@ public class SpectatorMode extends JavaPlugin {
 
     public ConfigManager reloadConfigManager() {
         this.reloadConfig();
-        config = new ConfigManager(this.getConfig());
+        config = new ConfigManager(this, this.getConfig());
         return config;
     }
 }
