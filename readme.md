@@ -144,3 +144,27 @@ not-in-state-message: '&cYou did not use this command to get into spectator mode
 ```
 </p>
 </details>
+
+<details><summary>Permissions</summary>
+<p>
+  
+## Permissions for SMP Spectator Mode
+`spectator.*`: Give access to the entire permission node
+
+`smpspectator.use`: Be able to use the /s command
+
+`smpspectator.enable`: Be able to enable and disable spectator mode from the /s command
+
+`smpspectator.speed`: Be able to change fly speed in spectator mode
+
+`smpspectator.bypass`: Be able to bypass the y-level and block restrictions
+
+`smpspectator.force`: Be able to force other players into and out of spectator mode
+
+`smpspectator.toggle`: Be able to use the /seffect command
+
+`smpspectator.reload`: Be able to reload the config
+
+</p>
+</details>
+
