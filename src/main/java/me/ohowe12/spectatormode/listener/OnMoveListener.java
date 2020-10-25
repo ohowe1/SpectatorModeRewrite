@@ -9,6 +9,8 @@
 package me.ohowe12.spectatormode.listener;
 
 import java.util.Objects;
+
+import me.ohowe12.spectatormode.Messenger;
 import me.ohowe12.spectatormode.SpectatorMode;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -127,8 +129,7 @@ public class OnMoveListener implements Listener {
             return;
         }
         if (e.getCause().equals(PlayerTeleportEvent.TeleportCause.SPECTATE)) {
-            e.getPlayer()
-                .sendMessage(plugin.getConfigManager().getColorizedString("permission-message"));
+            Messenger.send(e.getPlayer(),"permission-message");
             e.setCancelled(true);
         }
     }

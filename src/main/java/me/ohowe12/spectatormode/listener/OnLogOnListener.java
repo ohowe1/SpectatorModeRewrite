@@ -8,6 +8,7 @@
 
 package me.ohowe12.spectatormode.listener;
 
+import me.ohowe12.spectatormode.PlaceholderEntity;
 import me.ohowe12.spectatormode.SpectatorMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,19 +18,25 @@ import org.jetbrains.annotations.NotNull;
 
 public class OnLogOnListener implements Listener {
 
-    final SpectatorMode plugin = SpectatorMode.getInstance();
+    private final SpectatorMode plugin;
+
+    public OnLogOnListener(SpectatorMode plugin) {
+        this.plugin = plugin;
+    }
 
     @EventHandler
     public void onLogOn(@NotNull final PlayerJoinEvent e) {
-        final boolean teleportBack = SpectatorMode.getInstance().getConfigManager().getBoolean("teleport-back");
-        if (teleportBack) {
-            final Player player = e.getPlayer();
-            try {
-                if (plugin.getSpectatorCommand().inState(player.getUniqueId().toString())) {
+        final boolean teleportBack = plugin.getConfigManager().getBoolean("teleport-back");
+        final Player player = e.getPlayer();
+        try {
+            if (plugin.getSpectatorCommand().inState(player.getUniqueId().toString())) {
+                if (teleportBack) {
                     teleportPlayerBack(player);
+                }else{
+                    PlaceholderEntity.create(player);
                 }
-            } catch (final NullPointerException ignored) {
             }
+        } catch (final NullPointerException ignored) {
         }
     }
 
