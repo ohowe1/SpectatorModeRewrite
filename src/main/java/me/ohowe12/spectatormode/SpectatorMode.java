@@ -19,6 +19,8 @@ import me.ohowe12.spectatormode.listener.OnLogOffListener;
 import me.ohowe12.spectatormode.listener.OnMoveListener;
 import me.ohowe12.spectatormode.tabCompleter.SpectatorTab;
 import me.ohowe12.spectatormode.tabCompleter.SpeedTab;
+import me.ohowe12.spectatormode.util.DataSaver;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -45,7 +47,7 @@ public class SpectatorMode extends JavaPlugin {
         PlaceholderEntity.init(this);
         config = new ConfigManager(this, this.getConfig());
         Messenger.init(this);
-        DataSaver.init(this.getDataFolder());
+        DataSaver.init(this.getDataFolder(), this);
         registerCommands();
         if (!this.getUnitTest()) {
             int pluginId = 7132;

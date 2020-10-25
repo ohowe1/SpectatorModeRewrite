@@ -23,6 +23,7 @@ import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import me.ohowe12.spectatormode.SpectatorMode;
 
@@ -36,6 +37,8 @@ public class State {
     private ArrayList<PotionEffect> potionEffects;
     private int waterBubbles;
     private Map<String, Boolean> mobIds;
+    @Nullable
+    private LivingEntity placeholder;
 
     private State(@NotNull Player player, @NotNull SpectatorMode plugin) {
         this.player = player;
@@ -50,6 +53,14 @@ public class State {
     private State(@NotNull Map<String, Object> serialized, @NotNull SpectatorMode plugin) {
         this.plugin = plugin;
         deserialize(serialized);
+    }
+
+    public @Nullable LivingEntity getPlaceholder() {
+        return placeholder;
+    }
+
+    public void setPlaceholder(@Nullable LivingEntity placeholder) {
+        this.placeholder = placeholder;
     }
 
     public static State fromMap(@NotNull Map<String, Object> serialized, SpectatorMode plugin) {
@@ -114,7 +125,7 @@ public class State {
                         }
                     }
                 }
-                
+
             }
         }
     }

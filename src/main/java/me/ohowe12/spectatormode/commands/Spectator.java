@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import me.ohowe12.spectatormode.Messenger;
+import me.ohowe12.spectatormode.PlaceholderEntity;
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.util.DataSaver;
 import me.ohowe12.spectatormode.util.State;
@@ -228,7 +230,7 @@ public class Spectator implements CommandExecutor {
     }
 
     private void goIntoSpectatorMode(@NotNull Player target) {
-        state.put(target.getUniqueId().toString(), new State(target));
+        state.put(target.getUniqueId().toString(), State.fromPlayer(target, plugin));
         PlaceholderEntity.create(target);
 
         for (@NotNull

@@ -21,8 +21,10 @@ public class DataSaver {
     private static File dataFolder;
 
     private static FileConfiguration data;
+    private static SpectatorMode plugin;
 
-    public static void init(File dataFolder) {
+    public static void init(File dataFolder, SpectatorMode plugin) {
+        DataSaver.plugin = plugin;
         DataSaver.dataFolder = dataFolder;
         data = YamlConfiguration
         .loadConfiguration(new File(dataFolder, "data.yml"));

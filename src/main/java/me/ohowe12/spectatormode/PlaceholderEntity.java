@@ -10,6 +10,7 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
+import me.ohowe12.spectatormode.util.State;
 
 import java.util.Objects;
 import java.util.UUID;
