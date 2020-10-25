@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.UUID;
 import me.ohowe12.spectatormode.ConfigManager;
 import me.ohowe12.spectatormode.SpectatorMode;
-import me.ohowe12.spectatormode.State;
+import me.ohowe12.spectatormode.util.State;
 import me.ohowe12.spectatormode.commands.Spectator;
 import org.bukkit.GameMode;
 import org.bukkit.Location;

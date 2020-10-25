@@ -11,21 +11,15 @@ package me.ohowe12.spectatormode.commands;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
-import me.ohowe12.spectatormode.DataSaver;
+
 import me.ohowe12.spectatormode.SpectatorMode;
-import me.ohowe12.spectatormode.State;
+import me.ohowe12.spectatormode.util.DataSaver;
+import me.ohowe12.spectatormode.util.State;
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -59,39 +53,7 @@ public class Spectator implements CommandExecutor {
     }
 
     private void setMobs(@NotNull Player player) {
-        @NotNull
-        Location loc = state.get(player.getUniqueId().toString()).getPlayerLocation();
-        World world = loc.getWorld();
-        assert world != null;
-        @NotNull
-        Chunk defaultChunk = world.getChunkAt(loc);
-
-        for (int x = 0; x <= 4; x++) {
-            for (int z = 0; z <= 4; z++) {
-                world.getChunkAt(defaultChunk.getX() + x, defaultChunk.getZ() + z).addPluginChunkTicket(plugin);
-            }
-        }
-
-        for (@NotNull
-        HashMap.Entry<String, Boolean> entry : state.get(player.getUniqueId().toString()).getMobIds().entrySet()) {
-            UUID key = UUID.fromString(entry.getKey());
-            if (!(Bukkit.getEntity(key) instanceof LivingEntity)) {
-                continue;
-            }
-            LivingEntity e = (LivingEntity) Bukkit.getEntity(key);
-
-            e.setRemoveWhenFarAway(true);
-
-            if (entry.getValue() && e instanceof Mob) {
-                Mob m = (Mob) e;
-                m.setTarget(player);
-            }
-        }
-        for (int x = 0; x <= 4; x++) {
-            for (int z = 0; z <= 4; z++) {
-                world.getChunkAt(defaultChunk.getX() + x, defaultChunk.getZ() + z).removePluginChunkTicket(plugin);
-            }
-        }
+        state.get(player.getUniqueId().toString()).unPrepareMobs();
     }
 
     private void setState(@NotNull Player player) {
@@ -110,6 +72,7 @@ public class Spectator implements CommandExecutor {
         return this.state.get(uuid);
     }
 
+    @SuppressWarnings("unchecked")
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label,
             @NotNull String @NotNull [] args) {
         worlds = (List<String>) plugin.getConfigManager().getList("worlds-allowed");
@@ -262,7 +225,7 @@ public class Spectator implements CommandExecutor {
     }
 
     private void goIntoSpectatorMode(@NotNull Player target) {
-        state.put(target.getUniqueId().toString(), new State(target));
+        state.put(target.getUniqueId().toString(), State.fromPlayer(target, plugin));
 
         for (@NotNull
         PotionEffect e : target.getActivePotionEffects()) {

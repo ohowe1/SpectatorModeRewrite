@@ -1,4 +1,4 @@
-package me.ohowe12.spectatormode;
+package me.ohowe12.spectatormode.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +12,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import me.ohowe12.spectatormode.SpectatorMode;
+
 
 public class DataSaver {
 
@@ -38,6 +41,7 @@ public class DataSaver {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static void load(final Map<String, State> state) {
         if (data.getConfigurationSection("data") == null) {
             return;
@@ -65,7 +69,7 @@ public class DataSaver {
                 final Location location = data.getLocation("data." + key + ".Location");
                 value.put("Location", location);
 
-                state.put(key, new State(value));
+                state.put(key, State.fromMap(value, plugin));
             });
         } catch (final NullPointerException ignored) {
         }

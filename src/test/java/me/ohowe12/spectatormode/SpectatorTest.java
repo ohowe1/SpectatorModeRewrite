@@ -1,7 +1,9 @@
 package me.ohowe12.spectatormode;
 
-
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -9,10 +11,15 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.UUID;
+
 import me.ohowe12.spectatormode.commands.Spectator;
+
+import org.bukkit.Chunk;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -94,6 +101,15 @@ public class SpectatorTest {
 
         final World world = mock(World.class);
         when(world.getName()).thenReturn("world");
+        when(player.getLocation()).thenReturn(new Location(world, 0, 0, 0));
+
+        Chunk chunk = mock(Chunk.class);
+        when(chunk.getX()).thenReturn(0);
+        when(chunk.getZ()).thenReturn(0);
+        when(world.getChunkAt(any(Location.class))).thenReturn(chunk);
+        Chunk chunk1 = mock(Chunk.class);
+        when(chunk1.getEntities()).thenReturn(new Entity[0]);
+        when(world.getChunkAt(anyInt(), anyInt())).thenReturn(chunk1);
 
         when(player.getWorld()).thenReturn(world);
 
