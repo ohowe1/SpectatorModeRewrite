@@ -8,6 +8,7 @@
 
 package me.ohowe12.spectatormode;
 
+import java.io.File;
 import java.util.Objects;
 
 import me.ohowe12.spectatormode.commands.Effects;
@@ -23,7 +24,9 @@ import me.ohowe12.spectatormode.util.DataSaver;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.java.JavaPluginLoader;
 import org.jetbrains.annotations.NotNull;
 
 public class SpectatorMode extends JavaPlugin {
@@ -31,6 +34,21 @@ public class SpectatorMode extends JavaPlugin {
     private static SpectatorMode instance;
     private Spectator spectatorCommand;
     private ConfigManager config;
+    private final boolean unitTest;
+
+    public boolean isUnitTest() {
+        return unitTest;
+    }
+
+    public SpectatorMode() {
+        super();
+        unitTest = false;
+    }
+
+    protected SpectatorMode(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
+        super(loader, description, dataFolder, file);
+        unitTest = true;
+    }
 
     @Deprecated
     public static SpectatorMode getInstance() {
@@ -49,7 +67,7 @@ public class SpectatorMode extends JavaPlugin {
         Messenger.init(this);
         DataSaver.init(this.getDataFolder(), this);
         registerCommands();
-        if (!this.getUnitTest()) {
+        if (!unitTest) {
             int pluginId = 7132;
             new Metrics(this, pluginId);
             UpdateChecker.getVersion(version -> {
@@ -66,11 +84,6 @@ public class SpectatorMode extends JavaPlugin {
                 }
             }, this);
         }
-    }
-    
-    // This will be mocked to be true in tests
-    public boolean getUnitTest() {
-        return false;
     }
 
     @Override

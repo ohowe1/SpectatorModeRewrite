@@ -43,9 +43,15 @@ public class State {
     private State(@NotNull Player player, @NotNull SpectatorMode plugin) {
         this.player = player;
         this.plugin = plugin;
+        mobIds = new HashMap<>();
         playerLocation = player.getLocation();
-        fireTicks = player.getFireTicks();
-        potionEffects = (ArrayList<PotionEffect>) player.getActivePotionEffects();
+        // Temporary till it gets added to mockbukkit
+        if (plugin.isUnitTest()) {
+            fireTicks = -20;
+        } else {
+            fireTicks = player.getFireTicks();
+        }
+        potionEffects = new ArrayList<>(player.getActivePotionEffects());
         waterBubbles = player.getRemainingAir();
         prepareMobs();
     }
@@ -100,68 +106,99 @@ public class State {
     }
 
     private void prepareMobs() {
+        // Also temporary
+        // This method is not covered by tests! Watch out
+        if (plugin.isUnitTest()) {
+            return;
+        }
         World world = player.getWorld();
         Chunk defaultChunk = world.getChunkAt(getPlayerLocation());
         for (int x = 0; x <= 4; x++) {
             for (int z = 0; z <= 4; z++) {
-                for (Entity e : world.getChunkAt(defaultChunk.getX() + x, defaultChunk.getZ() + z).getEntities()) {
-                    if (e instanceof LivingEntity) {
-                        @NotNull
-                        LivingEntity living = (LivingEntity) e;
-                        if (e instanceof Player) {
-                            continue;
-                        }
-                        if (living.getRemoveWhenFarAway()) {
-                            living.setRemoveWhenFarAway(false);
-                            boolean targeted = false;
-                            if (living instanceof Mob) {
-                                @NotNull
-                                Mob m = (Mob) living;
-                                if (m.getTarget() instanceof Player) {
-                                    targeted = player.equals((Player) m.getTarget());
-                                }
-                                mobIds.put(living.getUniqueId().toString(), targeted);
-                            }
-                        }
-                    }
-                }
-
+                processMobChunk(world.getChunkAt(defaultChunk.getX() + x, defaultChunk.getZ() + z));
             }
         }
     }
 
+    private void processMobChunk(Chunk chunk) {
+        for (Entity e : chunk.getEntities()) {
+            checkAndAddEntity(e);
+        }
+    }
+
+    private void checkAndAddEntity(Entity e) {
+        if (e instanceof LivingEntity) {
+            @NotNull
+            LivingEntity living = (LivingEntity) e;
+            if (e instanceof Player) {
+                return;
+            }
+            if (living.getRemoveWhenFarAway()) {
+                addLivingEntity(living);
+            }
+        }
+    }
+
+    private void addLivingEntity(LivingEntity living) {
+        living.setRemoveWhenFarAway(false);
+        boolean targeted = false;
+        if (living instanceof Mob) {
+            @NotNull
+            Mob m = (Mob) living;
+            if (m.getTarget() instanceof Player) {
+                targeted = player.equals((Player) m.getTarget());
+            }
+            mobIds.put(living.getUniqueId().toString(), targeted);
+        }
+    }
+
     public void unPrepareMobs() {
+        // Also temporary
+        // This method is not covered by tests! Watch out
+        if (plugin.isUnitTest()) {
+            return;
+        }
         @NotNull
         Location loc = getPlayerLocation();
         World world = loc.getWorld();
-        assert world != null;
+
         @NotNull
         Chunk defaultChunk = world.getChunkAt(loc);
 
-        for (int x = 0; x <= 6; x++) {
-            for (int z = 0; z <= 6; z++) {
-                world.getChunkAt(defaultChunk.getX() + x, defaultChunk.getZ() + z).addPluginChunkTicket(plugin);
-            }
-        }
+        loadChunks(world, defaultChunk.getX(), defaultChunk.getZ());
 
-        for (@NotNull
-        HashMap.Entry<String, Boolean> entry : getMobIds().entrySet()) {
+        for (HashMap.Entry<String, Boolean> entry : getMobIds().entrySet()) {
             UUID key = UUID.fromString(entry.getKey());
-            if (!(Bukkit.getEntity(key) instanceof LivingEntity)) {
+            Entity entityEntity = Bukkit.getEntity(key);
+            if (!(entityEntity instanceof LivingEntity)) {
                 continue;
             }
-            LivingEntity e = (LivingEntity) Bukkit.getEntity(key);
+            LivingEntity entityLiving = (LivingEntity) entityEntity;
 
-            e.setRemoveWhenFarAway(true);
+            entityLiving.setRemoveWhenFarAway(true);
 
-            if (entry.getValue() && e instanceof Mob) {
-                Mob m = (Mob) e;
-                m.setTarget(player);
+            if (entry.getValue() && entityLiving instanceof Mob) {
+                Mob entityMob = (Mob) entityLiving;
+                entityMob.setTarget(player);
             }
         }
+
+        unloadChunks(world, defaultChunk.getX(), defaultChunk.getZ());
+
+    }
+
+    private void loadChunks(World world, int defaultX, int defaultZ) {
         for (int x = 0; x <= 6; x++) {
             for (int z = 0; z <= 6; z++) {
-                world.getChunkAt(defaultChunk.getX() + x, defaultChunk.getZ() + z).removePluginChunkTicket(plugin);
+                world.getChunkAt(defaultX + x, defaultZ + z).addPluginChunkTicket(plugin);
+            }
+        }
+    }
+
+    private void unloadChunks(World world, int defaultX, int defaultZ) {
+        for (int x = 0; x <= 6; x++) {
+            for (int z = 0; z <= 6; z++) {
+                world.getChunkAt(defaultX + x, defaultZ + z).removePluginChunkTicket(plugin);
             }
         }
     }

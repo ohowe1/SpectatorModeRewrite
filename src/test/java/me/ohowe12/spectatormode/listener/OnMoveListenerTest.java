@@ -37,7 +37,6 @@ public class OnMoveListenerTest {
     public void setUp() {
         when(plugin.getConfigManager()).thenReturn(configManager);
         when(plugin.getSpectatorCommand()).thenReturn(spectator);
-        when(plugin.getUnitTest()).thenReturn(true);
 
         resetAll();
         when(configManager.getInt("y-level")).thenReturn(0);
