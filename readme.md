@@ -85,6 +85,9 @@ silence-survival-mode-message-on-join: true
 #If this is true, the player will get temporarily replaced by a baby zombie, resembling them, when they go into spectator mode
 placeholder-mob: false
 
+#If this is true the message with a new version, or up to date message will appear
+update-checker: true
+
 ### Message section ###
 #Adding /actionbar/ in front of a message, will make it appear in the actionbar instead of the chat
 
