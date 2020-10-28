@@ -9,7 +9,9 @@
 package me.ohowe12.spectatormode;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.Callable;
 
 import me.ohowe12.spectatormode.commands.Effects;
 import me.ohowe12.spectatormode.commands.Spectator;
@@ -68,22 +70,45 @@ public class SpectatorMode extends JavaPlugin {
         DataSaver.init(this.getDataFolder(), this);
         registerCommands();
         if (!unitTest) {
-            int pluginId = 7132;
-            new Metrics(this, pluginId);
-            UpdateChecker.getVersion(version -> {
-                if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
-                    Bukkit.getConsoleSender()
-                            .sendMessage(ChatColor.AQUA
-                                    + "[SMP SPECTATOR MODE] SMP SPECTATOR MODE is all up to date at version "
-                                    + this.getDescription().getVersion() + '!');
-                } else {
-                    Bukkit.getConsoleSender()
-                            .sendMessage(ChatColor.DARK_RED
-                                    + "[SMP SPECTATOR MODE] A new version of SMP SPECTATOR MODE is available (version "
-                                    + version + ")! You are on version " + this.getDescription().getVersion() + ".");
-                }
-            }, this);
+            addMetrics();
+            
+            if (config.getBoolean("update-checker")) {
+                checkUpdate();
+            }
         }
+    }
+
+    
+
+    private void addMetrics() {
+        Metrics metrics = new Metrics(this, 7132);
+        for(Map.Entry<String, String> entry : config.getAllBooleansAndNumbers().entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            getLogger().info(key + ": " + value);
+            metrics.addCustomChart(new Metrics.SimplePie(key + "_CHARTID", new Callable<String>(){
+                @Override
+                public String call() throws Exception {
+                    return value;
+                }
+            }));
+        }
+    }
+
+    private void checkUpdate() {
+        UpdateChecker.getVersion(version -> {
+            if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
+                Bukkit.getConsoleSender()
+                        .sendMessage(ChatColor.AQUA
+                                + "[SMP SPECTATOR MODE] SMP SPECTATOR MODE is all up to date at version "
+                                + this.getDescription().getVersion() + '!');
+            } else {
+                Bukkit.getConsoleSender()
+                        .sendMessage(ChatColor.DARK_RED
+                                + "[SMP SPECTATOR MODE] A new version of SMP SPECTATOR MODE is available (version "
+                                + version + ")! You are on version " + this.getDescription().getVersion() + ".");
+            }
+        }, this);
     }
 
     @Override

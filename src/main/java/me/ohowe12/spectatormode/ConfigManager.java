@@ -1,6 +1,8 @@
 package me.ohowe12.spectatormode;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.Configuration;
@@ -23,6 +25,16 @@ public class ConfigManager {
             }
         }
         plugin.saveConfig();
+    }
+
+    public Map<String, String> getAllBooleansAndNumbers() {
+        Map<String, String> result = new HashMap<>();
+        for (String path : config.getKeys(true)) {
+            if (config.isBoolean(path) || config.isInt(path)) {
+                result.put(path, String.valueOf(config.get(path)));
+            }
+        }
+        return result;
     }
 
     public @NotNull String getColorizedString(@NotNull final String path) {
