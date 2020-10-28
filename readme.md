@@ -1,3 +1,4 @@
+[![Maintainability](https://api.codeclimate.com/v1/badges/b886095a96a861fe1a35/maintainability)](https://codeclimate.com/github/carelesshippo/SpectatorModeRewrite/maintainability)
 # SMP Spectator Mode
 
 ---
