@@ -1,8 +1,9 @@
+[![Maintainability](https://api.codeclimate.com/v1/badges/b886095a96a861fe1a35/maintainability)](https://codeclimate.com/github/carelesshippo/SpectatorModeRewrite/maintainability)
 # SMP Spectator Mode
 
 ---
 
-### This plugin is being not currently actively developed. New features are however welcome. If you would like a new feature open a issue [here](https://github.com/carelesshippo/SpectatorModeRewrite/issues).
+### This plugin is not really being actively developed. New features are however welcome. If you would like a new feature open a issue [here](https://github.com/carelesshippo/SpectatorModeRewrite/issues).
 
 Download on [SpigotMC](https://www.spigotmc.org/resources/smp-spectator-mode.77267/)
 
@@ -85,6 +86,9 @@ silence-survival-mode-message-on-join: true
 #If this is true, the player will get temporarily replaced by a baby zombie, resembling them, when they go into spectator mode
 placeholder-mob: false
 
+#If this is true the message with a new version, or up to date message will appear
+update-checker: true
+
 ### Message section ###
 #Adding /actionbar/ in front of a message, will make it appear in the actionbar instead of the chat
 
@@ -144,3 +148,27 @@ not-in-state-message: '&cYou did not use this command to get into spectator mode
 ```
 </p>
 </details>
+
+<details><summary>Permissions</summary>
+<p>
+  
+## Permissions for SMP Spectator Mode
+`spectator.*`: Give access to the entire permission node
+
+`smpspectator.use`: Be able to use the /s command
+
+`smpspectator.enable`: Be able to enable and disable spectator mode from the /s command
+
+`smpspectator.speed`: Be able to change fly speed in spectator mode
+
+`smpspectator.bypass`: Be able to bypass the y-level and block restrictions
+
+`smpspectator.force`: Be able to force other players into and out of spectator mode
+
+`smpspectator.toggle`: Be able to use the /seffect command
+
+`smpspectator.reload`: Be able to reload the config
+
+</p>
+</details>
+

@@ -68,6 +68,15 @@ disable-switching-message: false
 #If this is true, you won't get the survival-mode-message on join, if the server sent you back into survival
 silence-survival-mode-message-on-join: true
 
+#If this is true, the player will get temporarily replaced by a baby zombie, resembling them, when they go into spectator mode
+placeholder-mob: false
+
+#If this is true the message with a new version, or up to date message will appear
+update-checker: true
+
+### Message section ###
+#Adding /actionbar/ in front of a message, will make it appear in the actionbar instead of the chat
+
 #Message when gamemode set to spectator mode
 spectator-mode-message: '&9Setting gamemode to &b&lSPECTATOR MODE'
 
@@ -108,10 +117,10 @@ invalid-speed-message: '&cThat is not a valid speed'
 invalid-player-message: '&cThat is not a valid player'
 
 #Message when forcing a player was successful. /target/ is the player
-force-success: '&bSuccessfully forced /target/ into /s'
+force-success: '&bSuccessfully forced /target/ into '
 
 #Message when forcing a player was not successful. /target/ is the player
-force-fail: '&cFailed to force /target/ into /s'
+force-fail: '&cFailed to force /target/ into '
 
 #Message sent when a player tries to use the /seffect when not in spectator mode
 no-spectator-message: '&cYou did not preform the /s command'
