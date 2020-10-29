@@ -77,6 +77,9 @@ public class DataSaver {
                 final Location location = data.getLocation("data." + key + ".Location");
                 value.put("Location", location);
 
+                String placeHolder = data.getString("data." + key + ".PlaceholderUUID");
+                value.put("PlaceholderUUID", placeHolder);
+                
                 state.put(key, State.fromMap(value, plugin));
             });
         } catch (final NullPointerException ignored) {

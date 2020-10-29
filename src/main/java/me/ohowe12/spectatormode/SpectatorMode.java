@@ -85,7 +85,6 @@ public class SpectatorMode extends JavaPlugin {
         for(Map.Entry<String, String> entry : config.getAllBooleansAndNumbers().entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            getLogger().info(key + ": " + value);
             metrics.addCustomChart(new Metrics.SimplePie(key + "_CHARTID", new Callable<String>(){
                 @Override
                 public String call() throws Exception {

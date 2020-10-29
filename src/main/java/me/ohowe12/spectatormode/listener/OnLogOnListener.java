@@ -32,7 +32,7 @@ public class OnLogOnListener implements Listener {
             if (plugin.getSpectatorCommand().inState(player.getUniqueId().toString())) {
                 if (teleportBack) {
                     teleportPlayerBack(player);
-                }else{
+                } else {
                     PlaceholderEntity.create(player);
                 }
             }

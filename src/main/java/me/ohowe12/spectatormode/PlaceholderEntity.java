@@ -10,10 +10,11 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
+
+import me.ohowe12.spectatormode.util.DataSaver;
 import me.ohowe12.spectatormode.util.State;
 
 import java.util.Objects;
-import java.util.UUID;
 
 public abstract class PlaceholderEntity {
 
@@ -37,6 +38,8 @@ public abstract class PlaceholderEntity {
         placeholder.setCustomName(target.getDisplayName());
         placeholder.setCustomNameVisible(true);
         placeholder.setBaby(true);
+        placeholder.setRemoveWhenFarAway(false);
+
         if (placeholder.isInsideVehicle()) {
             Entity vehicle = placeholder.getVehicle();
             placeholder.leaveVehicle();
@@ -50,10 +53,15 @@ public abstract class PlaceholderEntity {
         placeholderEquip.setItemInOffHand(playerEquip.getItemInOffHand());
         placeholderEquip.setHelmet(getPlayerHead(target));
         getStateOfPlayer(target).setPlaceholder(placeholder);
+        plugin.getSpectatorCommand().save();
     }
 
     private static State getStateOfPlayer(@NotNull Player target) {
         String id = target.getUniqueId().toString();
+        return plugin.getSpectatorCommand().getState(id);
+    }
+
+    private static State getStateOfPlayer(String id) {
         return plugin.getSpectatorCommand().getState(id);
     }
 
@@ -67,15 +75,22 @@ public abstract class PlaceholderEntity {
 
     public static void remove(@NotNull Player target) {
         LivingEntity placeholder = getStateOfPlayer(target).getPlaceholder();
-        if (placeholder != null)
+        if (placeholder != null) {
             placeholder.remove();
+        }
+    }
+
+    public static void remove(String uuid) {
+        LivingEntity placeholder = getStateOfPlayer(uuid).getPlaceholder();
+        if (placeholder != null) {
+            placeholder.remove();
+        } 
     }
 
     public static void shutdown() {
-        plugin.getSpectatorCommand().getAllStates().keySet().stream()
-                .map(UUID::fromString)
-                .map(plugin.getServer()::getPlayer)
-                .filter(Objects::nonNull)
-                .forEach(PlaceholderEntity::remove);
+        for (String uuid : plugin.getSpectatorCommand().getAllStates().keySet()) {
+            plugin.getLogger().info("Removing " + uuid);
+            remove(uuid);
+        }
     }
 }

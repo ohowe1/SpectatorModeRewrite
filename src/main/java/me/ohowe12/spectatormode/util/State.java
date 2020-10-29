@@ -103,6 +103,12 @@ public class State {
         potionEffects = (ArrayList<PotionEffect>) serialized.get("Potions");
         waterBubbles = (int) serialized.get("Water bubbles");
         mobIds = (Map<String, Boolean>) serialized.get("Mobs");
+
+        String uuidPlaceholderString = (String) serialized.get("PlaceholderUUID");
+        if (uuidPlaceholderString != null) {
+            Entity e = plugin.getServer().getEntity(UUID.fromString(uuidPlaceholderString));
+            placeholder = (LivingEntity) e;
+        }
     }
 
     private void prepareMobs() {
@@ -210,6 +216,9 @@ public class State {
         serialized.put("Potions", potionEffects);
         serialized.put("Water bubbles", waterBubbles);
         serialized.put("Mobs", mobIds);
+        if (placeholder != null) {
+            serialized.put("PlaceholderUUID", placeholder.getUniqueId().toString());
+        }
         return serialized;
     }
 }

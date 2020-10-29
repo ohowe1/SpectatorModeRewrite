@@ -74,6 +74,10 @@ public class Spectator implements CommandExecutor {
         return this.state.get(uuid);
     }
 
+    public void save() {
+        DataSaver.save(state);
+    }
+
     public Map<String, State> getAllStates() {
         return this.state;
     }
