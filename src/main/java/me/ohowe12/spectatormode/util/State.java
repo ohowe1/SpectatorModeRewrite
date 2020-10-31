@@ -97,6 +97,15 @@ public class State {
         return mobIds;
     }
 
+    public void setPlayer(Player player) {
+        player.teleport(getPlayerLocation());
+        if (!plugin.isUnitTest()) {
+            player.setFireTicks(getFireTicks());
+        }
+        player.addPotionEffects(getPotionEffects());
+        player.setRemainingAir(getWaterBubbles());
+    }
+
     private void deserialize(@NotNull Map<String, Object> serialized) {
         playerLocation = (Location) serialized.get("Location");
         fireTicks = (int) serialized.get("Fire ticks");

@@ -6,6 +6,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -22,6 +23,11 @@ public class SpectatorTest {
     public static void setUp() {
         server = MockBukkit.mock();
         plugin = (SpectatorMode) MockBukkit.load(SpectatorMode.class);
+    }
+
+    @BeforeEach
+    public void beforeEach() {
+        server.setPlayers(0);
     }
 
     @Test
@@ -58,6 +64,26 @@ public class SpectatorTest {
         server.execute("s", player).assertResponse("§9Setting gamemode to §b§lSURVIVAL MODE");
         player.assertGameMode(GameMode.SURVIVAL);
         player.assertLocation(original, 1);
+    }
+
+    @Test
+    @DisplayName("Test /s force")
+    public void testForceSucess() {
+        PlayerMock target = createSurvivalModePlayer();
+        PlayerMock op = server.addPlayer();
+        op.setOp(true);
+
+        Location original = target.getLocation();
+
+        server.execute("s", op, target.getName()).assertResponse("§bSuccessfully forced %s into SPECTATOR", target.getName());
+        op.assertNoMoreSaid();
+        target.assertGameMode(GameMode.SPECTATOR);
+        target.teleport(new Location(target.getWorld(), 100, 100, 100));
+
+        server.execute("s", op, target.getName()).assertResponse("§bSuccessfully forced %s into SURVIVAL", target.getName());
+        op.assertNoMoreSaid();
+        target.assertGameMode(GameMode.SURVIVAL);
+        target.assertLocation(original, 1);
     }
 
     private PlayerMock createSurvivalModePlayer() {
