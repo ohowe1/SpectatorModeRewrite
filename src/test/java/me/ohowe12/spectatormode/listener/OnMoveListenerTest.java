@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.UUID;
 import me.ohowe12.spectatormode.ConfigManager;
 import me.ohowe12.spectatormode.SpectatorMode;
-import me.ohowe12.spectatormode.State;
+import me.ohowe12.spectatormode.util.State;
 import me.ohowe12.spectatormode.commands.Spectator;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -37,7 +37,6 @@ public class OnMoveListenerTest {
     public void setUp() {
         when(plugin.getConfigManager()).thenReturn(configManager);
         when(plugin.getSpectatorCommand()).thenReturn(spectator);
-        when(plugin.getUnitTest()).thenReturn(true);
 
         resetAll();
         when(configManager.getInt("y-level")).thenReturn(0);
