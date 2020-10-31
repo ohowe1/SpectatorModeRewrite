@@ -35,7 +35,7 @@ public class OnMoveListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onMove(@NotNull final PlayerMoveEvent e) {
-        if (shouldCancelMoveEvent(e) && !shouldSkipEvent(e)) {
+        if (!shouldSkipEvent(e) && shouldCancelMoveEvent(e)) {
             cancelPlayerMoveEvent(e);
         }
     }
