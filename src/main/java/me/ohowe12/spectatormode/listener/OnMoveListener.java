@@ -54,7 +54,7 @@ public class OnMoveListener implements Listener {
         final boolean enforceWorldBorder = plugin.getConfigManager().getBoolean("enforce-world-border");
 
         return (enforceY && checkAndEnforceY(e)) || isCollidingAndCollidingNotAllowed(e)
-                || (enforceDistance && distanceToFar(e)) || (enforceWorldBorder && outsideWorldBorder(e));
+                || (enforceDistance && distanceTooFar(e)) || (enforceWorldBorder && outsideWorldBorder(e));
     }
 
     private boolean outsideWorldBorder(PlayerMoveEvent e) {
@@ -96,7 +96,7 @@ public class OnMoveListener implements Listener {
         return false;
     }
 
-    private boolean distanceToFar(PlayerMoveEvent e) {
+    private boolean distanceTooFar(PlayerMoveEvent e) {
         final int distance = plugin.getConfigManager().getInt("distance");
         final Location originalLocation = plugin.getSpectatorCommand().getState(e.getPlayer().getUniqueId().toString())
                 .getPlayerLocation();
