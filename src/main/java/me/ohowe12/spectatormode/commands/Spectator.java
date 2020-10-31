@@ -217,6 +217,7 @@ public class Spectator implements CommandExecutor {
                 playerNotInState(player);
             } else {
                 goIntoSurvivalMode(player);
+                return true;
             }
         }
         return false;
