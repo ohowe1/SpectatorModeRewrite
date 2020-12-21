@@ -1,8 +1,6 @@
 package me.ohowe12.spectatormode.listener;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -19,22 +17,22 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
 
 public class OnMoveListenerTest {
 
-    private final SpectatorMode plugin = mock(SpectatorMode.class);
-    private final ConfigManager configManager = mock(ConfigManager.class);
-    private final Spectator spectator = mock(Spectator.class);
-    private final Player player = mock(Player.class);
-    private final Block air = mock(Block.class);
-    private final Block stone = mock(Block.class);
-    private final World world = mock(World.class);
-    private final State state = mock(State.class);
+    private static final SpectatorMode plugin = mock(SpectatorMode.class);
+    private static final ConfigManager configManager = mock(ConfigManager.class);
+    private static final Spectator spectator = mock(Spectator.class);
+    private static final Player player = mock(Player.class);
+    private static final Block air = mock(Block.class);
+    private static final Block stone = mock(Block.class);
+    private static final World world = mock(World.class);
+    private static final State state = mock(State.class);
 
-    @Before
-    public void setUp() {
+    @BeforeAll
+    public static void setUp() {
         when(plugin.getConfigManager()).thenReturn(configManager);
         when(plugin.getSpectatorCommand()).thenReturn(spectator);
 
@@ -186,7 +184,7 @@ public class OnMoveListenerTest {
     }
 
 
-    private void resetAll() {
+    private static void resetAll() {
         when(configManager.getBoolean("enforce-y")).thenReturn(false);
         when(configManager.getBoolean("enforce-distance")).thenReturn(false);
         when(configManager.getBoolean("disallow-non-transparent-blocks")).thenReturn(false);

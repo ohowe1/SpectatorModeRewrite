@@ -45,12 +45,8 @@ public class State {
         this.plugin = plugin;
         mobIds = new HashMap<>();
         playerLocation = player.getLocation();
-        // Temporary till it gets added to mockbukkit
-        if (plugin.isUnitTest()) {
             fireTicks = -20;
-        } else {
             fireTicks = player.getFireTicks();
-        }
         potionEffects = new ArrayList<>(player.getActivePotionEffects());
         waterBubbles = player.getRemainingAir();
         prepareMobs();
@@ -99,9 +95,7 @@ public class State {
 
     public void setPlayer(Player player) {
         player.teleport(getPlayerLocation());
-        if (!plugin.isUnitTest()) {
             player.setFireTicks(getFireTicks());
-        }
         player.addPotionEffects(getPotionEffects());
         player.setRemainingAir(getWaterBubbles());
     }

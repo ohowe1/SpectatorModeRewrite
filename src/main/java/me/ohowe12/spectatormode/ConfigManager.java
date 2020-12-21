@@ -46,6 +46,10 @@ public class ConfigManager {
         return config.getBoolean(path, defaults.getBoolean(path));
     }
 
+    public double getDouble(@NotNull final String path) {
+        return config.getDouble(path, defaults.getDouble(path));
+    }
+
     public List<?> getList(@NotNull final String path) {
         return Objects.requireNonNull(config.getList(path, defaults.getList(path)));
     }

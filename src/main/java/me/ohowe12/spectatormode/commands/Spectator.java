@@ -195,18 +195,24 @@ public class Spectator implements CommandExecutor {
                 return true;
             }
         } else {
-            if (!worlds.contains(player.getWorld().getName())
-                    && plugin.getConfigManager().getBoolean("enforce-worlds")) {
-                Messenger.send(player, "world-message");
-                return false;
-            }
-            if (player.getFallDistance() > 0) {
-                Messenger.send(player, "falling-message");
-                return false;
-            }
-            if (state.containsKey(player.getUniqueId().toString())) {
-                setMobs(player);
-                state.remove(player.getUniqueId().toString());
+            if (!player.hasPermission("smpspectator.bypass")) {
+                if (!worlds.contains(player.getWorld().getName())
+                        && plugin.getConfigManager().getBoolean("enforce-worlds")) {
+                    Messenger.send(player, "world-message");
+                    return false;
+                }
+                if (player.getHealth() < plugin.getConfigManager().getDouble("minimum-health")) {
+                    Messenger.send(player, "health-message");
+                    return false;
+                }
+                if (player.getFallDistance() > 0) {
+                    Messenger.send(player, "falling-message");
+                    return false;
+                }
+                if (state.containsKey(player.getUniqueId().toString())) {
+                    setMobs(player);
+                    state.remove(player.getUniqueId().toString());
+                }
             }
             goIntoSpectatorMode(player);
             return true;
