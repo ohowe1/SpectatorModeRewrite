@@ -69,6 +69,9 @@ enforce-distance: false
 #See above (blocks)
 distance: 64
 
+#The minimum health a player can have to activate /s
+minimum-health: 0
+
 #Prevents players from using the spectator teleport hot bar
 prevent-teleport: false
 #Prevents these commands from being executed unless you have the smpspectator.bypass permission. Example list: [back, return, home, homes, tpaccept, tpyes, warp, warps]
@@ -103,6 +106,9 @@ falling-message: '&cHey you &lcan not &r&cdo that while falling!'
 
 #Message when user preforms command in world it is not allowed in
 world-message: '&cHey you&l can not &r&cdo that in that world!'
+
+#Message sent when a player tries to execute /s but is below the minimum health
+health-message: '&cYou are below the minimum required health to preform this command!'
 
 #Message when user does not have permission to execute the command
 permission-message: '&cYou do not have permission to do that!'
