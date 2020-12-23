@@ -17,7 +17,6 @@ import me.ohowe12.spectatormode.PlaceholderEntity;
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.util.DataSaver;
 import me.ohowe12.spectatormode.util.State;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -26,7 +25,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class Spectator implements CommandExecutor {
 
@@ -54,16 +52,6 @@ public class Spectator implements CommandExecutor {
 
     private void setMobs(@NotNull Player player) {
         state.get(player.getUniqueId().toString()).unPrepareMobs();
-    }
-
-    private void setState(@NotNull Player player) {
-        final String uuid = player.getUniqueId().toString();
-        player.teleport(state.get(uuid).getPlayerLocation());
-        if (!plugin.isUnitTest()) {
-            player.setFireTicks(state.get(uuid).getFireTicks());
-        }
-        player.addPotionEffects(state.get(uuid).getPotionEffects());
-        player.setRemainingAir(state.get(uuid).getWaterBubbles());
     }
 
     public boolean inState(String uuid) {
@@ -109,32 +97,36 @@ public class Spectator implements CommandExecutor {
                 Messenger.send(sender, "disabled-message");
                 return;
             }
-            checkIfEligibleForSpectatorMode(player);
+            checkAndChangeGamemode(player);
             return;
         }
         String argument = args[0];
         if (isSpecialArgument(argument)) {
             checkAndExecuteDisable(sender, argument);
+            return;
         }
 
         if (sender.hasPermission("smpspectator.force")) {
-            @Nullable
-            Player target = Bukkit.getPlayerExact(argument);
-            if (target == null) {
-                Messenger.send(sender, "invalid-player-message");
-                return;
-            }
-            if (Bukkit.getOnlinePlayers().contains(target)) {
-                if (checkIfEligibleForSpectatorMode(target, true)) {
-                    Messenger.send(sender, target, "force-success", target.getGameMode().name());
-                } else {
-                    Messenger.send(sender, target, "force-fail",
-                            target.getGameMode() == GameMode.SPECTATOR ? GameMode.SURVIVAL.name()
-                                    : GameMode.SPECTATOR.name());
-                }
-            }
+            forcePlayer(sender, argument);
         } else {
             Messenger.send(sender, "permission-message");
+        }
+    }
+
+    private void forcePlayer(CommandSender sender, String argument) {
+        Player target = plugin.getServer().getPlayerExact(argument);
+        if (target == null) {
+            Messenger.send(sender, "invalid-player-message");
+            return;
+        }
+        if (plugin.getServer().getOnlinePlayers().contains(target)) {
+            if (checkAndChangeGamemode(target, true)) {
+                Messenger.send(sender, target, "force-success", target.getGameMode().name());
+            } else {
+                Messenger.send(sender, target, "force-fail",
+                        target.getGameMode() == GameMode.SPECTATOR ? GameMode.SURVIVAL.name()
+                                : GameMode.SPECTATOR.name());
+            }
         }
     }
 
@@ -145,7 +137,7 @@ public class Spectator implements CommandExecutor {
             return true;
         } else if (argument.equalsIgnoreCase("reload")) {
             return true;
-        } 
+        }
         return false;
     }
 
@@ -184,40 +176,46 @@ public class Spectator implements CommandExecutor {
         }
     }
 
-    private boolean checkIfEligibleForSpectatorMode(@NotNull Player player) {
-        return checkIfEligibleForSpectatorMode(player, false);
+    private boolean checkAndChangeGamemode(@NotNull Player player) {
+        return checkAndChangeGamemode(player, false);
     }
 
-    private boolean checkIfEligibleForSpectatorMode(@NotNull Player player, boolean force) {
+    private boolean checkAndChangeGamemode(@NotNull Player player, boolean force) {
         if (!player.hasPermission("smpspectator.use") && !force) {
             Messenger.send(player, "permission-message");
             return false;
         }
         @NotNull
         GameMode gm = player.getGameMode();
-        if (!gm.equals(GameMode.SPECTATOR)) {
-            assert worlds != null;
-            if ((!worlds.contains(player.getWorld().getName()))
-                    && plugin.getConfigManager().getBoolean("enforce-worlds")) {
-                Messenger.send(player, "world-message");
-                return false;
-            }
-            if (player.getFallDistance() > 0) {
-                Messenger.send(player, "falling-message");
-                return false;
-            }
-            if (state.containsKey(player.getUniqueId().toString())) {
-                setMobs(player);
-                state.remove(player.getUniqueId().toString());
-            }
-            goIntoSpectatorMode(player);
-            return true;
-        } else {
+        if (gm == GameMode.SPECTATOR) {
             if (!state.containsKey(player.getUniqueId().toString())) {
                 playerNotInState(player);
             } else {
                 goIntoSurvivalMode(player);
+                return true;
             }
+        } else {
+            if (!player.hasPermission("smpspectator.bypass")) {
+                if (!worlds.contains(player.getWorld().getName())
+                        && plugin.getConfigManager().getBoolean("enforce-worlds")) {
+                    Messenger.send(player, "world-message");
+                    return false;
+                }
+                if (player.getHealth() < plugin.getConfigManager().getDouble("minimum-health")) {
+                    Messenger.send(player, "health-message");
+                    return false;
+                }
+                if (player.getFallDistance() > 0) {
+                    Messenger.send(player, "falling-message");
+                    return false;
+                }
+                if (state.containsKey(player.getUniqueId().toString())) {
+                    setMobs(player);
+                    state.remove(player.getUniqueId().toString());
+                }
+            }
+            goIntoSpectatorMode(player);
+            return true;
         }
         return false;
     }
@@ -241,7 +239,7 @@ public class Spectator implements CommandExecutor {
 
         target.setGameMode(GameMode.SURVIVAL);
 
-        setState(target);
+        state.get(target.getUniqueId().toString()).setPlayer(target);
 
         setMobs(target);
 

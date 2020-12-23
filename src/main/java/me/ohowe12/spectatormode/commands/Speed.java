@@ -65,7 +65,7 @@ public class Speed implements CommandExecutor {
         if (speed > maxSpeed || speed < 0) {
             Messenger.send(sender, "invalid-speed-message");
         } else {
-            player.setFlySpeed(speed / 10);
+            player.setFlySpeed((float) speed / 10);
             Messenger.send(sender, "speed-message", String.valueOf(speed));
         }
 
@@ -75,20 +75,17 @@ public class Speed implements CommandExecutor {
         if (!speedAllowed) {
             return false;
         }
-        if (!sender.hasPermission("smpspectator.speed")) {
-            return false;
-        }
-        return true;
+        return sender.hasPermission("smpspectator.speed");
     }
 
     private void setSpeedDefault(Player player) {
-        float speed;
+        int speed;
         if (maxSpeed < 2) {
             speed = 1;
         } else {
             speed = 2;
         }
-        player.setFlySpeed(speed / 10);
+        player.setFlySpeed((float) speed / 10);
         Messenger.send(player, "speed-message", String.valueOf(speed));
     }
 }
