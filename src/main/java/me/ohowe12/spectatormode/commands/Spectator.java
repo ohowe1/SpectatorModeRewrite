@@ -28,10 +28,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class Spectator implements CommandExecutor {
 
+    private static final String PERMISSIONMESSAGE = "permission-message";
+
     private final SpectatorMode plugin;
     private final Map<String, State> state;
-    private final PotionEffect NIGHTVISON = new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 10);
-    private final PotionEffect CONDUIT = new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000000, 10);
+    private final PotionEffect nightVisionEffect = new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 10);
+    private final PotionEffect conduitEffect = new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000000, 10);
     private boolean sEnabled;
     private boolean nightVisionEnabled;
     private boolean conduitEnabled;
@@ -109,7 +111,7 @@ public class Spectator implements CommandExecutor {
         if (sender.hasPermission("smpspectator.force")) {
             forcePlayer(sender, argument);
         } else {
-            Messenger.send(sender, "permission-message");
+            Messenger.send(sender, PERMISSIONMESSAGE);
         }
     }
 
@@ -131,14 +133,8 @@ public class Spectator implements CommandExecutor {
     }
 
     private boolean isSpecialArgument(String argument) {
-        if (argument.equalsIgnoreCase("disable")) {
-            return true;
-        } else if (argument.equalsIgnoreCase("enable")) {
-            return true;
-        } else if (argument.equalsIgnoreCase("reload")) {
-            return true;
-        }
-        return false;
+        return argument.equalsIgnoreCase("disable") || argument.equalsIgnoreCase("enable")
+                || argument.equalsIgnoreCase("reload");
     }
 
     private void checkAndExecuteDisable(CommandSender sender, String argument) {
@@ -151,12 +147,15 @@ public class Spectator implements CommandExecutor {
                 break;
             case "reload":
                 attemptToReloadConfig(sender);
+                break;
+            default:
+
         }
     }
 
     private void attemptToReloadConfig(CommandSender sender) {
         if (!sender.hasPermission("smpspectator.reload")) {
-            Messenger.send(sender, "permission-message");
+            Messenger.send(sender, PERMISSIONMESSAGE);
         } else {
             plugin.reloadConfigManager();
             Messenger.send(sender, "reload-message");
@@ -165,7 +164,7 @@ public class Spectator implements CommandExecutor {
 
     private void changeEnabled(boolean status, @NotNull CommandSender sender) {
         if (!sender.hasPermission("smpspectator.enable")) {
-            Messenger.send(sender, "permission-message");
+            Messenger.send(sender, PERMISSIONMESSAGE);
             return;
         }
         sEnabled = status;
@@ -182,39 +181,66 @@ public class Spectator implements CommandExecutor {
 
     private boolean checkAndChangeGamemode(@NotNull Player player, boolean force) {
         if (!player.hasPermission("smpspectator.use") && !force) {
-            Messenger.send(player, "permission-message");
+            Messenger.send(player, PERMISSIONMESSAGE);
             return false;
         }
         @NotNull
-        GameMode gm = player.getGameMode();
-        if (gm == GameMode.SPECTATOR) {
-            if (!state.containsKey(player.getUniqueId().toString())) {
-                playerNotInState(player);
-            } else {
-                goIntoSurvivalMode(player);
-                return true;
-            }
+        GameMode currentGm = player.getGameMode();
+        if (currentGm == GameMode.SPECTATOR) {
+            prepareSurvival(player);
         } else {
-            if (!player.hasPermission("smpspectator.bypass")) {
-                if (!worlds.contains(player.getWorld().getName())
-                        && plugin.getConfigManager().getBoolean("enforce-worlds")) {
-                    Messenger.send(player, "world-message");
-                    return false;
-                }
-                if (player.getHealth() < plugin.getConfigManager().getDouble("minimum-health")) {
-                    Messenger.send(player, "health-message");
-                    return false;
-                }
-                if (player.getFallDistance() > 0) {
-                    Messenger.send(player, "falling-message");
-                    return false;
-                }
-                if (state.containsKey(player.getUniqueId().toString())) {
-                    setMobs(player);
-                    state.remove(player.getUniqueId().toString());
-                }
+            return prepareSpectator(player);
+        }
+        return true;
+    }
+
+    private boolean prepareSpectator(Player player) {
+        if (!player.hasPermission("smpspectator.bypass")) {
+            if (checkAndEnforceWorld(player)) {
+                return false;
             }
-            goIntoSpectatorMode(player);
+            if (checkAndEnforceHealth(player)) {
+                return false;
+            }
+            if (checkAndEnforceFalling(player)) {
+                return false;
+            }
+            if (state.containsKey(player.getUniqueId().toString())) {
+                setMobs(player);
+                state.remove(player.getUniqueId().toString());
+            }
+        }
+        goIntoSpectatorMode(player);
+        return true;
+    }
+
+    private void prepareSurvival(Player player) {
+        if (!state.containsKey(player.getUniqueId().toString())) {
+            playerNotInState(player);
+        } else {
+            goIntoSurvivalMode(player);
+        }
+    }
+
+    private boolean checkAndEnforceFalling(Player player) {
+        if (player.getFallDistance() > 0) {
+            Messenger.send(player, "falling-message");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkAndEnforceWorld(Player player) {
+        if (!worlds.contains(player.getWorld().getName()) && plugin.getConfigManager().getBoolean("enforce-worlds")) {
+            Messenger.send(player, "world-message");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkAndEnforceHealth(Player player) {
+        if (player.getHealth() < plugin.getConfigManager().getDouble("minimum-health")) {
+            Messenger.send(player, "health-message");
             return true;
         }
         return false;
@@ -262,10 +288,10 @@ public class Spectator implements CommandExecutor {
         target.setGameMode(GameMode.SPECTATOR);
         sendSpectatorMessage(target);
         if (nightVisionEnabled) {
-            target.addPotionEffect(NIGHTVISON);
+            target.addPotionEffect(nightVisionEffect);
         }
         if (conduitEnabled) {
-            target.addPotionEffect(CONDUIT);
+            target.addPotionEffect(conduitEffect);
         }
         DataSaver.save(state);
     }
