@@ -20,8 +20,8 @@ import me.ohowe12.spectatormode.listener.OnCommandPreprocessListener;
 import me.ohowe12.spectatormode.listener.OnLogOnListener;
 import me.ohowe12.spectatormode.listener.OnLogOffListener;
 import me.ohowe12.spectatormode.listener.OnMoveListener;
-import me.ohowe12.spectatormode.tabCompleter.SpectatorTab;
-import me.ohowe12.spectatormode.tabCompleter.SpeedTab;
+import me.ohowe12.spectatormode.tabcompleter.SpectatorTab;
+import me.ohowe12.spectatormode.tabcompleter.SpeedTab;
 import me.ohowe12.spectatormode.util.DataSaver;
 
 import org.bukkit.Bukkit;
@@ -33,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class SpectatorMode extends JavaPlugin {
 
-    private static SpectatorMode instance;
     private Spectator spectatorCommand;
     private ConfigManager config;
     private final boolean unitTest;
@@ -52,18 +51,12 @@ public class SpectatorMode extends JavaPlugin {
         unitTest = true;
     }
 
-    @Deprecated
-    public static SpectatorMode getInstance() {
-        return instance;
-    }
-
     public Spectator getSpectatorCommand() {
         return spectatorCommand;
     }
 
     @Override
     public void onEnable() {
-        instance = this;
         PlaceholderEntity.init(this);
         config = new ConfigManager(this, this.getConfig());
         Messenger.init(this);

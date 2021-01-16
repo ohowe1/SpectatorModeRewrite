@@ -176,7 +176,7 @@ public class State {
 
         loadChunks(world, defaultChunk.getX(), defaultChunk.getZ());
 
-        for (HashMap.Entry<String, Boolean> entry : getMobIds().entrySet()) {
+        for (Map.Entry<String, Boolean> entry : getMobIds().entrySet()) {
             UUID key = UUID.fromString(entry.getKey());
             Entity entityEntity = Bukkit.getEntity(key);
             if (!(entityEntity instanceof LivingEntity)) {

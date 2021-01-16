@@ -18,7 +18,12 @@ import me.ohowe12.spectatormode.SpectatorMode;
 
 public class DataSaver {
 
+    private DataSaver() {
+
+    }
+
     private static File dataFolder;
+    private static final String HEADER = "data.";
 
     private static FileConfiguration data;
     private static SpectatorMode plugin;
@@ -34,13 +39,13 @@ public class DataSaver {
         if (data.getConfigurationSection("data") != null) {
             Objects.requireNonNull(data.getConfigurationSection("data")).getKeys(false).forEach(key -> {
                 if (!state.containsKey(key)) {
-                    data.set("data." + key, null);
+                    setData(key, null);
                 }
             });
         }
         for (@NotNull
         final Map.Entry<String, State> entry : state.entrySet()) {
-            data.set("data." + entry.getKey(), entry.getValue().serialize());
+            setData(entry.getKey(), entry.getValue().serialize());
         }
         try {
             data.save(new File(dataFolder, "data.yml"));
@@ -60,29 +65,33 @@ public class DataSaver {
                 final Map<String, Object> value = new HashMap<>();
 
                 final ArrayList<PotionEffect> potions = (ArrayList<PotionEffect>) data
-                        .getList("data." + key + ".Potions");
+                        .getList(HEADER + key + ".Potions");
                 value.put("Potions", potions);
 
-                final int waterBubbles = data.getInt("data." + key + ".Water bubbles");
+                final int waterBubbles = data.getInt(HEADER + key + ".Water bubbles");
                 value.put("Water bubbles", waterBubbles);
 
                 final Map<String, Boolean> mobs = new HashMap<>();
-                Objects.requireNonNull(data.getConfigurationSection("data." + key + ".Mobs")).getKeys(false)
-                        .forEach(mobKey -> mobs.put(mobKey, data.getBoolean("data." + key + ".Mobs" + mobKey)));
+                Objects.requireNonNull(data.getConfigurationSection(HEADER + key + ".Mobs")).getKeys(false)
+                        .forEach(mobKey -> mobs.put(mobKey, data.getBoolean(HEADER + key + ".Mobs" + mobKey)));
                 value.put("Mobs", mobs);
 
-                final int fireTicks = data.getInt("data." + key + ".Fire ticks");
+                final int fireTicks = data.getInt(HEADER + key + ".Fire ticks");
                 value.put("Fire ticks", fireTicks);
 
-                final Location location = data.getLocation("data." + key + ".Location");
+                final Location location = data.getLocation(HEADER + key + ".Location");
                 value.put("Location", location);
 
-                String placeHolder = data.getString("data." + key + ".PlaceholderUUID");
+                String placeHolder = data.getString(HEADER + key + ".PlaceholderUUID");
                 value.put("PlaceholderUUID", placeHolder);
                 
                 state.put(key, State.fromMap(value, plugin));
             });
         } catch (final NullPointerException ignored) {
         }
+    }
+
+    private static void setData(String key, Object value) {
+        data.set(HEADER + key, value);
     }
 }

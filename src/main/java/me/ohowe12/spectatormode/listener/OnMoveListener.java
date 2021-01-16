@@ -8,7 +8,6 @@
 
 package me.ohowe12.spectatormode.listener;
 
-
 import me.ohowe12.spectatormode.Messenger;
 import me.ohowe12.spectatormode.SpectatorMode;
 import org.bukkit.GameMode;
@@ -72,6 +71,7 @@ public class OnMoveListener implements Listener {
         e.setCancelled(true);
     }
 
+    @SuppressWarnings("all")
     public boolean isCollidingAndCollidingNotAllowed(@NotNull PlayerMoveEvent e) {
         final boolean enforceNonTransparent = plugin.getConfigManager().getBoolean("disallow-non-transparent-blocks");
         final boolean enforceAllBlocks = plugin.getConfigManager().getBoolean("disallow-all-blocks");
@@ -85,10 +85,8 @@ public class OnMoveListener implements Listener {
                     BoundingBox bb = block.getBoundingBox().clone().expand(bubbleSize);
                     Material mat = block.getType();
                     Vector tovect = e.getTo().toVector().clone().add(new Vector(0, 1.6, 0));
-                    if (mat.isSolid()) {
-                        if (tovect.isInAABB(bb.getMin(), bb.getMax())) {
-                            return enforceAllBlocks || mat.isOccluding();
-                        }
+                    if (mat.isSolid() && tovect.isInAABB(bb.getMin(), bb.getMax())) {
+                        return enforceAllBlocks || mat.isOccluding();
                     }
                 }
             }

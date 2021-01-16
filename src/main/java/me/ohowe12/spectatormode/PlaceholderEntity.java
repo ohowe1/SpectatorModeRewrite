@@ -17,6 +17,10 @@ import java.util.Objects;
 
 public abstract class PlaceholderEntity {
 
+    private PlaceholderEntity() {
+
+    }
+
     private static SpectatorMode plugin = null;
 
     public static void init(SpectatorMode plugin) {
@@ -88,7 +92,6 @@ public abstract class PlaceholderEntity {
 
     public static void shutdown() {
         for (String uuid : plugin.getSpectatorCommand().getAllStates().keySet()) {
-            plugin.getLogger().info("Removing " + uuid);
             remove(uuid);
         }
     }

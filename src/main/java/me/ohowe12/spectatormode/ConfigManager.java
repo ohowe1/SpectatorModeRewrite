@@ -50,6 +50,7 @@ public class ConfigManager {
         return config.getDouble(path, defaults.getDouble(path));
     }
 
+    @SuppressWarnings("all")
     public List<?> getList(@NotNull final String path) {
         return Objects.requireNonNull(config.getList(path, defaults.getList(path)));
     }

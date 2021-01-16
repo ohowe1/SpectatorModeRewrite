@@ -1,4 +1,4 @@
-package me.ohowe12.spectatormode.tabCompleter;
+package me.ohowe12.spectatormode.tabcompleter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class TabCompleteUtil {
+
+    private TabCompleteUtil() {
+
+    }
 
     @Nullable
     public static List<String> getStrings(@NotNull final String @NotNull [] args,
