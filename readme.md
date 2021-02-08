@@ -92,6 +92,9 @@ placeholder-mob: false
 #If this is true the message with a new version, or up to date message will appear
 update-checker: true
 
+# If a hostile mob is within this distance, the player will not be allowed into spectator mode
+closest-hostile: 0
+
 ### Message section ###
 #Adding /actionbar/ in front of a message, will make it appear in the actionbar instead of the chat
 
@@ -151,6 +154,9 @@ bad-command-message: '&cYou can not execute that command while in spectator mode
 
 #Message sent when a player executes /s while in spectator mode but did not use it to get into spectator mode
 not-in-state-message: '&cYou did not use this command to get into spectator mode! Setting gamemode to SURVIVAL MODE'
+
+#Message sent when a player tries to use /s when they are to close to a hostile mob (See closest-hostile)
+mob-to-close-message: '&cYou are to close to a hostile mob to enter spectator mode'
 ```
 </p>
 </details>

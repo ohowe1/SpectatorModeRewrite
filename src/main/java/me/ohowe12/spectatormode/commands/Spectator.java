@@ -21,6 +21,8 @@ import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -205,6 +207,9 @@ public class Spectator implements CommandExecutor {
             if (checkAndEnforceFalling(player)) {
                 return false;
             }
+            if (checkAndEnforceHostiles(player)) {
+                return false;
+            }
             if (state.containsKey(player.getUniqueId().toString())) {
                 setMobs(player);
                 state.remove(player.getUniqueId().toString());
@@ -242,6 +247,22 @@ public class Spectator implements CommandExecutor {
         if (player.getHealth() < plugin.getConfigManager().getDouble("minimum-health")) {
             Messenger.send(player, "health-message");
             return true;
+        }
+        return false;
+    }
+
+    private boolean checkAndEnforceHostiles(Player player) {
+        if (plugin.isUnitTest()) {
+            return false;
+        }
+        double closestAllowed = plugin.getConfigManager().getDouble("closest-hostile");
+        List<Entity> entites = player.getNearbyEntities(closestAllowed,
+                closestAllowed, closestAllowed);
+        for (Entity entity : entites) {
+            if (entity instanceof Monster) {
+                Messenger.send(player, "mob-to-close-message");
+                return true;
+            }
         }
         return false;
     }
