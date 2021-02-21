@@ -92,7 +92,7 @@ placeholder-mob: false
 #If this is true the message with a new version, or up to date message will appear
 update-checker: true
 
-# If a hostile mob is within this distance, the player will not be allowed into spectator mode
+# If a hostile mob is within this distance, the player will not be allowed into spectator mode. 0 is off
 closest-hostile: 0
 
 ### Message section ###
