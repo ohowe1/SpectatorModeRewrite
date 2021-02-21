@@ -40,7 +40,7 @@ public abstract class PlaceholderEntity {
         placeholder.setSilent(true);
         placeholder.setCustomName(target.getDisplayName());
         placeholder.setCustomNameVisible(true);
-        placeholder.setBaby(true);
+        placeholder.setBaby();
         placeholder.setRemoveWhenFarAway(false);
 
         if (placeholder.isInsideVehicle()) {
@@ -55,6 +55,7 @@ public abstract class PlaceholderEntity {
         placeholderEquip.setItemInMainHand(playerEquip.getItemInMainHand());
         placeholderEquip.setItemInOffHand(playerEquip.getItemInOffHand());
         placeholderEquip.setHelmet(getPlayerHead(target));
+
         getStateOfPlayer(target).setPlaceholder(placeholder);
         plugin.getSpectatorCommand().save();
     }
