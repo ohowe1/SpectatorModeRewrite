@@ -47,7 +47,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * Check out https://bStats.org/ to learn more about bStats!
  */
-@SuppressWarnings({"unused"})
+@SuppressWarnings("all")
 public class Metrics {
 
     // The version of this bStats class

@@ -19,6 +19,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class UpdateChecker {
 
+    private UpdateChecker() {
+        
+    }
+
 
     public static void getVersion(final @NotNull Consumer<String> consumer, Plugin plugin) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {

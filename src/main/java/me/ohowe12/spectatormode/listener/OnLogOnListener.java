@@ -37,6 +37,7 @@ public class OnLogOnListener implements Listener {
                 }
             }
         } catch (final NullPointerException ignored) {
+            // Filler
         }
     }
 

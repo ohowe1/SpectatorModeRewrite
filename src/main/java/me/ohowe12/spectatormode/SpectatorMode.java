@@ -16,12 +16,13 @@ import java.util.concurrent.Callable;
 import me.ohowe12.spectatormode.commands.Effects;
 import me.ohowe12.spectatormode.commands.Spectator;
 import me.ohowe12.spectatormode.commands.Speed;
+import me.ohowe12.spectatormode.context.SpectatorContextCalculator;
 import me.ohowe12.spectatormode.listener.OnCommandPreprocessListener;
 import me.ohowe12.spectatormode.listener.OnLogOnListener;
 import me.ohowe12.spectatormode.listener.OnLogOffListener;
 import me.ohowe12.spectatormode.listener.OnMoveListener;
-import me.ohowe12.spectatormode.tabCompleter.SpectatorTab;
-import me.ohowe12.spectatormode.tabCompleter.SpeedTab;
+import me.ohowe12.spectatormode.tabcompleter.SpectatorTab;
+import me.ohowe12.spectatormode.tabcompleter.SpeedTab;
 import me.ohowe12.spectatormode.util.DataSaver;
 
 import org.bukkit.Bukkit;
@@ -33,7 +34,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class SpectatorMode extends JavaPlugin {
 
-    private static SpectatorMode instance;
     private Spectator spectatorCommand;
     private ConfigManager config;
     private final boolean unitTest;
@@ -52,18 +52,12 @@ public class SpectatorMode extends JavaPlugin {
         unitTest = true;
     }
 
-    @Deprecated
-    public static SpectatorMode getInstance() {
-        return instance;
-    }
-
     public Spectator getSpectatorCommand() {
         return spectatorCommand;
     }
 
     @Override
     public void onEnable() {
-        instance = this;
         PlaceholderEntity.init(this);
         config = new ConfigManager(this, this.getConfig());
         Messenger.init(this);
@@ -71,21 +65,34 @@ public class SpectatorMode extends JavaPlugin {
         registerCommands();
         if (!unitTest) {
             addMetrics();
-            
+
             if (config.getBoolean("update-checker")) {
                 checkUpdate();
             }
+            initalizeLuckPermsContext();
         }
     }
 
-    
+    private void initalizeLuckPermsContext() {
+        try {
+            Class.forName("net.luckperms.api.LuckPerms");
+        } catch (ClassNotFoundException ignored) {
+            getLogger().info("LuckPerms class not found");
+            return;
+        }
+        if (!getServer().getPluginManager().isPluginEnabled("LuckPerms")) {
+            getLogger().info("LuckPerms not enabled");
+            return;
+        }
+        SpectatorContextCalculator.initalizeSpectatorContext(this);
+    }
 
     private void addMetrics() {
         Metrics metrics = new Metrics(this, 7132);
-        for(Map.Entry<String, String> entry : config.getAllBooleansAndNumbers().entrySet()) {
+        for (Map.Entry<String, String> entry : config.getAllBooleansAndNumbers().entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            metrics.addCustomChart(new Metrics.SimplePie(key + "_CHARTID", new Callable<String>(){
+            metrics.addCustomChart(new Metrics.SimplePie(key + "_CHARTID", new Callable<String>() {
                 @Override
                 public String call() throws Exception {
                     return value;
@@ -97,9 +104,8 @@ public class SpectatorMode extends JavaPlugin {
     private void checkUpdate() {
         UpdateChecker.getVersion(version -> {
             if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
-                Bukkit.getConsoleSender()
-                        .sendMessage(ChatColor.AQUA
-                                + "[SMP SPECTATOR MODE] SMP SPECTATOR MODE is all up to date at version "
+                Bukkit.getConsoleSender().sendMessage(
+                        ChatColor.AQUA + "[SMP SPECTATOR MODE] SMP SPECTATOR MODE is all up to date at version "
                                 + this.getDescription().getVersion() + '!');
             } else {
                 Bukkit.getConsoleSender()

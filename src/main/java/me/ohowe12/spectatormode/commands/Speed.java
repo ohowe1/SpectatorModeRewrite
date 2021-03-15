@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class Speed implements CommandExecutor {
 
+    private static final String SPEEDFILLER = "speed";
     private final SpectatorMode plugin;
     private int maxSpeed;
     private boolean speedAllowed;
@@ -25,12 +26,12 @@ public class Speed implements CommandExecutor {
     public Speed(SpectatorMode plugin) {
         this.plugin = plugin;
         this.maxSpeed = plugin.getConfigManager().getInt("max-speed");
-        this.speedAllowed = plugin.getConfigManager().getBoolean("speed");
+        this.speedAllowed = plugin.getConfigManager().getBoolean(SPEEDFILLER);
     }
 
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label,
             @NotNull String @NotNull [] args) {
-        if ((label.equalsIgnoreCase("speed")) || (label.equalsIgnoreCase("sp"))) {
+        if ((label.equalsIgnoreCase(SPEEDFILLER)) || (label.equalsIgnoreCase("sp"))) {
             speedCommand(sender, args);
             return true;
         }
@@ -39,7 +40,7 @@ public class Speed implements CommandExecutor {
 
     private void speedCommand(CommandSender sender, String[] args) {
         maxSpeed = plugin.getConfigManager().getInt("max-speed");
-        speedAllowed = plugin.getConfigManager().getBoolean("speed");
+        speedAllowed = plugin.getConfigManager().getBoolean(SPEEDFILLER);
         if (!(sender instanceof Player)) {
             Messenger.send(sender, "console-message");
             return;

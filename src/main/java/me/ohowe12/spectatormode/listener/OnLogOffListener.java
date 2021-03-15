@@ -24,6 +24,7 @@ public class OnLogOffListener implements Listener {
                 PlaceholderEntity.remove(player);
             }
         } catch (final NullPointerException ignored) {
+            // Filler
         }
     }
 }

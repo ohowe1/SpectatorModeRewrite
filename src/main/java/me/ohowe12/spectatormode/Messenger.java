@@ -10,6 +10,10 @@ import java.util.Objects;
 
 public abstract class Messenger {
 
+    private Messenger() {
+
+    }
+
     private static SpectatorMode plugin;
 
     public static void init(@NotNull SpectatorMode plugin) {
@@ -31,7 +35,7 @@ public abstract class Messenger {
     public static void send(@NotNull CommandSender sender, @NotNull CommandSender target, @NotNull String msgkey, @NotNull String extra) {
         String cfgmsg = Objects.requireNonNull(plugin.getConfigManager(), "Messenger not initialized")
                 .getColorizedString(msgkey)
-                .replaceAll("/target/", target.getName());
+                .replace("/target/", target.getName());
         ChatMessageType type = cfgmsg.startsWith("/actionbar/") ? ChatMessageType.ACTION_BAR : ChatMessageType.CHAT;
         cfgmsg = cfgmsg.replace("/actionbar/", "");
         cfgmsg += extra;

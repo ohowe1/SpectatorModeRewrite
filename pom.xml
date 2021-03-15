@@ -13,7 +13,7 @@
 
     <groupId>me.ohowe12</groupId>
     <artifactId>SpectatorMode</artifactId>
-    <version>1.4.5</version>
+    <version>1.4.8</version>
     <packaging>jar</packaging>
 
     <name>SpectatorMode</name>
@@ -75,9 +75,15 @@
 
     <dependencies>
         <dependency>
+            <groupId>net.luckperms</groupId>
+            <artifactId>api</artifactId>
+            <version>5.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.15.2-R0.1-SNAPSHOT</version>
+            <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -108,7 +114,7 @@
         <dependency>
             <groupId>com.github.seeseemelk</groupId>
             <artifactId>MockBukkit-v1.16</artifactId>
-            <version>0.18.0</version>
+            <version>0.24.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

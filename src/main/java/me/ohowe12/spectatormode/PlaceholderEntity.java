@@ -17,6 +17,10 @@ import java.util.Objects;
 
 public abstract class PlaceholderEntity {
 
+    private PlaceholderEntity() {
+
+    }
+
     private static SpectatorMode plugin = null;
 
     public static void init(SpectatorMode plugin) {
@@ -36,7 +40,7 @@ public abstract class PlaceholderEntity {
         placeholder.setSilent(true);
         placeholder.setCustomName(target.getDisplayName());
         placeholder.setCustomNameVisible(true);
-        placeholder.setBaby(true);
+        placeholder.setBaby();
         placeholder.setRemoveWhenFarAway(false);
 
         if (placeholder.isInsideVehicle()) {
@@ -51,6 +55,7 @@ public abstract class PlaceholderEntity {
         placeholderEquip.setItemInMainHand(playerEquip.getItemInMainHand());
         placeholderEquip.setItemInOffHand(playerEquip.getItemInOffHand());
         placeholderEquip.setHelmet(getPlayerHead(target));
+
         getStateOfPlayer(target).setPlaceholder(placeholder);
         plugin.getSpectatorCommand().save();
     }
@@ -88,7 +93,6 @@ public abstract class PlaceholderEntity {
 
     public static void shutdown() {
         for (String uuid : plugin.getSpectatorCommand().getAllStates().keySet()) {
-            plugin.getLogger().info("Removing " + uuid);
             remove(uuid);
         }
     }

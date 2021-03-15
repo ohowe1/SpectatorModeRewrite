@@ -6,7 +6,7 @@
  * MIT License
  */
 
-package me.ohowe12.spectatormode.tabCompleter;
+package me.ohowe12.spectatormode.tabcompleter;
 
 import java.util.ArrayList;
 import java.util.List;
