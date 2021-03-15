@@ -80,6 +80,9 @@ update-checker: true
 # If a hostile mob is within this distance, the player will not be allowed into spectator mode. 0 is off
 closest-hostile: 0
 
+# This will detach leads when a player enters spectator mode with /s
+detach-leads: true
+
 ### Message section ###
 #Adding /actionbar/ in front of a message, will make it appear in the actionbar instead of the chat
 

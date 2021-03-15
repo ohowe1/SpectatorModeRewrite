@@ -11,6 +11,7 @@ package me.ohowe12.spectatormode.commands;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import me.ohowe12.spectatormode.Messenger;
 import me.ohowe12.spectatormode.PlaceholderEntity;
@@ -18,12 +19,15 @@ import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.util.DataSaver;
 import me.ohowe12.spectatormode.util.State;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
@@ -141,16 +145,16 @@ public class Spectator implements CommandExecutor {
 
     private void checkAndExecuteDisable(CommandSender sender, String argument) {
         switch (argument.toLowerCase()) {
-            case "disable":
-                changeEnabled(false, sender);
-                break;
-            case "enable":
-                changeEnabled(true, sender);
-                break;
-            case "reload":
-                attemptToReloadConfig(sender);
-                break;
-            default:
+        case "disable":
+            changeEnabled(false, sender);
+            break;
+        case "enable":
+            changeEnabled(true, sender);
+            break;
+        case "reload":
+            attemptToReloadConfig(sender);
+            break;
+        default:
 
         }
     }
@@ -198,16 +202,8 @@ public class Spectator implements CommandExecutor {
 
     private boolean prepareSpectator(Player player) {
         if (!player.hasPermission("smpspectator.bypass")) {
-            if (checkAndEnforceWorld(player)) {
-                return false;
-            }
-            if (checkAndEnforceHealth(player)) {
-                return false;
-            }
-            if (checkAndEnforceFalling(player)) {
-                return false;
-            }
-            if (checkAndEnforceHostiles(player)) {
+            if (checkAndEnforceWorld(player) || checkAndEnforceHealth(player) || checkAndEnforceFalling(player)
+                    || checkAndEnforceHostiles(player)) {
                 return false;
             }
             if (state.containsKey(player.getUniqueId().toString())) {
@@ -256,8 +252,7 @@ public class Spectator implements CommandExecutor {
             return false;
         }
         double closestAllowed = plugin.getConfigManager().getDouble("closest-hostile");
-        List<Entity> entites = player.getNearbyEntities(closestAllowed,
-                closestAllowed, closestAllowed);
+        List<Entity> entites = player.getNearbyEntities(closestAllowed, closestAllowed, closestAllowed);
         for (Entity entity : entites) {
             if (entity instanceof Monster) {
                 Messenger.send(player, "mob-to-close-message");
@@ -307,6 +302,9 @@ public class Spectator implements CommandExecutor {
         }
 
         target.setGameMode(GameMode.SPECTATOR);
+        if (!plugin.isUnitTest()) {
+            removeLead(target);
+        }
         sendSpectatorMessage(target);
         if (nightVisionEnabled) {
             target.addPotionEffect(nightVisionEffect);
@@ -315,6 +313,20 @@ public class Spectator implements CommandExecutor {
             target.addPotionEffect(conduitEffect);
         }
         DataSaver.save(state);
+    }
+
+    private void removeLead(Player target) {
+        List<LivingEntity> leads = target.getNearbyEntities(11, 11, 11).stream()
+                .filter(entity -> entity instanceof LivingEntity).map(entity -> (LivingEntity) entity)
+                .filter(LivingEntity::isLeashed).filter(entity -> entity.getLeashHolder() instanceof Player)
+                .filter(entity -> ((Player) entity.getLeashHolder()).equals(target)).collect(Collectors.toList());
+        for (LivingEntity entity : leads) {
+            entity.setLeashHolder(null);
+            HashMap<Integer, ItemStack> failedItems = target.getInventory().addItem(new ItemStack(Material.LEAD));
+            for (Map.Entry<Integer, ItemStack> item : failedItems.entrySet()) {
+                target.getWorld().dropItemNaturally(target.getLocation(), item.getValue());
+            }
+        }
     }
 
     private void sendSurvivalMessage(Player target) {
