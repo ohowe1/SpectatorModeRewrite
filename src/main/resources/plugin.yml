@@ -2,7 +2,7 @@ name: SpectatorMode
 version: ${project.version}
 main: me.ohowe12.spectatormode.SpectatorMode
 api-version: 1.16
-softdepend: [Multiverse-Core]
+softdepend: [Multiverse-Core, LuckPerms]
 
 commands:
   s:
