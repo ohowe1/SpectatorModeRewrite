@@ -31,7 +31,7 @@ public class Speed implements CommandExecutor {
 
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label,
             @NotNull String @NotNull [] args) {
-        if ((label.equalsIgnoreCase(SPEEDFILLER)) || (label.equalsIgnoreCase("sp"))) {
+        if ((cmd.getName().equalsIgnoreCase(SPEEDFILLER)) || (cmd.getName().equalsIgnoreCase("sp"))) {
             speedCommand(sender, args);
             return true;
         }
