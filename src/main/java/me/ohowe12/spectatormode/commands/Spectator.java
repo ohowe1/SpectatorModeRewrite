@@ -85,7 +85,7 @@ public class Spectator implements CommandExecutor {
         nightVisionEnabled = plugin.getConfigManager().getBoolean("night-vision");
         conduitEnabled = plugin.getConfigManager().getBoolean("conduit");
 
-        if (label.equalsIgnoreCase("s") || label.equalsIgnoreCase("spectator")) {
+        if (cmd.getName().equalsIgnoreCase("s") || cmd.getName().equalsIgnoreCase("spectator")) {
             processPlayerCommand(sender, args);
             return true;
         }
