@@ -26,7 +26,7 @@ public class Effects implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
             @NotNull String[] args) {
-        if (label.equalsIgnoreCase("seffect")) {
+        if (command.getName().equalsIgnoreCase("seffect")) {
             if (!(sender instanceof Player)) {
                 Messenger.send(sender, "console-message");
                 return true;
