@@ -24,6 +24,8 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class OnMoveListener implements Listener {
 
     private final SpectatorMode plugin;
@@ -34,14 +36,14 @@ public class OnMoveListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onMove(@NotNull final PlayerMoveEvent e) {
-        if (!shouldSkipEvent(e) && shouldCancelMoveEvent(e)) {
+        if (shouldDoNotSkipEvent(e) && shouldCancelMoveEvent(e)) {
             cancelPlayerMoveEvent(e);
         }
     }
 
     @EventHandler
     public void onTeleport(@NotNull final PlayerTeleportEvent e) {
-        if (shoudCancelTeleport(e) && !shouldSkipEvent(e)) {
+        if (shouldCancelTeleport(e) && shouldDoNotSkipEvent(e)) {
             Messenger.send(e.getPlayer(), "permission-message");
             e.setCancelled(true);
         }
@@ -75,8 +77,11 @@ public class OnMoveListener implements Listener {
     public boolean isCollidingAndCollidingNotAllowed(@NotNull PlayerMoveEvent e) {
         final boolean enforceNonTransparent = plugin.getConfigManager().getBoolean("disallow-non-transparent-blocks");
         final boolean enforceAllBlocks = plugin.getConfigManager().getBoolean("disallow-all-blocks");
+        final List<String> disallowedBlocks = (List<String>) plugin.getConfigManager().getList("disallowed-blocks");
+
+
         final float bubbleSize = plugin.getConfigManager().getInt("bubble-size") / 100.0f;
-        if (e.getTo() == null || !(enforceNonTransparent || enforceAllBlocks))
+        if (e.getTo() == null || !(enforceNonTransparent || enforceAllBlocks || disallowedBlocks.size() > 0))
             return false;
         for (int x = -1; x < 2; x++) {
             for (int y = 0; y < 3; y++) {
@@ -86,7 +91,7 @@ public class OnMoveListener implements Listener {
                     Material mat = block.getType();
                     Vector tovect = e.getTo().toVector().clone().add(new Vector(0, 1.6, 0));
                     if (mat.isSolid() && tovect.isInAABB(bb.getMin(), bb.getMax())) {
-                        return enforceAllBlocks || mat.isOccluding();
+                        return enforceAllBlocks || (mat.isOccluding() && enforceNonTransparent) || disallowedBlocks.stream().allMatch(mat.name()::equalsIgnoreCase);
                     }
                 }
             }
@@ -101,14 +106,14 @@ public class OnMoveListener implements Listener {
         return (originalLocation.distance(e.getTo())) > distance;
     }
 
-    private boolean shoudCancelTeleport(PlayerTeleportEvent e) {
+    private boolean shouldCancelTeleport(PlayerTeleportEvent e) {
         return (e.getCause().equals(PlayerTeleportEvent.TeleportCause.SPECTATE))
                 && plugin.getConfigManager().getBoolean("prevent-teleport");
     }
 
-    private boolean shouldSkipEvent(PlayerEvent e) {
-        return e.getPlayer().hasPermission("smpspectator.bypass")
-                || !plugin.getSpectatorCommand().inState(e.getPlayer().getUniqueId().toString())
-                || !e.getPlayer().getGameMode().equals(GameMode.SPECTATOR);
+    private boolean shouldDoNotSkipEvent(PlayerEvent e) {
+        return !e.getPlayer().hasPermission("smpspectator.bypass")
+                && plugin.getSpectatorCommand().inState(e.getPlayer().getUniqueId().toString())
+                && e.getPlayer().getGameMode().equals(GameMode.SPECTATOR);
     }
 }

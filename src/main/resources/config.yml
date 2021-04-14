@@ -45,6 +45,10 @@ disallow-non-transparent-blocks: false
 #If a player is not allowed to go through blocks in spectator mode
 disallow-all-blocks: false
 
+#Specific blocks that a player cannot go through. the id
+disallowed-blocks: []
+
+
 #How close a player can get to a block, to be used with disallow-all-blocks (percentage of block), adjust according to ping
 bubble-size: 35
 
