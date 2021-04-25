@@ -24,7 +24,7 @@ permissions:
       smpspectator.toggle: true
   smpspectator.use:
     description: Be able to use the /s command
-    default: true
+    default: op
   smpspectator.enable:
     description: Be able to enable and disable spectator mode from the /s command
     default: op
