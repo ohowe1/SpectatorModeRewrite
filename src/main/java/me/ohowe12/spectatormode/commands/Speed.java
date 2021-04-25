@@ -47,6 +47,7 @@ public class Speed implements CommandExecutor {
         }
         if (!permissionEligible(sender)) {
             Messenger.send(sender, "permission-message");
+            return;
         }
         
         Player player = (Player) sender;
