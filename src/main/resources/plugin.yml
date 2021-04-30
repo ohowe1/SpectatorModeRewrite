@@ -7,6 +7,7 @@ softdepend: [Multiverse-Core, LuckPerms]
 commands:
   s:
     description: This command will set your gamemode to spectator or survival.
+    aliases: [smps]
   speed:
     description: Changes the flying speed in spectator mode of the player.
   seffect:
@@ -30,7 +31,7 @@ permissions:
     default: op
   smpspectator.speed:
     description: Be able to change fly speed in spectator mode
-    default: true
+    default: op
   smpspectator.bypass:
     description: Be able to bypass the y-level and block restrictions
     default: op
@@ -39,7 +40,7 @@ permissions:
     default: op
   smpspectator.toggle:
     description: Be able to use the /seffect command
-    default: true
+    default: op
   smpspectator.reload:
     description: Be able to reload the config
     default: op

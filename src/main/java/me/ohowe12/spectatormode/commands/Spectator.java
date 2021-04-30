@@ -1,9 +1,24 @@
 /*
- * SpectatorModeRewrite
- *
- * Copyright (c) 2020. Oliver Howe
- *
  * MIT License
+ *
+ * Copyright (c) 2021 carelesshippo
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN
  */
 
 package me.ohowe12.spectatormode.commands;
@@ -85,11 +100,8 @@ public class Spectator implements CommandExecutor {
         nightVisionEnabled = plugin.getConfigManager().getBoolean("night-vision");
         conduitEnabled = plugin.getConfigManager().getBoolean("conduit");
 
-        if (cmd.getName().equalsIgnoreCase("s") || cmd.getName().equalsIgnoreCase("spectator")) {
-            processPlayerCommand(sender, args);
-            return true;
-        }
-        return false;
+        processPlayerCommand(sender, args);
+        return true;
     }
 
     private void processPlayerCommand(CommandSender sender, String[] args) {
@@ -276,12 +288,13 @@ public class Spectator implements CommandExecutor {
 
     public void goIntoSurvivalMode(@NotNull Player target, boolean silent) {
         PlaceholderEntity.remove(target);
+        state.get(target.getUniqueId().toString()).setNeedsMob(false);
         target.removePotionEffect(PotionEffectType.NIGHT_VISION);
         target.removePotionEffect(PotionEffectType.CONDUIT_POWER);
 
         target.setGameMode(GameMode.SURVIVAL);
 
-        state.get(target.getUniqueId().toString()).setPlayer(target);
+        state.get(target.getUniqueId().toString()).resetPlayer(target);
 
         setMobs(target);
 
