@@ -1,18 +1,30 @@
 /*
- * SpectatorModeRewrite
- *
- * Copyright (c) 2020. Oliver Howe
- *
  * MIT License
+ *
+ * Copyright (c) 2021 carelesshippo
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN
  */
 
 package me.ohowe12.spectatormode.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
+import me.ohowe12.spectatormode.PlaceholderEntity;
+import me.ohowe12.spectatormode.SpectatorMode;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -25,7 +37,10 @@ import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import me.ohowe12.spectatormode.SpectatorMode;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @SuppressWarnings("unchecked")
 public class State {
@@ -37,6 +52,7 @@ public class State {
     private ArrayList<PotionEffect> potionEffects;
     private int waterBubbles;
     private Map<String, Boolean> mobIds;
+    private boolean needsMob = false;
     @Nullable
     private LivingEntity placeholder;
 
@@ -45,8 +61,7 @@ public class State {
         this.plugin = plugin;
         mobIds = new HashMap<>();
         playerLocation = player.getLocation();
-            fireTicks = -20;
-            fireTicks = player.getFireTicks();
+        fireTicks = player.getFireTicks();
         potionEffects = new ArrayList<>(player.getActivePotionEffects());
         waterBubbles = player.getRemainingAir();
         prepareMobs();
@@ -93,7 +108,14 @@ public class State {
         return mobIds;
     }
 
-    public void setPlayer(Player player) {
+    public Player getPlayer() {
+        return player;
+    }
+    public UUID getPlayerUUID() {
+        return player.getUniqueId();
+    }
+
+    public void resetPlayer(Player player) {
         player.teleport(getPlayerLocation());
             player.setFireTicks(getFireTicks());
         player.addPotionEffects(getPotionEffects());
@@ -111,6 +133,9 @@ public class State {
         if (uuidPlaceholderString != null) {
             Entity e = plugin.getServer().getEntity(UUID.fromString(uuidPlaceholderString));
             placeholder = (LivingEntity) e;
+            needsMob = false;
+        } else {
+            needsMob = true;
         }
     }
 
@@ -222,6 +247,15 @@ public class State {
         if (placeholder != null) {
             serialized.put("PlaceholderUUID", placeholder.getUniqueId().toString());
         }
+        serialized.put("NeedsMob", true);
         return serialized;
+    }
+
+    public boolean isNeedsMob() {
+        return needsMob;
+    }
+
+    public void setNeedsMob(boolean needsMob) {
+        this.needsMob = needsMob;
     }
 }
