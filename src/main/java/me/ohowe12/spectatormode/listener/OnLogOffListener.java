@@ -23,7 +23,7 @@
 
 package me.ohowe12.spectatormode.listener;
 
-import me.ohowe12.spectatormode.PlaceholderEntity;
+import me.ohowe12.spectatormode.util.PlaceholderEntity;
 import me.ohowe12.spectatormode.SpectatorMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -43,8 +43,8 @@ public class OnLogOffListener implements Listener {
     public void onLogOut(@NotNull final PlayerQuitEvent e){
         final Player player = e.getPlayer();
         try {
-            if (plugin.getSpectatorCommand().inState(player.getUniqueId().toString())) {
-                PlaceholderEntity.remove(player);
+            if (plugin.getSpectatorManager().getStateHolder().hasPlayer(player)) {
+                PlaceholderEntity.remove(plugin.getSpectatorManager().getStateHolder().getPlayer(player));
             }
         } catch (final NullPointerException ignored) {
             // Filler

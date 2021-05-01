@@ -23,7 +23,7 @@
 
 package me.ohowe12.spectatormode.listener;
 
-import me.ohowe12.spectatormode.PlaceholderEntity;
+import me.ohowe12.spectatormode.util.PlaceholderEntity;
 import me.ohowe12.spectatormode.SpectatorMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -44,11 +44,11 @@ public class OnLogOnListener implements Listener {
         final boolean teleportBack = plugin.getConfigManager().getBoolean("teleport-back");
         final Player player = e.getPlayer();
         try {
-            if (plugin.getSpectatorCommand().inState(player.getUniqueId().toString())) {
+            if (plugin.getSpectatorManager().getStateHolder().hasPlayer(player)) {
                 if (teleportBack) {
                     teleportPlayerBack(player);
                 } else {
-                    PlaceholderEntity.create(player);
+                    PlaceholderEntity.create(plugin.getSpectatorManager().getStateHolder().getPlayer(player));
                 }
             }
         } catch (final NullPointerException ignored) {
@@ -58,6 +58,6 @@ public class OnLogOnListener implements Listener {
 
     private void teleportPlayerBack(@NotNull final Player player) {
         final boolean silent = plugin.getConfigManager().getBoolean("silence-survival-mode-message-on-join");
-        plugin.getSpectatorCommand().goIntoSurvivalMode(player, silent);
+        plugin.getSpectatorManager().togglePlayer(player, true);
     }
 }

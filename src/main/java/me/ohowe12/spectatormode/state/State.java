@@ -21,9 +21,8 @@
  * OUT OF OR IN
  */
 
-package me.ohowe12.spectatormode.util;
+package me.ohowe12.spectatormode.state;
 
-import me.ohowe12.spectatormode.PlaceholderEntity;
 import me.ohowe12.spectatormode.SpectatorMode;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -56,7 +55,7 @@ public class State {
     @Nullable
     private LivingEntity placeholder;
 
-    private State(@NotNull Player player, @NotNull SpectatorMode plugin) {
+    public State(@NotNull Player player, @NotNull SpectatorMode plugin) {
         this.player = player;
         this.plugin = plugin;
         mobIds = new HashMap<>();
@@ -67,7 +66,7 @@ public class State {
         prepareMobs();
     }
 
-    private State(@NotNull Map<String, Object> serialized, @NotNull SpectatorMode plugin) {
+    public State(@NotNull Map<String, Object> serialized, @NotNull SpectatorMode plugin) {
         this.plugin = plugin;
         deserialize(serialized);
     }
@@ -78,14 +77,6 @@ public class State {
 
     public void setPlaceholder(@Nullable LivingEntity placeholder) {
         this.placeholder = placeholder;
-    }
-
-    public static State fromMap(@NotNull Map<String, Object> serialized, SpectatorMode plugin) {
-        return new State(serialized, plugin);
-    }
-
-    public static State fromPlayer(@NotNull Player player, SpectatorMode plugin) {
-        return new State(player, plugin);
     }
 
     public Location getPlayerLocation() {
@@ -140,11 +131,6 @@ public class State {
     }
 
     private void prepareMobs() {
-        // Also temporary
-        // This method is not covered by tests! Watch out
-        if (plugin.isUnitTest()) {
-            return;
-        }
         World world = player.getWorld();
         Chunk defaultChunk = world.getChunkAt(getPlayerLocation());
         for (int x = 0; x <= 4; x++) {
@@ -180,18 +166,13 @@ public class State {
             @NotNull
             Mob m = (Mob) living;
             if (m.getTarget() instanceof Player) {
-                targeted = player.equals((Player) m.getTarget());
+                targeted = player.equals(m.getTarget());
             }
             mobIds.put(living.getUniqueId().toString(), targeted);
         }
     }
 
     public void unPrepareMobs() {
-        // Also temporary
-        // This method is not covered by tests! Watch out
-        if (plugin.isUnitTest()) {
-            return;
-        }
         @NotNull
         Location loc = getPlayerLocation();
         World world = loc.getWorld();

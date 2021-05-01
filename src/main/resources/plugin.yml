@@ -4,15 +4,6 @@ main: me.ohowe12.spectatormode.SpectatorMode
 api-version: 1.16
 softdepend: [Multiverse-Core, LuckPerms]
 
-commands:
-  s:
-    description: This command will set your gamemode to spectator or survival.
-    aliases: [smps]
-  speed:
-    description: Changes the flying speed in spectator mode of the player.
-  seffect:
-    description: This command will toggle the effects of night vision and conduit while in spectator mode
-
 permissions:
   spectator.*:
     description: Give access to the entire permission node
@@ -39,7 +30,7 @@ permissions:
     description: Be able to force other players into and out of spectator mode
     default: op
   smpspectator.toggle:
-    description: Be able to use the /seffect command
+    description: Be able to use the /s effect command
     default: op
   smpspectator.reload:
     description: Be able to reload the config

@@ -21,7 +21,7 @@
  * OUT OF OR IN
  */
 
-package me.ohowe12.spectatormode;
+package me.ohowe12.spectatormode.util;
 
 import java.io.IOException;
 import java.io.InputStream;

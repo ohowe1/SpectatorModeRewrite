@@ -21,7 +21,7 @@
  * OUT OF OR IN
  */
 
-package me.ohowe12.spectatormode;
+package me.ohowe12.spectatormode.util;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;

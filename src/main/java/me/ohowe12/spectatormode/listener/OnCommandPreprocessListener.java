@@ -23,7 +23,7 @@
 
 package me.ohowe12.spectatormode.listener;
 
-import me.ohowe12.spectatormode.Messenger;
+import me.ohowe12.spectatormode.util.Messenger;
 import me.ohowe12.spectatormode.SpectatorMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -46,7 +46,7 @@ public class OnCommandPreprocessListener implements Listener {
         if (player.hasPermission("smpspectator.bypass")) {
             return;
         }
-        if (!plugin.getSpectatorCommand().inState(player.getUniqueId().toString())) {
+        if (!plugin.getSpectatorManager().getStateHolder().hasPlayer(player)) {
             return;
         }
         if (plugin.getConfigManager().getList("bad-commands")

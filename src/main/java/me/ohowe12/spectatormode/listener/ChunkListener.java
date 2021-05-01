@@ -23,10 +23,9 @@
 
 package me.ohowe12.spectatormode.listener;
 
-import me.ohowe12.spectatormode.PlaceholderEntity;
+import me.ohowe12.spectatormode.util.PlaceholderEntity;
 import me.ohowe12.spectatormode.SpectatorMode;
-import me.ohowe12.spectatormode.util.State;
-import org.bukkit.Chunk;
+import me.ohowe12.spectatormode.state.State;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -48,10 +47,10 @@ public class ChunkListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void chunkLoadEvent(@NotNull final ChunkLoadEvent e) {
-        for (State state : plugin.getSpectatorCommand().getAllStates().values()) {
+        for (State state : plugin.getSpectatorManager().getStateHolder().allStates()) {
             if (state.getPlayerLocation().getChunk().equals(e.getChunk())) {
                 if (state.isNeedsMob()) {
-                    PlaceholderEntity.create(state.getPlayer());
+                    PlaceholderEntity.create(state);
                     state.setNeedsMob(false);
                 }
             }
@@ -70,7 +69,7 @@ public class ChunkListener implements Listener {
     }
 
     private Optional<State> stateWithEntity(Entity e) {
-        return plugin.getSpectatorCommand().getAllStates().values().stream().filter(state -> {
+        return plugin.getSpectatorManager().getStateHolder().allStates().stream().filter(state -> {
             if (state.getPlaceholder() != null) {
                 return state.getPlaceholder().getUniqueId().equals(e.getUniqueId());
             }

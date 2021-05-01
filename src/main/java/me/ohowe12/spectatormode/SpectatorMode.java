@@ -23,69 +23,56 @@
 
 package me.ohowe12.spectatormode;
 
-import java.io.File;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.Callable;
-
-import me.ohowe12.spectatormode.commands.Effects;
-import me.ohowe12.spectatormode.commands.Spectator;
-import me.ohowe12.spectatormode.commands.Speed;
+import dev.jorel.commandapi.CommandAPI;
+import me.ohowe12.spectatormode.commands.SpectatorCommand;
 import me.ohowe12.spectatormode.context.SpectatorContextCalculator;
 import me.ohowe12.spectatormode.listener.*;
-import me.ohowe12.spectatormode.tabcompleter.SpectatorTab;
-import me.ohowe12.spectatormode.tabcompleter.SpeedTab;
-import me.ohowe12.spectatormode.util.DataSaver;
-
+import me.ohowe12.spectatormode.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.java.JavaPluginLoader;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 public class SpectatorMode extends JavaPlugin {
 
-    private Spectator spectatorCommand;
+    private SpectatorManager spectatorManager;
     private ConfigManager config;
-    private final boolean unitTest;
+    private Logger pluginLogger;
 
-    public boolean isUnitTest() {
-        return unitTest;
+    public SpectatorManager getSpectatorManager() {
+        return spectatorManager;
     }
 
-    public SpectatorMode() {
-        super();
-        unitTest = false;
-    }
 
-    protected SpectatorMode(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
-        super(loader, description, dataFolder, file);
-        unitTest = true;
-    }
-
-    public Spectator getSpectatorCommand() {
-        return spectatorCommand;
+    @Override
+    public void onLoad() {
+        CommandAPI.onLoad(false);
     }
 
     @Override
     public void onEnable() {
-        PlaceholderEntity.init(this);
+        CommandAPI.onEnable(this);
         config = new ConfigManager(this, this.getConfig());
-        Messenger.init(this);
-        DataSaver.init(this.getDataFolder(), this);
+        pluginLogger = new Logger(this);
+        spectatorManager = new SpectatorManager(this);
+        SpectatorCommand.initPlugin(this);
         registerCommands();
-        if (!unitTest) {
-            addMetrics();
+        Messenger.init(this);
+        PlaceholderEntity.init(this, spectatorManager.getStateHolder());
+        registerCommands();
+        addMetrics();
 
-            if (config.getBoolean("update-checker")) {
-                checkUpdate();
-            }
-            initalizeLuckPermsContext();
+        if (config.getBoolean("update-checker")) {
+            checkUpdate();
         }
+        initializeLuckPermsContext();
+        registerListeners();
     }
 
-    private void initalizeLuckPermsContext() {
+    private void initializeLuckPermsContext() {
         try {
             Class.forName("net.luckperms.api.LuckPerms");
         } catch (ClassNotFoundException ignored) {
@@ -106,7 +93,7 @@ public class SpectatorMode extends JavaPlugin {
             String value = entry.getValue();
             metrics.addCustomChart(new Metrics.SimplePie(key + "_CHARTID", new Callable<String>() {
                 @Override
-                public String call() throws Exception {
+                public String call() {
                     return value;
                 }
             }));
@@ -134,15 +121,10 @@ public class SpectatorMode extends JavaPlugin {
     }
 
     public void registerCommands() {
-        spectatorCommand = new Spectator(this);
-        Objects.requireNonNull(this.getCommand("s")).setExecutor(spectatorCommand);
-        Objects.requireNonNull(this.getCommand("s")).setTabCompleter(new SpectatorTab());
+        CommandAPI.registerCommand(SpectatorCommand.class);
+    }
 
-        Objects.requireNonNull(this.getCommand("speed")).setExecutor(new Speed(this));
-        Objects.requireNonNull(this.getCommand("speed")).setTabCompleter(new SpeedTab());
-
-        Objects.requireNonNull(this.getCommand("seffect")).setExecutor(new Effects(this));
-
+    public void registerListeners() {
         getServer().getPluginManager().registerEvents(new OnMoveListener(this), this);
         getServer().getPluginManager().registerEvents(new OnLogOnListener(this), this);
         getServer().getPluginManager().registerEvents(new OnLogOffListener(this), this);
@@ -155,9 +137,13 @@ public class SpectatorMode extends JavaPlugin {
         return config;
     }
 
-    public ConfigManager reloadConfigManager() {
+    public void reloadConfigManager() {
         this.reloadConfig();
         config = new ConfigManager(this, this.getConfig());
-        return config;
     }
+
+    public Logger getPluginLogger() {
+        return pluginLogger;
+    }
+
 }

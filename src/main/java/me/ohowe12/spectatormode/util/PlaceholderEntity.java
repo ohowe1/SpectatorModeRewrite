@@ -21,8 +21,11 @@
  * OUT OF OR IN
  */
 
-package me.ohowe12.spectatormode;
+package me.ohowe12.spectatormode.util;
 
+import me.ohowe12.spectatormode.SpectatorMode;
+import me.ohowe12.spectatormode.state.State;
+import me.ohowe12.spectatormode.state.StateHolder;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -34,8 +37,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 
-import me.ohowe12.spectatormode.util.State;
-
 import java.util.Objects;
 
 public abstract class PlaceholderEntity {
@@ -45,23 +46,25 @@ public abstract class PlaceholderEntity {
     }
 
     private static SpectatorMode plugin = null;
+    private static StateHolder stateHolder = null;
 
-    public static void init(SpectatorMode plugin) {
+    public static void init(SpectatorMode plugin, StateHolder stateHolder) {
         PlaceholderEntity.plugin = plugin;
+        PlaceholderEntity.stateHolder = stateHolder;
     }
 
-    public static void create(@NotNull Player target) {
+    public static void create(@NotNull State state) {
         if (!plugin.getConfigManager().getBoolean("placeholder-mob"))
             return;
 
-        Zombie placeholder = (Zombie) target.getWorld().spawnEntity(getStateOfPlayer(target).getPlayerLocation(),
+        Zombie placeholder = (Zombie) state.getPlayerLocation().getWorld().spawnEntity(state.getPlayerLocation(),
                 EntityType.ZOMBIE);
         placeholder.setAI(false);
         placeholder.setInvulnerable(true);
         placeholder.setCanPickupItems(false);
         placeholder.setCollidable(false);
         placeholder.setSilent(true);
-        placeholder.setCustomName(target.getDisplayName());
+        placeholder.setCustomName(state.getPlayer().getDisplayName());
         placeholder.setCustomNameVisible(true);
         placeholder.setBaby();
 
@@ -73,24 +76,20 @@ public abstract class PlaceholderEntity {
             }
         }
         EntityEquipment placeholderEquip = Objects.requireNonNull(placeholder.getEquipment());
-        EntityEquipment playerEquip = Objects.requireNonNull(target.getEquipment());
+        EntityEquipment playerEquip = Objects.requireNonNull(state.getPlayer().getEquipment());
         placeholderEquip.setArmorContents(playerEquip.getArmorContents());
         placeholderEquip.setItemInMainHand(new ItemStack(Material.AIR));
         placeholderEquip.setItemInMainHand(playerEquip.getItemInMainHand());
         placeholderEquip.setItemInOffHand(playerEquip.getItemInOffHand());
-        placeholderEquip.setHelmet(getPlayerHead(target));
+        placeholderEquip.setHelmet(getPlayerHead(state.getPlayer()));
 
-        getStateOfPlayer(target).setPlaceholder(placeholder);
-        plugin.getSpectatorCommand().save();
+        state.setPlaceholder(placeholder);
+        plugin.getPluginLogger().debugLog("Added " + placeholder.getUniqueId());
+        stateHolder.save();
     }
 
-    private static State getStateOfPlayer(@NotNull Player target) {
-        String id = target.getUniqueId().toString();
-        return plugin.getSpectatorCommand().getState(id);
-    }
-
-    private static State getStateOfPlayer(String id) {
-        return plugin.getSpectatorCommand().getState(id);
+    private static State getStateOfPlayer(String uuid) {
+        return stateHolder.getPlayer(uuid);
     }
 
     private static ItemStack getPlayerHead(@NotNull Player target) {
@@ -101,22 +100,20 @@ public abstract class PlaceholderEntity {
         return skull;
     }
 
-    public static void remove(@NotNull Player target) {
-        LivingEntity placeholder = getStateOfPlayer(target).getPlaceholder();
+    public static void remove(@NotNull State state) {
+        LivingEntity placeholder = state.getPlaceholder();
         if (placeholder != null) {
             placeholder.remove();
+            plugin.getPluginLogger().debugLog("Removed " + placeholder.getUniqueId());
         }
     }
 
     public static void remove(String uuid) {
-        LivingEntity placeholder = getStateOfPlayer(uuid).getPlaceholder();
-        if (placeholder != null) {
-            placeholder.remove();
-        }
+        remove(getStateOfPlayer(uuid));
     }
 
     public static void shutdown() {
-        for (String uuid : plugin.getSpectatorCommand().getAllStates().keySet()) {
+        for (String uuid : stateHolder.allPlayersInState()) {
             remove(uuid);
         }
     }
