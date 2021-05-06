@@ -10,9 +10,6 @@
 #If the command /s is enabled (/s enable overrules this)
 enabled: true
 
-#The language, en-US is default. See spigot page for supported ones or use a custom one with CUSTOM (Will be gotten from language.json file in plugin folder
-language: en-US
-
 #if players can change their fly speed in spectator mode
 speed: true
 

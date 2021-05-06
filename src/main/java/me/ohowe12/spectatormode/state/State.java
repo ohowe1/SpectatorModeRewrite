@@ -63,7 +63,8 @@ public class State {
         fireTicks = player.getFireTicks();
         potionEffects = new ArrayList<>(player.getActivePotionEffects());
         waterBubbles = player.getRemainingAir();
-        prepareMobs();
+        if (!plugin.isUnitTest())
+            prepareMobs();
     }
 
     public State(@NotNull Map<String, Object> serialized, @NotNull SpectatorMode plugin) {
@@ -173,6 +174,9 @@ public class State {
     }
 
     public void unPrepareMobs() {
+        if (plugin.isUnitTest()) {
+            return;
+        }
         @NotNull
         Location loc = getPlayerLocation();
         World world = loc.getWorld();

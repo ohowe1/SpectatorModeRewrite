@@ -24,51 +24,73 @@
 package me.ohowe12.spectatormode;
 
 import dev.jorel.commandapi.CommandAPI;
-import me.ohowe12.spectatormode.commands.SpectatorCommand;
+import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.arguments.IntegerArgument;
+import dev.jorel.commandapi.arguments.PlayerArgument;
 import me.ohowe12.spectatormode.context.SpectatorContextCalculator;
 import me.ohowe12.spectatormode.listener.*;
 import me.ohowe12.spectatormode.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.java.JavaPluginLoader;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
 public class SpectatorMode extends JavaPlugin {
 
+    private final boolean unitTest;
     private SpectatorManager spectatorManager;
     private ConfigManager config;
     private Logger pluginLogger;
+
+    public SpectatorMode() {
+        super();
+        unitTest = false;
+    }
+
+    protected SpectatorMode(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
+        super(loader, description, dataFolder, file);
+        unitTest = true;
+    }
 
     public SpectatorManager getSpectatorManager() {
         return spectatorManager;
     }
 
+    public boolean isUnitTest() {
+        return unitTest;
+    }
 
     @Override
     public void onLoad() {
-        CommandAPI.onLoad(false);
+        if (!unitTest)
+            CommandAPI.onLoad(false);
     }
 
     @Override
     public void onEnable() {
-        CommandAPI.onEnable(this);
         config = new ConfigManager(this, this.getConfig());
         pluginLogger = new Logger(this);
         spectatorManager = new SpectatorManager(this);
-        SpectatorCommand.initPlugin(this);
-        registerCommands();
+        if (!unitTest) {
+            CommandAPI.onEnable(this);
+            registerCommands();
+            addMetrics();
+            if (config.getBoolean("update-checker")) {
+                checkUpdate();
+            }
+            initializeLuckPermsContext();
+        }
+
         Messenger.init(this);
         PlaceholderEntity.init(this, spectatorManager.getStateHolder());
-        registerCommands();
-        addMetrics();
-
-        if (config.getBoolean("update-checker")) {
-            checkUpdate();
-        }
-        initializeLuckPermsContext();
         registerListeners();
     }
 
@@ -121,7 +143,44 @@ public class SpectatorMode extends JavaPlugin {
     }
 
     public void registerCommands() {
-        CommandAPI.registerCommand(SpectatorCommand.class);
+        CommandAPICommand enableCommand = new CommandAPICommand("enable").executes((sender, args) -> {
+            spectatorManager.setSpectatorEnabled(true);
+            Messenger.send(sender, "enable-message");
+        });
+
+        CommandAPICommand disableCommand = new CommandAPICommand("disable").executes((sender, args) -> {
+            spectatorManager.setSpectatorEnabled(false);
+            Messenger.send(sender, "disable-message");
+        });
+
+        CommandAPICommand reloadCommand =
+                new CommandAPICommand("reload").withPermission("smpspectator.reload").executes((sender, args) -> {
+                    reloadConfigManager();
+                    Messenger.send(sender, "reload-message");
+                });
+
+        CommandAPICommand effectCommand =
+                new CommandAPICommand("seffect").withPermission("smpspectator.toggle").executesPlayer((player, args) -> {
+                    spectatorManager.togglePlayerEffects(player);
+                });
+
+        CommandAPICommand speedCommand =
+                new CommandAPICommand("speed").withPermission("smpspectator.speed").withArguments(new IntegerArgument("speed", 1, config.getInt("max-speed"))).executesPlayer((player, args) -> {
+                    player.setFlySpeed(((Number) ((int) args[0] / 10)).floatValue());
+                    Messenger.send(player, "speed-message", String.valueOf(args[0]));
+                });
+
+        new CommandAPICommand("s").withAliases("smps").withPermission("smpspectator.use").executesPlayer((player,
+                                                                                                          args) -> {
+            spectatorManager.togglePlayer(player);
+        }).withSubcommand(enableCommand).withSubcommand(disableCommand).withSubcommand(reloadCommand).withSubcommand(effectCommand).withSubcommand(speedCommand).register();
+
+
+        new CommandAPICommand("s").withAliases("smps").withPermission("smpspectator.force").withArguments(new PlayerArgument("target")).executes((sender
+                , args) -> {
+            spectatorManager.togglePlayer((Player) args[0], true);
+        }).register();
+
     }
 
     public void registerListeners() {
@@ -135,6 +194,10 @@ public class SpectatorMode extends JavaPlugin {
     @NotNull
     public ConfigManager getConfigManager() {
         return config;
+    }
+
+    public void setConfigManagerConfigFile(FileConfiguration fileConfiguration) {
+        config = new ConfigManager(this, fileConfiguration);
     }
 
     public void reloadConfigManager() {

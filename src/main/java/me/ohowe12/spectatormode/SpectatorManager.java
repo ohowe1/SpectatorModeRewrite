@@ -131,11 +131,13 @@ public class SpectatorManager {
         }
         // Closest mob
         double closestAllowed = plugin.getConfigManager().getDouble("closest-hostile");
-        List<Entity> entites = player.getNearbyEntities(closestAllowed, closestAllowed, closestAllowed);
-        for (Entity entity : entites) {
-            if (entity instanceof Monster) {
-                Messenger.send(player, "mob-to-close-message");
-                return false;
+        if (closestAllowed != 0) {
+            List<Entity> entites = player.getNearbyEntities(closestAllowed, closestAllowed, closestAllowed);
+            for (Entity entity : entites) {
+                if (entity instanceof Monster) {
+                    Messenger.send(player, "mob-to-close-message");
+                    return false;
+                }
             }
         }
         // Worlds
@@ -167,6 +169,9 @@ public class SpectatorManager {
     }
 
     private void removeLeads(Player target) {
+        if (plugin.isUnitTest()) {
+            return;
+        }
         List<LivingEntity> leads = target.getNearbyEntities(11, 11, 11).stream()
                 .filter(entity -> entity instanceof LivingEntity).map(entity -> (LivingEntity) entity)
                 .filter(LivingEntity::isLeashed).filter(entity -> entity.getLeashHolder() instanceof Player)
@@ -183,6 +188,28 @@ public class SpectatorManager {
     private void sendMessageIfNotSilenced(Player target, GameMode gameMode) {
         if (!plugin.getConfigManager().getBoolean("disable-switching-message")) {
             Messenger.send(target, gameMode == GameMode.SURVIVAL ? "survival-mode-message" : "spectator-mode-message");
+        }
+    }
+
+    public void togglePlayerEffects(Player player) {
+        if (!plugin.getConfigManager().getBoolean("seffect")) {
+            Messenger.send(player, "permission-message");
+        }
+        if (!stateHolder.hasPlayer(player)) {
+            Messenger.send(player, "no-spectator-message");
+            return;
+        }
+        if (player.hasPotionEffect(PotionEffectType.NIGHT_VISION)
+                || player.hasPotionEffect(PotionEffectType.CONDUIT_POWER)) {
+            player.removePotionEffect(PotionEffectType.NIGHT_VISION);
+            player.removePotionEffect(PotionEffectType.CONDUIT_POWER);
+        } else {
+            if (plugin.getConfigManager().getBoolean("night-vision")) {
+                player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 10));
+            }
+            if (plugin.getConfigManager().getBoolean("conduit")) {
+                player.addPotionEffect(new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000000, 10));
+            }
         }
     }
 }
