@@ -58,6 +58,8 @@ public class OnLogOnListener implements Listener {
 
     private void teleportPlayerBack(@NotNull final Player player) {
         final boolean silent = plugin.getConfigManager().getBoolean("silence-survival-mode-message-on-join");
+        // todo
+        plugin.getPluginLogger().debugLog("Sending player back to survival mode");
         plugin.getSpectatorManager().togglePlayer(player, true);
     }
 }

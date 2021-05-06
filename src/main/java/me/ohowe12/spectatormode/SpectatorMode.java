@@ -166,7 +166,7 @@ public class SpectatorMode extends JavaPlugin {
 
         CommandAPICommand speedCommand =
                 new CommandAPICommand("speed").withPermission("smpspectator.speed").withArguments(new IntegerArgument("speed", 1, config.getInt("max-speed"))).executesPlayer((player, args) -> {
-                    player.setFlySpeed(((Number) ((int) args[0] / 10)).floatValue());
+                    player.setFlySpeed(Math.min(1f, (int) args[0] * 0.1f));
                     Messenger.send(player, "speed-message", String.valueOf(args[0]));
                 });
 

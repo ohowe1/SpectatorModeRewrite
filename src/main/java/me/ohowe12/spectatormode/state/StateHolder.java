@@ -44,6 +44,7 @@ public class StateHolder {
     public StateHolder(SpectatorMode plugin) {
         this.plugin = plugin;
         this.dataFile = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "data.yml"));
+        load();
     }
 
     public void addPlayer(Player player) {

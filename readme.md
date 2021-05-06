@@ -7,6 +7,13 @@
 
 Download on [SpigotMC](https://www.spigotmc.org/resources/smp-spectator-mode.77267/)
 
+
+## TODO:
+- Add ability to stop mobs as being marked for non removal to remove possible lag on servers who do not want that
+- Possibility fix reload functionality
+- Test everything
+- Automate testing for everything
+
 <details><summary>Default config file</summary>
 <p>
   
