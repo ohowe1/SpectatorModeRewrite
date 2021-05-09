@@ -87,6 +87,9 @@ closest-hostile: 0
 # This will detach leads when a player enters spectator mode with /s
 detach-leads: true
 
+# Save mobs. If your server is having lag issues it is advised to turn this on
+save-mobs: true
+
 ### Message section ###
 #Adding /actionbar/ in front of a message, will make it appear in the actionbar instead of the chat
 
