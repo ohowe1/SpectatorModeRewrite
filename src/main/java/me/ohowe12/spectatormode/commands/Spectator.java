@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import me.ohowe12.spectatormode.Messenger;
-import me.ohowe12.spectatormode.PlaceholderEntity;
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.util.DataSaver;
 import me.ohowe12.spectatormode.util.State;
@@ -53,8 +52,8 @@ public class Spectator implements CommandExecutor {
 
     private final SpectatorMode plugin;
     private final Map<String, State> state;
-    private final PotionEffect nightVisionEffect = new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 10);
-    private final PotionEffect conduitEffect = new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000000, 10);
+    private final PotionEffect nightVisionEffect = new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 1);
+    private final PotionEffect conduitEffect = new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000000, 1);
     private boolean sEnabled;
     private boolean nightVisionEnabled;
     private boolean conduitEnabled;
@@ -287,8 +286,6 @@ public class Spectator implements CommandExecutor {
     }
 
     public void goIntoSurvivalMode(@NotNull Player target, boolean silent) {
-        PlaceholderEntity.remove(target);
-        state.get(target.getUniqueId().toString()).setNeedsMob(false);
         target.removePotionEffect(PotionEffectType.NIGHT_VISION);
         target.removePotionEffect(PotionEffectType.CONDUIT_POWER);
 
@@ -307,7 +304,6 @@ public class Spectator implements CommandExecutor {
 
     private void goIntoSpectatorMode(@NotNull Player target) {
         state.put(target.getUniqueId().toString(), State.fromPlayer(target, plugin));
-        PlaceholderEntity.create(target);
 
         for (@NotNull
         PotionEffect e : target.getActivePotionEffects()) {

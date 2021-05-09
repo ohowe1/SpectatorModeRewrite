@@ -103,12 +103,6 @@ public class DataSaver {
 
                 final Location location = data.getLocation(HEADER + key + ".Location");
                 value.put("Location", location);
-
-                String placeHolder = data.getString(HEADER + key + ".PlaceholderUUID");
-                value.put("PlaceholderUUID", placeHolder);
-
-                boolean needsMob = data.getBoolean(HEADER + key + "NeedsMob");
-                value.put("NeedsMob", needsMob);
                 
                 state.put(key, State.fromMap(value, plugin));
             });

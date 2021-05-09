@@ -70,7 +70,6 @@ public class SpectatorMode extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        PlaceholderEntity.init(this);
         config = new ConfigManager(this, this.getConfig());
         Messenger.init(this);
         DataSaver.init(this.getDataFolder(), this);
@@ -130,7 +129,6 @@ public class SpectatorMode extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        PlaceholderEntity.shutdown();
     }
 
     public void registerCommands() {
@@ -145,9 +143,7 @@ public class SpectatorMode extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new OnMoveListener(this), this);
         getServer().getPluginManager().registerEvents(new OnLogOnListener(this), this);
-        getServer().getPluginManager().registerEvents(new OnLogOffListener(this), this);
         getServer().getPluginManager().registerEvents(new OnCommandPreprocessListener(this), this);
-        getServer().getPluginManager().registerEvents(new ChunkListener(this), this);
     }
 
     @NotNull

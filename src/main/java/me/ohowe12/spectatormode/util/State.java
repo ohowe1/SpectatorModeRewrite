@@ -23,7 +23,6 @@
 
 package me.ohowe12.spectatormode.util;
 
-import me.ohowe12.spectatormode.PlaceholderEntity;
 import me.ohowe12.spectatormode.SpectatorMode;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -35,7 +34,6 @@ import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,16 +43,13 @@ import java.util.UUID;
 @SuppressWarnings("unchecked")
 public class State {
 
-    private Player player;
     private final SpectatorMode plugin;
+    private Player player;
     private Location playerLocation;
     private int fireTicks;
     private ArrayList<PotionEffect> potionEffects;
     private int waterBubbles;
     private Map<String, Boolean> mobIds;
-    private boolean needsMob = false;
-    @Nullable
-    private LivingEntity placeholder;
 
     private State(@NotNull Player player, @NotNull SpectatorMode plugin) {
         this.player = player;
@@ -64,20 +59,13 @@ public class State {
         fireTicks = player.getFireTicks();
         potionEffects = new ArrayList<>(player.getActivePotionEffects());
         waterBubbles = player.getRemainingAir();
+
         prepareMobs();
     }
 
     private State(@NotNull Map<String, Object> serialized, @NotNull SpectatorMode plugin) {
         this.plugin = plugin;
         deserialize(serialized);
-    }
-
-    public @Nullable LivingEntity getPlaceholder() {
-        return placeholder;
-    }
-
-    public void setPlaceholder(@Nullable LivingEntity placeholder) {
-        this.placeholder = placeholder;
     }
 
     public static State fromMap(@NotNull Map<String, Object> serialized, SpectatorMode plugin) {
@@ -111,13 +99,14 @@ public class State {
     public Player getPlayer() {
         return player;
     }
+
     public UUID getPlayerUUID() {
         return player.getUniqueId();
     }
 
     public void resetPlayer(Player player) {
         player.teleport(getPlayerLocation());
-            player.setFireTicks(getFireTicks());
+        player.setFireTicks(getFireTicks());
         player.addPotionEffects(getPotionEffects());
         player.setRemainingAir(getWaterBubbles());
     }
@@ -128,19 +117,9 @@ public class State {
         potionEffects = (ArrayList<PotionEffect>) serialized.get("Potions");
         waterBubbles = (int) serialized.get("Water bubbles");
         mobIds = (Map<String, Boolean>) serialized.get("Mobs");
-
-        String uuidPlaceholderString = (String) serialized.get("PlaceholderUUID");
-        if (uuidPlaceholderString != null) {
-            Entity e = plugin.getServer().getEntity(UUID.fromString(uuidPlaceholderString));
-            placeholder = (LivingEntity) e;
-            needsMob = false;
-        } else {
-            needsMob = true;
-        }
     }
 
     private void prepareMobs() {
-        // Also temporary
         // This method is not covered by tests! Watch out
         if (plugin.isUnitTest()) {
             return;
@@ -167,27 +146,26 @@ public class State {
             if (e instanceof Player) {
                 return;
             }
-            if (living.getRemoveWhenFarAway()) {
-                addLivingEntity(living);
-            }
+            addLivingEntity(living);
         }
     }
 
     private void addLivingEntity(LivingEntity living) {
-        living.setRemoveWhenFarAway(false);
+        if (plugin.getConfigManager().getBoolean("save-mobs") && living.getRemoveWhenFarAway()) {
+            living.setRemoveWhenFarAway(false);
+        }
         boolean targeted = false;
         if (living instanceof Mob) {
             @NotNull
             Mob m = (Mob) living;
             if (m.getTarget() instanceof Player) {
-                targeted = player.equals((Player) m.getTarget());
+                targeted = player.equals(m.getTarget());
             }
             mobIds.put(living.getUniqueId().toString(), targeted);
         }
     }
 
     public void unPrepareMobs() {
-        // Also temporary
         // This method is not covered by tests! Watch out
         if (plugin.isUnitTest()) {
             return;
@@ -244,18 +222,7 @@ public class State {
         serialized.put("Potions", potionEffects);
         serialized.put("Water bubbles", waterBubbles);
         serialized.put("Mobs", mobIds);
-        if (placeholder != null) {
-            serialized.put("PlaceholderUUID", placeholder.getUniqueId().toString());
-        }
-        serialized.put("NeedsMob", true);
         return serialized;
     }
 
-    public boolean isNeedsMob() {
-        return needsMob;
-    }
-
-    public void setNeedsMob(boolean needsMob) {
-        this.needsMob = needsMob;
-    }
 }
