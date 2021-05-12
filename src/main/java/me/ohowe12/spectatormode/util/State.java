@@ -49,7 +49,7 @@ public class State {
     private int fireTicks;
     private ArrayList<PotionEffect> potionEffects;
     private int waterBubbles;
-    private Map<String, Boolean> mobIds;
+    private Map<String, Boolean[]> mobIds;
 
     private State(@NotNull Player player, @NotNull SpectatorMode plugin) {
         this.player = player;
@@ -92,7 +92,7 @@ public class State {
         return waterBubbles;
     }
 
-    public Map<String, Boolean> getMobIds() {
+    public Map<String, Boolean[]> getMobIds() {
         return mobIds;
     }
 
@@ -116,7 +116,7 @@ public class State {
         fireTicks = (int) serialized.get("Fire ticks");
         potionEffects = (ArrayList<PotionEffect>) serialized.get("Potions");
         waterBubbles = (int) serialized.get("Water bubbles");
-        mobIds = (Map<String, Boolean>) serialized.get("Mobs");
+        mobIds = (Map<String, Boolean[]>) serialized.get("Mobs");
     }
 
     private void prepareMobs() {
@@ -151,17 +151,21 @@ public class State {
     }
 
     private void addLivingEntity(LivingEntity living) {
-        if (plugin.getConfigManager().getBoolean("save-mobs") && living.getRemoveWhenFarAway()) {
-            living.setRemoveWhenFarAway(false);
-        }
+
         boolean targeted = false;
         if (living instanceof Mob) {
             @NotNull
             Mob m = (Mob) living;
+            Boolean[] data = new Boolean[]{false, false};
             if (m.getTarget() instanceof Player) {
                 targeted = player.equals(m.getTarget());
             }
-            mobIds.put(living.getUniqueId().toString(), targeted);
+            data[0] = targeted;
+            if (plugin.getConfigManager().getBoolean("save-mobs") && living.getRemoveWhenFarAway()) {
+                living.setRemoveWhenFarAway(false);
+                data[1] = true;
+            }
+            mobIds.put(living.getUniqueId().toString(), data);
         }
     }
 
@@ -179,7 +183,7 @@ public class State {
 
         loadChunks(world, defaultChunk.getX(), defaultChunk.getZ());
 
-        for (Map.Entry<String, Boolean> entry : getMobIds().entrySet()) {
+        for (Map.Entry<String, Boolean[]> entry : getMobIds().entrySet()) {
             UUID key = UUID.fromString(entry.getKey());
             Entity entityEntity = Bukkit.getEntity(key);
             if (!(entityEntity instanceof LivingEntity)) {
@@ -187,9 +191,11 @@ public class State {
             }
             LivingEntity entityLiving = (LivingEntity) entityEntity;
 
-            entityLiving.setRemoveWhenFarAway(true);
+            if (entry.getValue()[1]) {
+                entityLiving.setRemoveWhenFarAway(true);
+            }
 
-            if (entry.getValue() && entityLiving instanceof Mob) {
+            if (entry.getValue()[0] && entityLiving instanceof Mob) {
                 Mob entityMob = (Mob) entityLiving;
                 entityMob.setTarget(player);
             }
