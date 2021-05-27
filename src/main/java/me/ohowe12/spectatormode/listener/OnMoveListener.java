@@ -23,8 +23,8 @@
 
 package me.ohowe12.spectatormode.listener;
 
-import me.ohowe12.spectatormode.Messenger;
 import me.ohowe12.spectatormode.SpectatorMode;
+import me.ohowe12.spectatormode.util.Messenger;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -41,6 +41,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+@SuppressWarnings("unchecked")
 public class OnMoveListener implements Listener {
 
     private final SpectatorMode plugin;
@@ -116,7 +117,7 @@ public class OnMoveListener implements Listener {
 
     private boolean distanceTooFar(PlayerMoveEvent e) {
         final int distance = plugin.getConfigManager().getInt("distance");
-        final Location originalLocation = plugin.getSpectatorCommand().getState(e.getPlayer().getUniqueId().toString())
+        final Location originalLocation = plugin.getSpectatorManager().getStateHolder().getPlayer(e.getPlayer())
                 .getPlayerLocation();
         return (originalLocation.distance(e.getTo())) > distance;
     }
@@ -128,7 +129,7 @@ public class OnMoveListener implements Listener {
 
     private boolean shouldDoNotSkipEvent(PlayerEvent e) {
         return !e.getPlayer().hasPermission("smpspectator.bypass")
-                && plugin.getSpectatorCommand().inState(e.getPlayer().getUniqueId().toString())
-                && e.getPlayer().getGameMode().equals(GameMode.SPECTATOR);
+                && plugin.getSpectatorManager().getStateHolder().hasPlayer(e.getPlayer())
+                && e.getPlayer().getGameMode() == GameMode.SPECTATOR;
     }
 }

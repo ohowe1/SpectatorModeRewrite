@@ -21,12 +21,14 @@
  * OUT OF OR IN
  */
 
-package me.ohowe12.spectatormode;
+package me.ohowe12.spectatormode.util;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import me.ohowe12.spectatormode.SpectatorMode;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -60,9 +62,13 @@ public class ConfigManager {
         return result;
     }
 
+    public String getString(@NotNull final String path) {
+        return Objects.requireNonNull(config.getString(path, defaults.getString(path)));
+    }
+
     public @NotNull String getColorizedString(@NotNull final String path) {
         return ChatColor.translateAlternateColorCodes('&',
-                Objects.requireNonNull(config.getString(path, defaults.getString(path))));
+                getString(path));
     }
 
     public boolean getBoolean(@NotNull final String path) {

@@ -21,8 +21,9 @@
  * OUT OF OR IN
  */
 
-package me.ohowe12.spectatormode;
+package me.ohowe12.spectatormode.util;
 
+import me.ohowe12.spectatormode.SpectatorMode;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
@@ -62,7 +63,7 @@ public abstract class Messenger {
         ChatMessageType type = cfgmsg.startsWith("/actionbar/") ? ChatMessageType.ACTION_BAR : ChatMessageType.CHAT;
         cfgmsg = cfgmsg.replace("/actionbar/", "");
         cfgmsg += extra;
-        if (!(sender instanceof Player) || plugin.isUnitTest())
+        if (!(sender instanceof Player))
             sender.sendMessage(cfgmsg);
         else
             ((Player)sender).spigot().sendMessage(type, new TextComponent(cfgmsg));
