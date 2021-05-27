@@ -49,8 +49,13 @@ public class OnCommandPreprocessListener implements Listener {
         if (!plugin.getSpectatorManager().getStateHolder().hasPlayer(player)) {
             return;
         }
+
+        String rawCommand = e.getMessage().substring(1).split(" ")[0]; // /back -> back || /essentials:back -> essentials:back
+        String[] splited = rawCommand.split(":");
+
+        rawCommand = splited[splited.length - 1];
         if (plugin.getConfigManager().getList("bad-commands")
-            .contains(e.getMessage().substring(1).split(" ")[0])) {
+            .contains(rawCommand)) {
             Messenger.send(player,"bad-command-message");
             e.setCancelled(true);
         }

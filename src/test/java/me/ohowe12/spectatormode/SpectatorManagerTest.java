@@ -29,9 +29,11 @@ import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import me.ohowe12.spectatormode.utils.TestUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.potion.PotionEffectType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import static me.ohowe12.spectatormode.utils.TestUtils.assertEqualsColored;
 
@@ -73,6 +75,48 @@ class SpectatorManagerTest {
         playerMock.assertGameMode(GameMode.SURVIVAL);
     }
 
+    @Test
+    void testGivenEffects() {
+        spectatorManager.togglePlayer(playerMock);
+
+        assertHasSpectatorEffects();
+
+        spectatorManager.togglePlayer(playerMock);
+
+        assertDoesNotHaveAnyEffects();
+    }
+
+    @Test
+    void testNotGivenEffectsWhenDisabled() {
+        TestUtils.setConfigFileOfPlugin(plugin, "disabledeffects.yml");
+
+        spectatorManager.togglePlayer(playerMock);
+
+        assertDoesNotHaveAnyEffects();
+
+        spectatorManager.togglePlayer(playerMock);
+
+        assertDoesNotHaveAnyEffects();
+    }
+
+    @Test
+    void testToggleEffectsCommand() {
+        spectatorManager.togglePlayer(playerMock);
+
+        spectatorManager.togglePlayerEffects(playerMock);
+        assertDoesNotHaveAnyEffects();
+
+        spectatorManager.togglePlayerEffects(playerMock);
+        assertHasSpectatorEffects();
+    }
+
+    private void assertDoesNotHaveAnyEffects() {
+        assertEquals(0, playerMock.getActivePotionEffects().size());
+    }
+    private void assertHasSpectatorEffects() {
+        assertTrue(playerMock.getActivePotionEffects().stream().anyMatch(e -> e.getType() == PotionEffectType.NIGHT_VISION));
+        assertTrue(playerMock.getActivePotionEffects().stream().anyMatch(e -> e.getType() == PotionEffectType.CONDUIT_POWER));
+    }
     @Test
     void testTogglePlayerMessageSent() {
         spectatorManager.togglePlayer(playerMock);
@@ -125,5 +169,7 @@ class SpectatorManagerTest {
         assertEqualsColored("&cHey you&l can not &r&cdo that in that world!", playerMock.nextMessage());
         playerMock.assertGameMode(GameMode.SURVIVAL);
     }
+
+
 
 }

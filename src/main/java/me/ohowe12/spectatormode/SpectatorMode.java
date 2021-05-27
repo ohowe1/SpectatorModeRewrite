@@ -90,7 +90,6 @@ public class SpectatorMode extends JavaPlugin {
         }
 
         Messenger.init(this);
-        PlaceholderEntity.init(this, spectatorManager.getStateHolder());
         registerListeners();
     }
 
@@ -113,12 +112,7 @@ public class SpectatorMode extends JavaPlugin {
         for (Map.Entry<String, String> entry : config.getAllBooleansAndNumbers().entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            metrics.addCustomChart(new Metrics.SimplePie(key + "_CHARTID", new Callable<String>() {
-                @Override
-                public String call() {
-                    return value;
-                }
-            }));
+            metrics.addCustomChart(new Metrics.SimplePie(key + "_CHARTID", () -> value));
         }
     }
 
@@ -139,28 +133,31 @@ public class SpectatorMode extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        PlaceholderEntity.shutdown();
+
     }
 
     public void registerCommands() {
-        CommandAPICommand enableCommand = new CommandAPICommand("enable").executes((sender, args) -> {
-            spectatorManager.setSpectatorEnabled(true);
-            Messenger.send(sender, "enable-message");
-        });
+        CommandAPICommand enableCommand =
+                new CommandAPICommand("enable").withPermission("smpspectator.enable").executes((sender, args) -> {
+                    spectatorManager.setSpectatorEnabled(true);
+                    Messenger.send(sender, "enable-message");
+                });
 
-        CommandAPICommand disableCommand = new CommandAPICommand("disable").executes((sender, args) -> {
-            spectatorManager.setSpectatorEnabled(false);
-            Messenger.send(sender, "disable-message");
-        });
+        CommandAPICommand disableCommand =
+                new CommandAPICommand("disable").withPermission("smpspectator.enable").executes((sender, args) -> {
+                    spectatorManager.setSpectatorEnabled(false);
+                    Messenger.send(sender, "disable-message");
+                });
 
         CommandAPICommand reloadCommand =
                 new CommandAPICommand("reload").withPermission("smpspectator.reload").executes((sender, args) -> {
                     reloadConfigManager();
+                    spectatorManager.getStateHolder().load();
                     Messenger.send(sender, "reload-message");
                 });
 
         CommandAPICommand effectCommand =
-                new CommandAPICommand("seffect").withPermission("smpspectator.toggle").executesPlayer((player, args) -> {
+                new CommandAPICommand("effect").withPermission("smpspectator.toggle").executesPlayer((player, args) -> {
                     spectatorManager.togglePlayerEffects(player);
                 });
 
@@ -170,25 +167,31 @@ public class SpectatorMode extends JavaPlugin {
                     Messenger.send(player, "speed-message", String.valueOf(args[0]));
                 });
 
-        new CommandAPICommand("s").withAliases("smps").withPermission("smpspectator.use").executesPlayer((player,
+        CommandAPICommand forceCommand =
+                new CommandAPICommand("force").withPermission("smpspectator.force").withArguments(new PlayerArgument(
+                        "target")).executes((sender, args) -> {
+                    spectatorManager.togglePlayer((Player) args[0], true);
+                });
+
+        CommandAPICommand mainCommand = new CommandAPICommand("s").withAliases("smps").withPermission("smpspectator.use").executesPlayer((player,
                                                                                                           args) -> {
             spectatorManager.togglePlayer(player);
-        }).withSubcommand(enableCommand).withSubcommand(disableCommand).withSubcommand(reloadCommand).withSubcommand(effectCommand).withSubcommand(speedCommand).register();
+        }).withSubcommand(enableCommand).withSubcommand(disableCommand).withSubcommand(reloadCommand).withSubcommand(effectCommand).withSubcommand(forceCommand);
 
+        if (config.getBoolean("speed")) {
+            mainCommand.withSubcommand(speedCommand);
+        }
+        if (config.getBoolean("seffect")) {
+            mainCommand.withSubcommand(effectCommand);
+        }
 
-        new CommandAPICommand("s").withAliases("smps").withPermission("smpspectator.force").withArguments(new PlayerArgument("target")).executes((sender
-                , args) -> {
-            spectatorManager.togglePlayer((Player) args[0], true);
-        }).register();
-
+        mainCommand.register();
     }
 
     public void registerListeners() {
         getServer().getPluginManager().registerEvents(new OnMoveListener(this), this);
         getServer().getPluginManager().registerEvents(new OnLogOnListener(this), this);
-        getServer().getPluginManager().registerEvents(new OnLogOffListener(this), this);
         getServer().getPluginManager().registerEvents(new OnCommandPreprocessListener(this), this);
-        getServer().getPluginManager().registerEvents(new ChunkListener(this), this);
     }
 
     @NotNull

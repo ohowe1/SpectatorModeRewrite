@@ -23,7 +23,6 @@
 
 package me.ohowe12.spectatormode.listener;
 
-import me.ohowe12.spectatormode.util.PlaceholderEntity;
 import me.ohowe12.spectatormode.SpectatorMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -47,8 +46,6 @@ public class OnLogOnListener implements Listener {
             if (plugin.getSpectatorManager().getStateHolder().hasPlayer(player)) {
                 if (teleportBack) {
                     teleportPlayerBack(player);
-                } else {
-                    PlaceholderEntity.create(plugin.getSpectatorManager().getStateHolder().getPlayer(player));
                 }
             }
         } catch (final NullPointerException ignored) {

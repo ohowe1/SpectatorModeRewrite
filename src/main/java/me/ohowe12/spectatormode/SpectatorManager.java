@@ -192,9 +192,6 @@ public class SpectatorManager {
     }
 
     public void togglePlayerEffects(Player player) {
-        if (!plugin.getConfigManager().getBoolean("seffect")) {
-            Messenger.send(player, "permission-message");
-        }
         if (!stateHolder.hasPlayer(player)) {
             Messenger.send(player, "no-spectator-message");
             return;

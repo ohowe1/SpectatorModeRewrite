@@ -41,6 +41,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+@SuppressWarnings("unchecked")
 public class OnMoveListener implements Listener {
 
     private final SpectatorMode plugin;
@@ -129,6 +130,6 @@ public class OnMoveListener implements Listener {
     private boolean shouldDoNotSkipEvent(PlayerEvent e) {
         return !e.getPlayer().hasPermission("smpspectator.bypass")
                 && plugin.getSpectatorManager().getStateHolder().hasPlayer(e.getPlayer())
-                && e.getPlayer().getGameMode().equals(GameMode.SPECTATOR);
+                && e.getPlayer().getGameMode() == GameMode.SPECTATOR;
     }
 }

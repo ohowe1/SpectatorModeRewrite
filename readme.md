@@ -7,16 +7,8 @@
 
 Download on [SpigotMC](https://www.spigotmc.org/resources/smp-spectator-mode.77267/)
 
-
-## TODO:
-- Add ability to stop mobs as being marked for non removal to remove possible lag on servers who do not want that
-- Possibility fix reload functionality
-- Test everything
-- Automate testing for everything
-
 <details><summary>Default config file</summary>
 <p>
-  
 ## Default `config.yml`
 
 ```yml
@@ -53,7 +45,7 @@ seffect: true
 #Whether to enforce the worlds
 enforce-worlds: false
 #The names of the worlds spectator mode is allowed in
-worlds-allowed: [world, world_nether, world_the_end]
+worlds-allowed: [ world, world_nether, world_the_end ]
 
 #If the y level is limited to the number in y-level in spectator mode
 enforce-y: false
@@ -68,7 +60,7 @@ disallow-non-transparent-blocks: false
 disallow-all-blocks: false
 
 #Specific blocks that a player cannot go through. the id
-disallowed-blocks: []
+disallowed-blocks: [ ]
 
 
 #How close a player can get to a block, to be used with disallow-all-blocks (percentage of block), adjust according to ping
@@ -86,7 +78,7 @@ minimum-health: 0
 #Prevents players from using the spectator teleport hot bar
 prevent-teleport: false
 #Prevents these commands from being executed unless you have the smpspectator.bypass permission. Example list: [back, return, home, homes, tpaccept, tpyes, warp, warps]
-bad-commands: []
+bad-commands: [ ]
 
 #Prevents players from going past the world border in spectator mode
 enforce-world-border: true
@@ -167,10 +159,13 @@ no-spectator-message: '&cYou did not preform the /s command'
 bad-command-message: '&cYou can not execute that command while in spectator mode'
 
 #Message sent when a player executes /s while in spectator mode but did not use it to get into spectator mode
-not-in-state-message: '&cYou did not use this command to get into spectator mode! Setting gamemode to SURVIVAL MODE'
+not-in-state-message: '&cYou did not use this command to get into spectator mode!'
 
 #Message sent when a player tries to use /s when they are to close to a hostile mob (See closest-hostile)
 mob-to-close-message: '&cYou are to close to a hostile mob to enter spectator mode'
+
+#Get debug logs
+debug: false
 ```
 </p>
 </details>

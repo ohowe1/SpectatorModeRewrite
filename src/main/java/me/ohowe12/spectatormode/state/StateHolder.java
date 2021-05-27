@@ -24,7 +24,6 @@
 package me.ohowe12.spectatormode.state;
 
 import me.ohowe12.spectatormode.SpectatorMode;
-import me.ohowe12.spectatormode.util.PlaceholderEntity;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -69,7 +68,6 @@ public class StateHolder {
 
     public void removePlayer(String uuid) {
         stateMap.get(uuid).unPrepareMobs();
-        PlaceholderEntity.remove(stateMap.get(uuid));
         stateMap.remove(uuid);
     }
 
