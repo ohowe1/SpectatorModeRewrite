@@ -39,11 +39,9 @@ public class SpectatorContextCalculator implements ContextCalculator<Player> {
     private final SpectatorMode plugin;
 
     public static void initalizeSpectatorContext(SpectatorMode plugin) {
-        plugin.getLogger().info("Attempting to get provider for LuckPerms");
         RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
         if (provider != null) {
             LuckPerms api = provider.getProvider();
-            plugin.getLogger().info("Got provider!\nInitalizing with LuckPerms Context");
             api.getContextManager().registerCalculator(new SpectatorContextCalculator(plugin));
         }
     }
@@ -55,7 +53,7 @@ public class SpectatorContextCalculator implements ContextCalculator<Player> {
     @Override
     public void calculate(Player target, ContextConsumer contextConsumer) {
         contextConsumer.accept("SMP Spectator",
-                plugin.getSpectatorCommand().inState(target.getUniqueId().toString()) ? "true" : "false");
+                plugin.getSpectatorManager().getStateHolder().hasPlayer(target) ? "true" : "false");
     }
 
     @Override

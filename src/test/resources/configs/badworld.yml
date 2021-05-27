@@ -1,0 +1,51 @@
+# config file for SpectatorManagerTest#testTogglePlayerWithBadWorld
+
+enabled: true
+speed: true
+night-vision: true
+conduit: true
+max-speed: 5
+teleport-back: false
+seffect: true
+# Changed worlds and worlds-allowed
+enforce-worlds: true
+worlds-allowed: [ aworldyouarenotin ]
+enforce-y: false
+y-level: 0
+disallow-non-transparent-blocks: false
+disallow-all-blocks: false
+disallowed-blocks: [ ]
+bubble-size: 35
+enforce-distance: false
+distance: 64
+minimum-health: 0
+prevent-teleport: false
+bad-commands: [ ]
+enforce-world-border: true
+disable-switching-message: false
+silence-survival-mode-message-on-join: true
+placeholder-mob: false
+update-checker: true
+closest-hostile: 0
+detach-leads: true
+spectator-mode-message: '&9Setting gamemode to &b&lSPECTATOR MODE'
+survival-mode-message: '&9Setting gamemode to &b&lSURVIVAL MODE'
+falling-message: '&cHey you &lcan not &r&cdo that while falling!'
+world-message: '&cHey you&l can not &r&cdo that in that world!'
+health-message: '&cYou are below the minimum required health to preform this command!'
+permission-message: '&cYou do not have permission to do that!'
+disabled-message: '&cSpectator Mode is &lnot &r&cenabled by the server!'
+console-message: '&cYou are &lnot &ca player!'
+disable-message: '&dSpectator mode has been &ldisabled'
+enable-message: '&dSpectator mode has been &lenabled'
+reload-message: '&bThe config file has been reloaded!'
+speed-message: '&bSpeed has been set to '
+invalid-speed-message: '&cThat is not a valid speed'
+invalid-player-message: '&cThat is not a valid player'
+force-success: '&bSuccessfully forced /target/ into '
+force-fail: '&cFailed to force /target/ into '
+no-spectator-message: '&cYou did not preform the /s command'
+bad-command-message: '&cYou can not execute that command while in spectator mode'
+not-in-state-message: '&cYou did not use this command to get into spectator mode!'
+mob-to-close-message: '&cYou are to close to a hostile mob to enter spectator mode'
+debug: false

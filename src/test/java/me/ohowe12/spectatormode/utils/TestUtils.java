@@ -21,23 +21,25 @@
  * OUT OF OR IN
  */
 
-package me.ohowe12.spectatormode.tabcompleter;
+package me.ohowe12.spectatormode.utils;
 
-import java.util.Collections;
-import java.util.List;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import me.ohowe12.spectatormode.SpectatorMode;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
-public class SpeedTab implements TabCompleter {
+import java.io.File;
 
-    @Override
-    public @Nullable List<String> onTabComplete(@NotNull final CommandSender sender, @NotNull final Command command,
-            @NotNull final String alias, @NotNull final String[] args) {
-        return Collections.emptyList();
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class TestUtils {
+    public static void assertEqualsColored(String expected, String actual) {
+        assertEquals(ChatColor.translateAlternateColorCodes('&', expected), actual);
     }
 
-
+    public static void setConfigFileOfPlugin(SpectatorMode plugin, String configName) {
+        FileConfiguration configuration = YamlConfiguration.loadConfiguration(new File("src/test/resources/configs/" + configName));
+        configuration.setDefaults(plugin.getConfig());
+        plugin.setConfigManagerConfigFile(configuration);
+    }
 }

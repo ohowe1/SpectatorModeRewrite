@@ -21,33 +21,35 @@
  * OUT OF OR IN
  */
 
-package me.ohowe12.spectatormode.tabcompleter;
+package me.ohowe12.spectatormode.util;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Scanner;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.util.Consumer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class TabCompleteUtil {
+public class UpdateChecker {
 
-    private TabCompleteUtil() {
-
+    private UpdateChecker() {
+        
     }
 
-    @Nullable
-    public static List<String> getStrings(@NotNull final String @NotNull [] args,
-            @NotNull final List<String> arguments) {
-        final List<String> results = new ArrayList<>();
 
-        if (args.length == 1) {
-            for (final String a : arguments) {
-                if (a.toLowerCase().startsWith(args[0].toLowerCase())) {
-                    results.add(a);
+    public static void getVersion(final @NotNull Consumer<String> consumer, Plugin plugin) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            try (InputStream inputStream = new URL(
+                "https://api.spigotmc.org/legacy/update.php?resource=77267")
+                .openStream(); Scanner scanner = new Scanner(inputStream)) {
+                if (scanner.hasNext()) {
+                    consumer.accept(scanner.next());
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            return results;
-        }
-
-        return null;
+        });
     }
 }
