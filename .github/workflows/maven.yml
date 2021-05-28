@@ -34,6 +34,6 @@ jobs:
     - name: Report test coverage
       run: |
         curl https://deepsource.io/cli | sh
-        ./bin/deepsource report --analyzer test-coverage --key java --value-file target/site/jacoco/jacocoTestReport.xml
+        ./bin/deepsource report --analyzer test-coverage --key java --value-file target/site/jacoco/jacoco.xml
       env:
         DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}
