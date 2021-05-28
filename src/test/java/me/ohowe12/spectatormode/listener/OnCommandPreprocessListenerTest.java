@@ -52,6 +52,7 @@ class OnCommandPreprocessListenerTest {
 
     @Test
     void testDisabledCommand() {
+        assert event != null;
         new OnCommandPreprocessListener(plugin).onCommandEvent(event);
 
         assertEqualsColored("&cYou can not execute that command while in spectator mode", playerMock.nextMessage());
@@ -60,6 +61,7 @@ class OnCommandPreprocessListenerTest {
 
     @Test
     void testDisabledCommandWithOverridePermission() {
+        assert playerMock != null;
         playerMock.addAttachment(plugin, "smpspectator.bypass", true);
 
         new OnCommandPreprocessListener(plugin).onCommandEvent(event);
@@ -71,6 +73,7 @@ class OnCommandPreprocessListenerTest {
 
     @Test
     void testCommandWithSemiColon() {
+        assert playerMock != null;
         PlayerCommandPreprocessEvent otherEvent = new PlayerCommandPreprocessEvent(playerMock, "/exampleplugin:testcommand");
         new OnCommandPreprocessListener(plugin).onCommandEvent(otherEvent);
 
