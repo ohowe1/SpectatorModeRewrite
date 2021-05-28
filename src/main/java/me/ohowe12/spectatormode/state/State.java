@@ -34,7 +34,6 @@ import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,9 +50,6 @@ public class State {
     private ArrayList<PotionEffect> potionEffects;
     private int waterBubbles;
     private Map<String, Boolean> mobIds;
-    private boolean needsMob = false;
-    @Nullable
-    private LivingEntity placeholder;
 
     public State(@NotNull Player player, @NotNull SpectatorMode plugin) {
         this.player = player;
@@ -70,14 +66,6 @@ public class State {
     public State(@NotNull Map<String, Object> serialized, @NotNull SpectatorMode plugin) {
         this.plugin = plugin;
         deserialize(serialized);
-    }
-
-    public @Nullable LivingEntity getPlaceholder() {
-        return placeholder;
-    }
-
-    public void setPlaceholder(@Nullable LivingEntity placeholder) {
-        this.placeholder = placeholder;
     }
 
     public Location getPlayerLocation() {
@@ -121,14 +109,6 @@ public class State {
         waterBubbles = (int) serialized.get("Water bubbles");
         mobIds = (Map<String, Boolean>) serialized.get("Mobs");
 
-        String uuidPlaceholderString = (String) serialized.get("PlaceholderUUID");
-        if (uuidPlaceholderString != null) {
-            Entity e = plugin.getServer().getEntity(UUID.fromString(uuidPlaceholderString));
-            placeholder = (LivingEntity) e;
-            needsMob = false;
-        } else {
-            needsMob = true;
-        }
     }
 
     private void prepareMobs() {
@@ -229,18 +209,6 @@ public class State {
         serialized.put("Potions", potionEffects);
         serialized.put("Water bubbles", waterBubbles);
         serialized.put("Mobs", mobIds);
-        if (placeholder != null) {
-            serialized.put("PlaceholderUUID", placeholder.getUniqueId().toString());
-        }
-        serialized.put("NeedsMob", true);
         return serialized;
-    }
-
-    public boolean isNeedsMob() {
-        return needsMob;
-    }
-
-    public void setNeedsMob(boolean needsMob) {
-        this.needsMob = needsMob;
     }
 }
