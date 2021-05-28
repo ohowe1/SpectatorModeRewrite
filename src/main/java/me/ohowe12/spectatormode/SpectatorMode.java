@@ -30,6 +30,7 @@ import dev.jorel.commandapi.arguments.PlayerArgument;
 import me.ohowe12.spectatormode.context.SpectatorContextCalculator;
 import me.ohowe12.spectatormode.listener.*;
 import me.ohowe12.spectatormode.util.*;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -41,7 +42,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 public class SpectatorMode extends JavaPlugin {
 
@@ -97,11 +97,11 @@ public class SpectatorMode extends JavaPlugin {
         try {
             Class.forName("net.luckperms.api.LuckPerms");
         } catch (ClassNotFoundException ignored) {
-            getLogger().info("LuckPerms class not found");
+            pluginLogger.debugLog("LuckPerms class not found");
             return;
         }
         if (!getServer().getPluginManager().isPluginEnabled("LuckPerms")) {
-            getLogger().info("LuckPerms not enabled");
+            pluginLogger.debugLog("LuckPerms not enabled");
             return;
         }
         SpectatorContextCalculator.initalizeSpectatorContext(this);
@@ -112,6 +112,7 @@ public class SpectatorMode extends JavaPlugin {
         for (Map.Entry<String, String> entry : config.getAllBooleansAndNumbers().entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
+
             metrics.addCustomChart(new Metrics.SimplePie(key + "_CHARTID", () -> value));
         }
     }
@@ -119,14 +120,10 @@ public class SpectatorMode extends JavaPlugin {
     private void checkUpdate() {
         UpdateChecker.getVersion(version -> {
             if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
-                Bukkit.getConsoleSender().sendMessage(
-                        ChatColor.AQUA + "[SMP SPECTATOR MODE] SMP SPECTATOR MODE is all up to date at version "
-                                + this.getDescription().getVersion() + '!');
+                pluginLogger.log(Logger.ANSI_CYAN + "SMP SPECTATOR MODE is all up to date at version " + this.getDescription().getVersion() + "!");
             } else {
-                Bukkit.getConsoleSender()
-                        .sendMessage(ChatColor.DARK_RED
-                                + "[SMP SPECTATOR MODE] A new version of SMP SPECTATOR MODE is available (version "
-                                + version + ")! You are on version " + this.getDescription().getVersion() + ".");
+                pluginLogger.log(Logger.ANSI_RED + "A new version of SMP SPECTATOR MODE is available (version "
+                        + version + ")! You are on version " + this.getDescription().getVersion() + ".");
             }
         }, this);
     }

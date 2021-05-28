@@ -28,5 +28,14 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
         
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
+    - name: Test with Maven
+      run: mvn test --file pom.xml
+
+    - name: Report test coverage
+      run: |
+      curl https://deepsource.io/cli | sh
+
+      # From the root directory, run the report coverage command
+      ./bin/deepsource report --analyzer test-coverage --key java --value-file target/site/jacoco/jacocoTestReport.xml
+      env:
+        DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}
