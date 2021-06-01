@@ -37,7 +37,3 @@ permissions:
   smpspectator.reload:
     description: Be able to reload the config
     default: op
-
-commands:
-  s:
-    description: The command for SMP Spectator Mode

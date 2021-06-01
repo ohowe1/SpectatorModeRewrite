@@ -63,23 +63,27 @@ public class SpectatorManager {
         return stateHolder;
     }
 
-    public void togglePlayer(Player player, boolean forced) {
+    public void togglePlayer(Player player, boolean forced, boolean silenceMessages) {
         if (!spectatorEnabled && !forced) {
             Messenger.send(player, "disabled-message");
             return;
         }
         if (player.getGameMode() == GameMode.SPECTATOR) {
-            toggleToSurvival(player);
+            toggleToSurvival(player, silenceMessages);
         } else {
-            toggleToSpectator(player, forced);
+            toggleToSpectator(player, forced, silenceMessages);
         }
+    }
+
+    public void togglePlayer(Player player, boolean forced) {
+        togglePlayer(player, forced, false);
     }
 
     public void togglePlayer(Player player) {
         togglePlayer(player, false);
     }
 
-    private void toggleToSpectator(Player target, boolean forced) {
+    private void toggleToSpectator(Player target, boolean forced, boolean messagesForcedSilenced) {
         if (canGoIntoSpectator(target, forced)) {
             if (stateHolder.hasPlayer(target)) {
                 stateHolder.removePlayer(target);
@@ -94,11 +98,11 @@ public class SpectatorManager {
 
             stateHolder.save();
 
-            sendMessageIfNotSilenced(target, GameMode.SPECTATOR);
+            sendMessageIfNotSilenced(target, GameMode.SPECTATOR, messagesForcedSilenced);
         }
     }
 
-    private void toggleToSurvival(Player target) {
+    private void toggleToSurvival(Player target, boolean messagesForcedSilenced) {
         if (stateHolder.hasPlayer(target)) {
             removeSpectatorEffects(target);
 
@@ -109,7 +113,7 @@ public class SpectatorManager {
 
             stateHolder.save();
 
-            sendMessageIfNotSilenced(target, GameMode.SURVIVAL);
+            sendMessageIfNotSilenced(target, GameMode.SURVIVAL, messagesForcedSilenced);
         } else {
             Messenger.send(target, "not-in-state-message");
         }
@@ -185,8 +189,8 @@ public class SpectatorManager {
         }
     }
 
-    private void sendMessageIfNotSilenced(Player target, GameMode gameMode) {
-        if (!plugin.getConfigManager().getBoolean("disable-switching-message")) {
+    private void sendMessageIfNotSilenced(Player target, GameMode gameMode, boolean forceSilence) {
+        if (!plugin.getConfigManager().getBoolean("disable-switching-message") || forceSilence) {
             Messenger.send(target, gameMode == GameMode.SURVIVAL ? "survival-mode-message" : "spectator-mode-message");
         }
     }
@@ -201,12 +205,7 @@ public class SpectatorManager {
             player.removePotionEffect(PotionEffectType.NIGHT_VISION);
             player.removePotionEffect(PotionEffectType.CONDUIT_POWER);
         } else {
-            if (plugin.getConfigManager().getBoolean("night-vision")) {
-                player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 10));
-            }
-            if (plugin.getConfigManager().getBoolean("conduit")) {
-                player.addPotionEffect(new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000000, 10));
-            }
+            addSpectatorEffectsIfEnabled(player);
         }
     }
 }
