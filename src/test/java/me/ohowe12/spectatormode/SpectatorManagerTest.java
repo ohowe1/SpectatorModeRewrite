@@ -33,9 +33,10 @@ import org.bukkit.potion.PotionEffectType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 import static me.ohowe12.spectatormode.utils.TestUtils.assertEqualsColored;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SpectatorManagerTest {
 
@@ -113,10 +114,12 @@ class SpectatorManagerTest {
     private void assertDoesNotHaveAnyEffects() {
         assertEquals(0, playerMock.getActivePotionEffects().size());
     }
+
     private void assertHasSpectatorEffects() {
         assertTrue(playerMock.getActivePotionEffects().stream().anyMatch(e -> e.getType() == PotionEffectType.NIGHT_VISION));
         assertTrue(playerMock.getActivePotionEffects().stream().anyMatch(e -> e.getType() == PotionEffectType.CONDUIT_POWER));
     }
+
     @Test
     void testTogglePlayerMessageSent() {
         spectatorManager.togglePlayer(playerMock);
@@ -156,7 +159,8 @@ class SpectatorManagerTest {
 
         spectatorManager.togglePlayer(playerMock);
 
-        assertEqualsColored("&cYou are below the minimum required health to preform this command!", playerMock.nextMessage());
+        assertEqualsColored("&cYou are below the minimum required health to preform this command!",
+                playerMock.nextMessage());
         playerMock.assertGameMode(GameMode.SURVIVAL);
     }
 
@@ -169,7 +173,6 @@ class SpectatorManagerTest {
         assertEqualsColored("&cHey you&l can not &r&cdo that in that world!", playerMock.nextMessage());
         playerMock.assertGameMode(GameMode.SURVIVAL);
     }
-
 
 
 }

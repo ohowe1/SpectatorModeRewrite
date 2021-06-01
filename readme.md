@@ -1,4 +1,3 @@
-[![Maintainability](https://api.codeclimate.com/v1/badges/b886095a96a861fe1a35/maintainability)](https://codeclimate.com/github/carelesshippo/SpectatorModeRewrite/maintainability)
 # SMP Spectator Mode
 
 ---
@@ -12,7 +11,7 @@ Download on [SpigotMC](https://www.spigotmc.org/resources/smp-spectator-mode.772
 ## Default `config.yml`
 
 ```yml
-#   _____ __  __ _____     _____                 _        _               __  __           _
+#  #   _____ __  __ _____     _____                 _        _               __  __           _
 #  / ____|  \/  |  __ \   / ____|               | |      | |             |  \/  |         | |
 # | (___ | \  / | |__) | | (___  _ __   ___  ___| |_ __ _| |_ ___  _ __  | \  / | ___   __| | ___
 #  \___ \| |\/| |  ___/   \___ \| '_ \ / _ \/ __| __/ _` | __/ _ \| '__| | |\/| |/ _ \ / _` |/ _ \
@@ -100,6 +99,9 @@ closest-hostile: 0
 
 # This will detach leads when a player enters spectator mode with /s
 detach-leads: true
+
+# Save mobs. If your server is having lag issues it is advised to turn this off
+mobs: true
 
 ### Message section ###
 #Adding /actionbar/ in front of a message, will make it appear in the actionbar instead of the chat

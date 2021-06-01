@@ -23,31 +23,30 @@
 
 package me.ohowe12.spectatormode.context;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.RegisteredServiceProvider;
-
 import me.ohowe12.spectatormode.SpectatorMode;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.context.ContextCalculator;
 import net.luckperms.api.context.ContextConsumer;
 import net.luckperms.api.context.ContextSet;
 import net.luckperms.api.context.ImmutableContextSet;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class SpectatorContextCalculator implements ContextCalculator<Player> {
 
     private final SpectatorMode plugin;
 
-    public static void initalizeSpectatorContext(SpectatorMode plugin) {
+    public SpectatorContextCalculator(SpectatorMode plugin) {
+        this.plugin = plugin;
+    }
+
+    public static void initializeSpectatorContext(SpectatorMode plugin) {
         RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
         if (provider != null) {
             LuckPerms api = provider.getProvider();
             api.getContextManager().registerCalculator(new SpectatorContextCalculator(plugin));
         }
-    }
-
-    public SpectatorContextCalculator(SpectatorMode plugin) {
-        this.plugin = plugin;
     }
 
     @Override

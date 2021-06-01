@@ -11,9 +11,10 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 import static me.ohowe12.spectatormode.utils.TestUtils.assertEqualsColored;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OnCommandPreprocessListenerTest {
     ServerMock serverMock;
@@ -52,6 +53,7 @@ class OnCommandPreprocessListenerTest {
 
     @Test
     void testDisabledCommand() {
+        assert event != null;
         new OnCommandPreprocessListener(plugin).onCommandEvent(event);
 
         assertEqualsColored("&cYou can not execute that command while in spectator mode", playerMock.nextMessage());
@@ -60,6 +62,7 @@ class OnCommandPreprocessListenerTest {
 
     @Test
     void testDisabledCommandWithOverridePermission() {
+        assert playerMock != null;
         playerMock.addAttachment(plugin, "smpspectator.bypass", true);
 
         new OnCommandPreprocessListener(plugin).onCommandEvent(event);
@@ -71,11 +74,26 @@ class OnCommandPreprocessListenerTest {
 
     @Test
     void testCommandWithSemiColon() {
-        PlayerCommandPreprocessEvent otherEvent = new PlayerCommandPreprocessEvent(playerMock, "/exampleplugin:testcommand");
+        assert playerMock != null;
+        PlayerCommandPreprocessEvent otherEvent = new PlayerCommandPreprocessEvent(playerMock, "/exampleplugin" +
+                ":testcommand");
         new OnCommandPreprocessListener(plugin).onCommandEvent(otherEvent);
 
         assertEqualsColored("&cYou can not execute that command while in spectator mode", playerMock.nextMessage());
         assertTrue(otherEvent.isCancelled());
+    }
+
+    @Test
+    void testWhenNotInState() {
+        assert playerMock != null;
+        // Put into survival
+        spectatorManager.togglePlayer(playerMock);
+        playerMock.nextMessage();
+
+        new OnCommandPreprocessListener(plugin).onCommandEvent(event);
+
+        playerMock.assertNoMoreSaid();
+        assertFalse(event.isCancelled());
     }
 
     @Test

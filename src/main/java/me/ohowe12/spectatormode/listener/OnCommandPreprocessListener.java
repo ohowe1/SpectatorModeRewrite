@@ -23,8 +23,8 @@
 
 package me.ohowe12.spectatormode.listener;
 
-import me.ohowe12.spectatormode.util.Messenger;
 import me.ohowe12.spectatormode.SpectatorMode;
+import me.ohowe12.spectatormode.util.Messenger;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -50,13 +50,14 @@ public class OnCommandPreprocessListener implements Listener {
             return;
         }
 
-        String rawCommand = e.getMessage().substring(1).split(" ")[0]; // /back -> back || /essentials:back -> essentials:back
+        String rawCommand = e.getMessage().substring(1).split(" ")[0]; // /back -> back || /essentials:back ->
+        // essentials:back
         String[] splited = rawCommand.split(":");
 
         rawCommand = splited[splited.length - 1];
         if (plugin.getConfigManager().getList("bad-commands")
-            .contains(rawCommand)) {
-            Messenger.send(player,"bad-command-message");
+                .contains(rawCommand)) {
+            Messenger.send(player, "bad-command-message");
             e.setCancelled(true);
         }
     }

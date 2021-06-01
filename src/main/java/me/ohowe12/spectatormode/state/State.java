@@ -24,6 +24,7 @@
 package me.ohowe12.spectatormode.state;
 
 import me.ohowe12.spectatormode.SpectatorMode;
+import me.ohowe12.spectatormode.util.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -34,7 +35,6 @@ import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,16 +44,13 @@ import java.util.UUID;
 @SuppressWarnings("unchecked")
 public class State {
 
-    private Player player;
     private final SpectatorMode plugin;
+    private Player player;
     private Location playerLocation;
     private int fireTicks;
     private ArrayList<PotionEffect> potionEffects;
     private int waterBubbles;
     private Map<String, Boolean> mobIds;
-    private boolean needsMob = false;
-    @Nullable
-    private LivingEntity placeholder;
 
     public State(@NotNull Player player, @NotNull SpectatorMode plugin) {
         this.player = player;
@@ -63,21 +60,13 @@ public class State {
         fireTicks = player.getFireTicks();
         potionEffects = new ArrayList<>(player.getActivePotionEffects());
         waterBubbles = player.getRemainingAir();
-        if (!plugin.isUnitTest())
-            prepareMobs();
+
+        prepareMobs();
     }
 
     public State(@NotNull Map<String, Object> serialized, @NotNull SpectatorMode plugin) {
         this.plugin = plugin;
         deserialize(serialized);
-    }
-
-    public @Nullable LivingEntity getPlaceholder() {
-        return placeholder;
-    }
-
-    public void setPlaceholder(@Nullable LivingEntity placeholder) {
-        this.placeholder = placeholder;
     }
 
     public Location getPlayerLocation() {
@@ -103,35 +92,33 @@ public class State {
     public Player getPlayer() {
         return player;
     }
-    public UUID getPlayerUUID() {
-        return player.getUniqueId();
-    }
 
     public void resetPlayer(Player player) {
         player.teleport(getPlayerLocation());
-            player.setFireTicks(getFireTicks());
+        player.setFireTicks(getFireTicks());
         player.addPotionEffects(getPotionEffects());
         player.setRemainingAir(getWaterBubbles());
     }
 
     private void deserialize(@NotNull Map<String, Object> serialized) {
-        playerLocation = (Location) serialized.get("Location");
-        fireTicks = (int) serialized.get("Fire ticks");
-        potionEffects = (ArrayList<PotionEffect>) serialized.get("Potions");
-        waterBubbles = (int) serialized.get("Water bubbles");
-        mobIds = (Map<String, Boolean>) serialized.get("Mobs");
-
-        String uuidPlaceholderString = (String) serialized.get("PlaceholderUUID");
-        if (uuidPlaceholderString != null) {
-            Entity e = plugin.getServer().getEntity(UUID.fromString(uuidPlaceholderString));
-            placeholder = (LivingEntity) e;
-            needsMob = false;
-        } else {
-            needsMob = true;
+        try {
+            playerLocation = (Location) serialized.get("Location");
+            fireTicks = (int) serialized.get("Fire ticks");
+            potionEffects = (ArrayList<PotionEffect>) serialized.get("Potions");
+            waterBubbles = (int) serialized.get("Water bubbles");
+            mobIds = (Map<String, Boolean>) serialized.get("Mobs");
+        } catch (ClassCastException exception) {
+            plugin.getPluginLogger().log(Logger.ANSI_RED + "There has been an error with your data.yml file!\nYou can" +
+                    " either fix this your self my removing the file and letting it regenerate itself, manually " +
+                    "fixing everything inside of it, or join the discord server for help. Please provide this error message with it:");
+            throw exception;
         }
     }
 
     private void prepareMobs() {
+        if (!plugin.getConfigManager().getBoolean("mobs") || plugin.isUnitTest()) {
+            return;
+        }
         World world = player.getWorld();
         Chunk defaultChunk = world.getChunkAt(getPlayerLocation());
         for (int x = 0; x <= 4; x++) {
@@ -147,11 +134,11 @@ public class State {
         }
     }
 
-    private void checkAndAddEntity(Entity e) {
-        if (e instanceof LivingEntity) {
+    private void checkAndAddEntity(Entity entity) {
+        if (entity instanceof LivingEntity) {
             @NotNull
-            LivingEntity living = (LivingEntity) e;
-            if (e instanceof Player) {
+            LivingEntity living = (LivingEntity) entity;
+            if (entity instanceof Player) {
                 return;
             }
             if (living.getRemoveWhenFarAway()) {
@@ -174,7 +161,7 @@ public class State {
     }
 
     public void unPrepareMobs() {
-        if (plugin.isUnitTest()) {
+        if (plugin.getConfigManager().getBoolean("mobs") || plugin.isUnitTest()) {
             return;
         }
         @NotNull
@@ -229,18 +216,6 @@ public class State {
         serialized.put("Potions", potionEffects);
         serialized.put("Water bubbles", waterBubbles);
         serialized.put("Mobs", mobIds);
-        if (placeholder != null) {
-            serialized.put("PlaceholderUUID", placeholder.getUniqueId().toString());
-        }
-        serialized.put("NeedsMob", true);
         return serialized;
-    }
-
-    public boolean isNeedsMob() {
-        return needsMob;
-    }
-
-    public void setNeedsMob(boolean needsMob) {
-        this.needsMob = needsMob;
     }
 }
