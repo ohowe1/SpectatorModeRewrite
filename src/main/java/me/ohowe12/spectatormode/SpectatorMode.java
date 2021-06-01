@@ -28,11 +28,14 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.PlayerArgument;
 import me.ohowe12.spectatormode.context.SpectatorContextCalculator;
-import me.ohowe12.spectatormode.listener.*;
-import me.ohowe12.spectatormode.util.*;
+import me.ohowe12.spectatormode.listener.OnCommandPreprocessListener;
+import me.ohowe12.spectatormode.listener.OnLogOnListener;
+import me.ohowe12.spectatormode.listener.OnMoveListener;
+import me.ohowe12.spectatormode.util.ConfigManager;
+import me.ohowe12.spectatormode.util.Logger;
+import me.ohowe12.spectatormode.util.Messenger;
+import me.ohowe12.spectatormode.util.UpdateChecker;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -104,7 +107,7 @@ public class SpectatorMode extends JavaPlugin {
             pluginLogger.debugLog("LuckPerms not enabled");
             return;
         }
-        SpectatorContextCalculator.initalizeSpectatorContext(this);
+        SpectatorContextCalculator.initializeSpectatorContext(this);
     }
 
     private void addMetrics() {
@@ -170,8 +173,9 @@ public class SpectatorMode extends JavaPlugin {
                     spectatorManager.togglePlayer((Player) args[0], true);
                 });
 
-        CommandAPICommand mainCommand = new CommandAPICommand("s").withAliases("smps").withPermission("smpspectator.use").executesPlayer((player,
-                                                                                                          args) -> {
+        CommandAPICommand mainCommand = new CommandAPICommand("s").withAliases("smps").withPermission("smpspectator" +
+                ".use").executesPlayer((player,
+                                                                                                                                          args) -> {
             spectatorManager.togglePlayer(player);
         }).withSubcommand(enableCommand).withSubcommand(disableCommand).withSubcommand(reloadCommand).withSubcommand(effectCommand).withSubcommand(forceCommand);
 

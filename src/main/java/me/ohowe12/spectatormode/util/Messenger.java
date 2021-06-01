@@ -34,11 +34,11 @@ import java.util.Objects;
 
 public abstract class Messenger {
 
+    private static SpectatorMode plugin;
+
     private Messenger() {
 
     }
-
-    private static SpectatorMode plugin;
 
     public static void init(@NotNull SpectatorMode plugin) {
         Messenger.plugin = plugin;
@@ -56,7 +56,8 @@ public abstract class Messenger {
         send(sender, sender, msgkey, extra);
     }
 
-    public static void send(@NotNull CommandSender sender, @NotNull CommandSender target, @NotNull String msgkey, @NotNull String extra) {
+    public static void send(@NotNull CommandSender sender, @NotNull CommandSender target, @NotNull String msgkey,
+                            @NotNull String extra) {
         String cfgmsg = Objects.requireNonNull(plugin.getConfigManager(), "Messenger not initialized")
                 .getColorizedString(msgkey)
                 .replace("/target/", target.getName());
@@ -66,6 +67,6 @@ public abstract class Messenger {
         if (!(sender instanceof Player))
             sender.sendMessage(cfgmsg);
         else
-            ((Player)sender).spigot().sendMessage(type, new TextComponent(cfgmsg));
+            ((Player) sender).spigot().sendMessage(type, new TextComponent(cfgmsg));
     }
 }

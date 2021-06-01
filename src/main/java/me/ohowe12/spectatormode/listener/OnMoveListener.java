@@ -25,9 +25,7 @@ package me.ohowe12.spectatormode.listener;
 
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.util.Messenger;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -76,6 +74,9 @@ public class OnMoveListener implements Listener {
 
     private boolean outsideWorldBorder(PlayerMoveEvent e) {
         Location location = e.getTo();
+        if (plugin.isUnitTest()) {
+            return false;
+        }
         return !location.getWorld().getWorldBorder().isInside(location);
     }
 

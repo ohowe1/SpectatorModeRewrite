@@ -78,6 +78,7 @@ public class StateHolder {
     public Set<String> allPlayersInState() {
         return stateMap.keySet();
     }
+
     public Collection<State> allStates() {
         return stateMap.values();
     }
@@ -90,8 +91,7 @@ public class StateHolder {
                 }
             });
         }
-        for (@NotNull
-        final Map.Entry<String, State> entry : stateMap.entrySet()) {
+        for (@NotNull final Map.Entry<String, State> entry : stateMap.entrySet()) {
             dataFile.set("data." + entry.getKey(), entry.getValue().serialize());
         }
         try {
@@ -109,8 +109,8 @@ public class StateHolder {
             Objects.requireNonNull(dataFile.getConfigurationSection("data")).getKeys(false).forEach(key -> {
                 final Map<String, Object> value = new HashMap<>();
 
-                @SuppressWarnings("unchecked")
-                final ArrayList<PotionEffect> potions = (ArrayList<PotionEffect>) dataFile
+                @SuppressWarnings("unchecked") final ArrayList<PotionEffect> potions =
+                        (ArrayList<PotionEffect>) dataFile
                         .getList("data." + key + ".Potions");
                 value.put("Potions", potions);
 
@@ -118,8 +118,9 @@ public class StateHolder {
                 value.put("Water bubbles", waterBubbles);
 
                 final Map<String, Boolean> mobs = new HashMap<>();
-                Objects.requireNonNull(dataFile.getConfigurationSection("data." + key + ".Mobs")).getKeys(false)
-                        .forEach(mobKey -> mobs.put(mobKey, dataFile.getBoolean("data." + key + ".Mobs" + mobKey)));
+                for (String mobKey : dataFile.getConfigurationSection("data." + key + ".Mobs").getKeys(false)) {
+                    mobs.put(mobKey, dataFile.getBoolean("data." + key + ".Mobs" + mobKey));
+                }
                 value.put("Mobs", mobs);
 
                 final int fireTicks = dataFile.getInt("data." + key + ".Fire ticks");
@@ -127,12 +128,6 @@ public class StateHolder {
 
                 final Location location = dataFile.getLocation("data." + key + ".Location");
                 value.put("Location", location);
-
-                String placeHolder = dataFile.getString("data." + key + ".PlaceholderUUID");
-                value.put("PlaceholderUUID", placeHolder);
-
-                boolean needsMob = dataFile.getBoolean("data." + key + "NeedsMob");
-                value.put("NeedsMob", needsMob);
 
                 stateMap.put(key, new State(value, plugin));
             });

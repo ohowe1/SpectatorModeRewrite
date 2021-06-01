@@ -38,7 +38,8 @@ public class TestUtils {
     }
 
     public static void setConfigFileOfPlugin(SpectatorMode plugin, String configName) {
-        FileConfiguration configuration = YamlConfiguration.loadConfiguration(new File("src/test/resources/configs/" + configName));
+        FileConfiguration configuration =
+                YamlConfiguration.loadConfiguration(new File("src/test/resources/configs/" + configName));
         configuration.setDefaults(plugin.getConfig());
         plugin.setConfigManagerConfigFile(configuration);
     }
