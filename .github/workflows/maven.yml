@@ -28,12 +28,16 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
         
-    - name: Test with Maven
-      run: mvn test --file pom.xml
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
 
-    - name: Report test coverage
-      run: |
-        curl https://deepsource.io/cli | sh
-        ./bin/deepsource report --analyzer test-coverage --key java --value-file target/site/jacoco/jacoco.xml
+    - name: Test & publish code coverage
+      uses: paambaati/codeclimate-action@v2.7.5
       env:
-        DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}
+      # Set CC_TEST_REPORTER_ID as secret of your repo
+        CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+        JACOCO_SOURCE_PATH: "${{github.workspace}}/src/main/java"
+      with:
+      # The report file must be there, otherwise Code Climate won't find it
+        coverageCommand: mvn test
+        coverageLocations: ${{github.workspace}}/target/site/jacoco/jacoco.xml:jacoco
