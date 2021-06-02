@@ -119,10 +119,14 @@
             <id>spigotmc-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
-            <repository>
-                <id>commandapi</id>
-                <url>https://raw.githubusercontent.com/JorelAli/CommandAPI/mvn-repo/</url>
-            </repository>
+        <repository>
+            <id>commandapi</id>
+            <url>https://raw.githubusercontent.com/JorelAli/CommandAPI/mvn-repo/</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -169,8 +173,8 @@
         </dependency>
         <dependency>
             <groupId>com.github.seeseemelk</groupId>
-            <artifactId>MockBukkit-v1.16</artifactId>
-            <version>1.1.0</version>
+            <artifactId>MockBukkit</artifactId>
+            <version>v1.16-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

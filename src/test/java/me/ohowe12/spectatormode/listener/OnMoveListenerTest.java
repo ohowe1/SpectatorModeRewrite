@@ -2,12 +2,10 @@ package me.ohowe12.spectatormode.listener;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
-import be.seeseemelk.mockbukkit.WorldMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.utils.TestUtils;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,28 +45,39 @@ class OnMoveListenerTest {
     @ParameterizedTest
     @ValueSource(ints = {-3, -5, -6})
     void testEnabledAndBadYLevel(int shift) {
-        TestUtils.setConfigFileOfPlugin(plugin, "badylevel.yml");
+        TestUtils.setConfigFileOfPlugin(plugin, "badyenabled.yml");
 
-        playerMock.simulatePlayerMove(playerMock.getLocation().add(0, shift, 0));
+        PlayerMoveEvent event = playerMock.simulatePlayerMove(playerMock.getLocation().add(0, shift, 0));
 
-        assertMoveEventCanceled();
+        assertMoveEventCanceled(event);
     }
 
     @ParameterizedTest
     @ValueSource(ints = {-2, 1})
     void testEnabledAndGoodYLevel(int shift) {
-        TestUtils.setConfigFileOfPlugin(plugin, "badylevel.yml");
+        TestUtils.setConfigFileOfPlugin(plugin, "badyenabled.yml");
 
-        playerMock.simulatePlayerMove(playerMock.getLocation().add(0, -shift, 0));
+        PlayerMoveEvent event = playerMock.simulatePlayerMove(playerMock.getLocation().add(0, -shift, 0));
 
-        assertMoveEventNotCanceled();
+        assertMoveEventNotCanceled(event);
     }
 
-    private void assertMoveEventCanceled() {
-        assertEquals(playerMock.getWorld().getSpawnLocation(), playerMock.getLocation());
+    @Test
+    void testDisabledAndBadYLevel() {
+        TestUtils.setConfigFileOfPlugin(plugin, "badydisabled.yml");
+
+        PlayerMoveEvent event = playerMock.simulatePlayerMove(playerMock.getLocation().add(0, -3, 0));
+
+        assertMoveEventNotCanceled(event);
     }
-    private void assertMoveEventNotCanceled() {
-        assertNotEquals(playerMock.getWorld().getSpawnLocation(), playerMock.getLocation());
+
+    private void assertMoveEventCanceled(PlayerMoveEvent event) {
+        assertTrue(event.isCancelled());
+        assertEquals(event.getFrom(), event.getTo());
+    }
+
+    private void assertMoveEventNotCanceled(PlayerMoveEvent event) {
+        assertFalse(event.isCancelled());
     }
 
 
