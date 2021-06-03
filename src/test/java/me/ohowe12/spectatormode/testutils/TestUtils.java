@@ -21,7 +21,7 @@
  * OUT OF OR IN
  */
 
-package me.ohowe12.spectatormode.utils;
+package me.ohowe12.spectatormode.testutils;
 
 import me.ohowe12.spectatormode.SpectatorMode;
 import org.bukkit.ChatColor;

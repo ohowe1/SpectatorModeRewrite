@@ -26,7 +26,7 @@ package me.ohowe12.spectatormode;
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
-import me.ohowe12.spectatormode.utils.TestUtils;
+import me.ohowe12.spectatormode.testutils.TestUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.potion.PotionEffectType;
@@ -34,7 +34,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static me.ohowe12.spectatormode.utils.TestUtils.assertEqualsColored;
+import static me.ohowe12.spectatormode.testutils.TestUtils.assertEqualsColored;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

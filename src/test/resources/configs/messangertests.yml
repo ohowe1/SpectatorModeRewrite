@@ -1,0 +1,6 @@
+# Config for all of MessengerTest
+regular-message: 'Hello world!'
+message-with-target: 'Message with /target/'
+message-with-extra: 'Something should be appended to this'
+message-with-all-features: '/target/ is a '
+action-bar-test: '/actionbar/This should be on your action bar'

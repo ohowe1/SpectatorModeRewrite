@@ -4,7 +4,7 @@ import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import me.ohowe12.spectatormode.SpectatorMode;
-import me.ohowe12.spectatormode.utils.TestUtils;
+import me.ohowe12.spectatormode.testutils.TestUtils;
 import org.bukkit.GameMode;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.junit.jupiter.api.AfterEach;

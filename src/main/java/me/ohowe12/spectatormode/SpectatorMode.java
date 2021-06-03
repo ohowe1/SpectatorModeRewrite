@@ -73,8 +73,9 @@ public class SpectatorMode extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        if (!unitTest)
+        if (!unitTest) {
             CommandAPI.onLoad(false);
+        }
     }
 
     @Override
@@ -129,11 +130,6 @@ public class SpectatorMode extends JavaPlugin {
                         + version + ")! You are on version " + this.getDescription().getVersion() + ".");
             }
         }, this);
-    }
-
-    @Override
-    public void onDisable() {
-
     }
 
     public void registerCommands() {

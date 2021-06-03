@@ -64,9 +64,10 @@ public abstract class Messenger {
         ChatMessageType type = cfgmsg.startsWith("/actionbar/") ? ChatMessageType.ACTION_BAR : ChatMessageType.CHAT;
         cfgmsg = cfgmsg.replace("/actionbar/", "");
         cfgmsg += extra;
-        if (!(sender instanceof Player))
-            sender.sendMessage(cfgmsg);
-        else
+        if (sender instanceof Player) {
             ((Player) sender).spigot().sendMessage(type, new TextComponent(cfgmsg));
+        } else {
+            sender.sendMessage(cfgmsg);
+        }
     }
 }

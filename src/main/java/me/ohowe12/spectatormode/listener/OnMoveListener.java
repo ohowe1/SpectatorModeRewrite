@@ -38,6 +38,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
 @SuppressWarnings("unchecked")
 public class OnMoveListener implements Listener {
@@ -48,67 +49,74 @@ public class OnMoveListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onMove(@NotNull final PlayerMoveEvent e) {
-        if (shouldDoNotSkipEvent(e) && shouldCancelMoveEvent(e)) {
-            cancelPlayerMoveEvent(e);
+    @EventHandler
+    public void onMove(@NotNull final PlayerMoveEvent moveEvent) {
+        if (shouldDoNotSkipEvent(moveEvent) && shouldCancelMoveEvent(moveEvent)) {
+            cancelPlayerMoveEvent(moveEvent);
         }
     }
 
     @EventHandler
-    public void onTeleport(@NotNull final PlayerTeleportEvent e) {
-        if (shouldCancelTeleport(e) && shouldDoNotSkipEvent(e)) {
-            Messenger.send(e.getPlayer(), "permission-message");
-            e.setCancelled(true);
+    public void onTeleport(@NotNull final PlayerTeleportEvent teleportEvent) {
+        if (shouldCancelTeleport(teleportEvent) && shouldDoNotSkipEvent(teleportEvent)) {
+            Messenger.send(teleportEvent.getPlayer(), "permission-message");
+            teleportEvent.setCancelled(true);
         }
     }
 
-    private boolean shouldCancelMoveEvent(PlayerMoveEvent e) {
+    private boolean shouldCancelMoveEvent(PlayerMoveEvent moveEvent) {
         final boolean enforceY = plugin.getConfigManager().getBoolean("enforce-y");
         final boolean enforceDistance = plugin.getConfigManager().getBoolean("enforce-distance");
         final boolean enforceWorldBorder = plugin.getConfigManager().getBoolean("enforce-world-border");
 
-        return (enforceY && checkAndEnforceY(e)) || isCollidingAndCollidingNotAllowed(e)
-                || (enforceDistance && distanceTooFar(e)) || (enforceWorldBorder && outsideWorldBorder(e));
+        return (enforceY && checkAndEnforceY(moveEvent)) || isCollidingAndCollidingNotAllowed(moveEvent)
+                || (enforceDistance && distanceTooFar(moveEvent)) || (enforceWorldBorder && outsideWorldBorder(moveEvent));
     }
 
-    private boolean outsideWorldBorder(PlayerMoveEvent e) {
-        Location location = e.getTo();
+    private boolean outsideWorldBorder(PlayerMoveEvent moveEvent) {
         if (plugin.isUnitTest()) {
             return false;
         }
-        return !location.getWorld().getWorldBorder().isInside(location);
+        Location toLocation = moveEvent.getTo();
+        if (toLocation == null) {
+            return false;
+        }
+        World world = Objects.requireNonNull(toLocation.getWorld());
+        return !world.getWorldBorder().isInside(toLocation);
     }
 
-    private boolean checkAndEnforceY(PlayerMoveEvent e) {
+    private boolean checkAndEnforceY(PlayerMoveEvent moveEvent) {
         int yLevel = plugin.getConfigManager().getInt("y-level");
-        return e.getTo().getY() <= yLevel;
+        Location toLocation = moveEvent.getTo();
+        if (toLocation == null) {
+            return false;
+        }
+        return toLocation.getY() <= yLevel;
     }
 
-    private void cancelPlayerMoveEvent(PlayerMoveEvent e) {
-        e.setTo(e.getFrom());
-        e.setCancelled(true);
+    private void cancelPlayerMoveEvent(PlayerMoveEvent moveEvent) {
+        moveEvent.setTo(moveEvent.getFrom());
+        moveEvent.setCancelled(true);
     }
 
-    @SuppressWarnings("all")
-    public boolean isCollidingAndCollidingNotAllowed(@NotNull PlayerMoveEvent e) {
+    public boolean isCollidingAndCollidingNotAllowed(@NotNull PlayerMoveEvent moveEvent) {
         final boolean enforceNonTransparent = plugin.getConfigManager().getBoolean("disallow-non-transparent-blocks");
         final boolean enforceAllBlocks = plugin.getConfigManager().getBoolean("disallow-all-blocks");
         final List<String> disallowedBlocks = (List<String>) plugin.getConfigManager().getList("disallowed-blocks");
 
 
         final float bubbleSize = plugin.getConfigManager().getInt("bubble-size") / 100.0f;
-        if (e.getTo() == null || !(enforceNonTransparent || enforceAllBlocks || disallowedBlocks.size() > 0))
+        if (moveEvent.getTo() == null || !(enforceNonTransparent || enforceAllBlocks || disallowedBlocks.size() > 0))
             return false;
         for (int x = -1; x < 2; x++) {
             for (int y = 0; y < 3; y++) {
                 for (int z = -1; z < 2; z++) {
-                    Block block = e.getTo().getBlock().getRelative(x, y, z);
+                    Block block = moveEvent.getTo().getBlock().getRelative(x, y, z);
                     BoundingBox bb = block.getBoundingBox().clone().expand(bubbleSize);
                     Material mat = block.getType();
-                    Vector tovect = e.getTo().toVector().clone().add(new Vector(0, 1.6, 0));
-                    if (mat.isSolid() && tovect.isInAABB(bb.getMin(), bb.getMax())) {
-                        return enforceAllBlocks || (mat.isOccluding() && enforceNonTransparent) || disallowedBlocks.stream().allMatch(mat.name()::equalsIgnoreCase);
+                    Vector toVect = moveEvent.getTo().toVector().clone().add(new Vector(0, 1.6, 0));
+                    if (mat.isSolid() && toVect.isInAABB(bb.getMin(), bb.getMax())) {
+                        return enforceAllBlocks || (mat.isOccluding() && enforceNonTransparent) || disallowedBlocks.stream().anyMatch(mat.name()::equalsIgnoreCase);
                     }
                 }
             }
@@ -116,21 +124,25 @@ public class OnMoveListener implements Listener {
         return false;
     }
 
-    private boolean distanceTooFar(PlayerMoveEvent e) {
+    private boolean distanceTooFar(PlayerMoveEvent moveEvent) {
         final int distance = plugin.getConfigManager().getInt("distance");
-        final Location originalLocation = plugin.getSpectatorManager().getStateHolder().getPlayer(e.getPlayer())
+        final Location originalLocation = plugin.getSpectatorManager().getStateHolder().getPlayer(moveEvent.getPlayer())
                 .getPlayerLocation();
-        return (originalLocation.distance(e.getTo())) > distance;
+        Location toLocation = moveEvent.getTo();
+        if (toLocation == null) {
+            return false;
+        }
+        return (originalLocation.distance(toLocation)) > distance;
     }
 
-    private boolean shouldCancelTeleport(PlayerTeleportEvent e) {
-        return (e.getCause().equals(PlayerTeleportEvent.TeleportCause.SPECTATE))
+    private boolean shouldCancelTeleport(PlayerTeleportEvent teleportEvent) {
+        return (teleportEvent.getCause().equals(PlayerTeleportEvent.TeleportCause.SPECTATE))
                 && plugin.getConfigManager().getBoolean("prevent-teleport");
     }
 
-    private boolean shouldDoNotSkipEvent(PlayerEvent e) {
-        return !e.getPlayer().hasPermission("smpspectator.bypass")
-                && plugin.getSpectatorManager().getStateHolder().hasPlayer(e.getPlayer())
-                && e.getPlayer().getGameMode() == GameMode.SPECTATOR;
+    private boolean shouldDoNotSkipEvent(PlayerEvent event) {
+        return !event.getPlayer().hasPermission("smpspectator.bypass")
+                && plugin.getSpectatorManager().getStateHolder().hasPlayer(event.getPlayer())
+                && event.getPlayer().getGameMode() == GameMode.SPECTATOR;
     }
 }
