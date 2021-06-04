@@ -24,7 +24,9 @@
 package me.ohowe12.spectatormode.state;
 
 import me.ohowe12.spectatormode.SpectatorMode;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -38,55 +40,68 @@ import java.util.*;
 public class StateHolder {
     private final Map<String, State> stateMap = new HashMap<>();
     private final SpectatorMode plugin;
+
+    private final File dataFileLocation;
     private final FileConfiguration dataFile;
 
     public StateHolder(SpectatorMode plugin) {
+        this(plugin, new File(plugin.getDataFolder(), "data.yml"));
+    }
+
+    public StateHolder(SpectatorMode plugin, File dataFileLocation) {
         this.plugin = plugin;
-        this.dataFile = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "data.yml"));
+        this.dataFileLocation = dataFileLocation;
+        this.dataFile = YamlConfiguration.loadConfiguration(dataFileLocation);
         load();
     }
 
-    public void addPlayer(Player player) {
+    public void addPlayer(@NotNull Player player) {
+        Validate.notNull(player, "Player cannot be null!");
         stateMap.put(player.getUniqueId().toString(), new State(player, plugin));
     }
 
-    public boolean hasPlayer(Player player) {
-        return hasPlayer(player.getUniqueId().toString());
+    public boolean hasPlayer(@NotNull Player player) {
+        Validate.notNull(player, "Player cannot be null");
+        return hasPlayer(player.getUniqueId());
     }
 
-    public boolean hasPlayer(String uuid) {
-        return stateMap.containsKey(uuid);
+    public boolean hasPlayer(@NotNull UUID uuid) {
+        Validate.notNull(uuid, "uuid cannot be null");
+        return stateMap.containsKey(uuid.toString());
     }
 
-    public State getPlayer(Player player) {
-        return getPlayer(player.getUniqueId().toString());
+    public State getPlayer(@NotNull Player player) {
+        Validate.notNull(player, "Player cannot be null");
+        return getPlayer(player.getUniqueId());
     }
 
-    public State getPlayer(String uuid) {
-        return stateMap.get(uuid);
+    public State getPlayer(@NotNull UUID uuid) {
+        Validate.notNull(uuid, "uuid cannot be null");
+        return stateMap.get(uuid.toString());
     }
 
-    public void removePlayer(String uuid) {
-        stateMap.get(uuid).unPrepareMobs();
-        stateMap.remove(uuid);
+    public void removePlayer(@NotNull UUID uuid) {
+        Validate.notNull(uuid, "uuid cannot be null");
+        if (!hasPlayer(uuid)) {
+            return;
+        }
+        stateMap.get(uuid.toString()).unPrepareMobs();
+        stateMap.remove(uuid.toString());
     }
 
-    public void removePlayer(Player player) {
-        removePlayer(player.getUniqueId().toString());
+    public void removePlayer(@NotNull Player player) {
+        Validate.notNull(player, "Player cannot be null");
+        removePlayer(player.getUniqueId());
     }
 
     public Set<String> allPlayersInState() {
         return stateMap.keySet();
     }
 
-    public Collection<State> allStates() {
-        return stateMap.values();
-    }
-
     public void save() {
         if (dataFile.getConfigurationSection("data") != null) {
             Objects.requireNonNull(dataFile.getConfigurationSection("data")).getKeys(false).forEach(key -> {
-                if (!hasPlayer(key)) {
+                if (!hasPlayer(UUID.fromString(key))) {
                     dataFile.set("data." + key, null);
                 }
             });
@@ -95,38 +110,45 @@ public class StateHolder {
             dataFile.set("data." + entry.getKey(), entry.getValue().serialize());
         }
         try {
-            dataFile.save(new File(plugin.getDataFolder(), "data.yml"));
+            dataFile.save(dataFileLocation);
         } catch (final IOException e) {
             e.printStackTrace();
         }
     }
 
     public void load() {
-        if (dataFile.getConfigurationSection("data") == null) {
+        load(dataFile);
+    }
+
+    public void load(FileConfiguration file) {
+        if (file.getConfigurationSection("data") == null) {
             return;
         }
         try {
-            Objects.requireNonNull(dataFile.getConfigurationSection("data")).getKeys(false).forEach(key -> {
+            Objects.requireNonNull(file.getConfigurationSection("data")).getKeys(false).forEach(key -> {
                 final Map<String, Object> value = new HashMap<>();
 
                 @SuppressWarnings("unchecked") final ArrayList<PotionEffect> potions =
-                        (ArrayList<PotionEffect>) dataFile
+                        (ArrayList<PotionEffect>) file
                         .getList("data." + key + ".Potions");
                 value.put("Potions", potions);
 
-                final int waterBubbles = dataFile.getInt("data." + key + ".Water bubbles");
+                final int waterBubbles = file.getInt("data." + key + ".Water bubbles");
                 value.put("Water bubbles", waterBubbles);
 
                 final Map<String, Boolean> mobs = new HashMap<>();
-                for (String mobKey : dataFile.getConfigurationSection("data." + key + ".Mobs").getKeys(false)) {
-                    mobs.put(mobKey, dataFile.getBoolean("data." + key + ".Mobs" + mobKey));
+                ConfigurationSection mobsConfigSection = file.getConfigurationSection("data." + key + ".Mobs");
+                if (mobsConfigSection != null) {
+                    for (String mobKey : mobsConfigSection.getKeys(false)) {
+                        mobs.put(mobKey, file.getBoolean("data." + key + ".Mobs" + mobKey));
+                    }
                 }
                 value.put("Mobs", mobs);
 
-                final int fireTicks = dataFile.getInt("data." + key + ".Fire ticks");
+                final int fireTicks = file.getInt("data." + key + ".Fire ticks");
                 value.put("Fire ticks", fireTicks);
 
-                final Location location = dataFile.getLocation("data." + key + ".Location");
+                final Location location = file.getLocation("data." + key + ".Location");
                 value.put("Location", location);
 
                 stateMap.put(key, new State(value, plugin));
