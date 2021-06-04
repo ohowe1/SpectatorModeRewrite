@@ -95,6 +95,49 @@ class OnMoveListenerTest {
         assertMoveEventNotCanceled(event);
     }
 
+    @Test
+    void checkDistance_DisabledAndToFar_Allowed() {
+        TestUtils.setConfigFileOfPlugin(plugin, "baddistancedisabled.yml");
+
+        PlayerMoveEvent event = playerMock.simulatePlayerMove(playerMock.getLocation().add(6, 0, 0));
+
+        assertMoveEventNotCanceled(event);
+    }
+
+//    World border not yet implemented in MockBukkit. Awaiting pull request merge
+//    @Test
+//    void checkWorldBorder_EnabledAndOutside_Cancelled() {
+//        // Enabled by default
+//
+//        playerMock.getWorld().getWorldBorder().setSize(10);
+//
+//        PlayerMoveEvent event = playerMock.simulatePlayerMove(playerMock.getLocation().add(11, 0, 0));
+//
+//        assertMoveEventCanceled(event);
+//    }
+//
+//    @Test
+//    void checkWorldBorder_EnabledAndInside_Allowed() {
+//        // Enabled by default
+//
+//        playerMock.getWorld().getWorldBorder().setSize(10);
+//
+//        PlayerMoveEvent event = playerMock.simulatePlayerMove(playerMock.getLocation().add(9, 0, 0));
+//
+//        assertMoveEventCanceled(event);
+//    }
+//
+//    @Test
+//    void checkWorldBorder_DisabledAndOutside_Allowed() {
+//        TestUtils.setConfigFileOfPlugin(plugin, "worldborderdisabled.yml");
+//
+//        playerMock.getWorld().getWorldBorder().setSize(10);
+//
+//        PlayerMoveEvent event = playerMock.simulatePlayerMove(playerMock.getLocation().add(9, 0, 0));
+//
+//        assertMoveEventCanceled(event);
+//    }
+
     private void assertMoveEventCanceled(PlayerMoveEvent event) {
         assertTrue(event.isCancelled());
         assertEquals(event.getFrom(), event.getTo());
