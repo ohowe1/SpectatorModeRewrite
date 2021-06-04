@@ -121,39 +121,44 @@ public class StateHolder {
     }
 
     public void load(FileConfiguration file) {
-        if (file.getConfigurationSection("data") == null) {
+        ConfigurationSection dataSection = file.getConfigurationSection("data");
+        if (dataSection == null) {
             return;
         }
-        try {
-            Objects.requireNonNull(file.getConfigurationSection("data")).getKeys(false).forEach(key -> {
-                final Map<String, Object> value = new HashMap<>();
+        loadFromConfigurationSection(dataSection);
+    }
 
-                @SuppressWarnings("unchecked") final ArrayList<PotionEffect> potions =
-                        (ArrayList<PotionEffect>) file
-                        .getList("data." + key + ".Potions");
-                value.put("Potions", potions);
+    private void loadFromConfigurationSection(@NotNull ConfigurationSection section) {
+        for (String key : section.getKeys(false)) {
+            ConfigurationSection playerSection = section.getConfigurationSection(key);
+            if (playerSection == null) {
+                continue;
+            }
+            final Map<String, Object> value = new HashMap<>();
 
-                final int waterBubbles = file.getInt("data." + key + ".Water bubbles");
-                value.put("Water bubbles", waterBubbles);
+            @SuppressWarnings("unchecked") final ArrayList<PotionEffect> potions =
+                    (ArrayList<PotionEffect>) playerSection.getList("Potions");
+            value.put("Potions", potions);
 
-                final Map<String, Boolean> mobs = new HashMap<>();
-                ConfigurationSection mobsConfigSection = file.getConfigurationSection("data." + key + ".Mobs");
-                if (mobsConfigSection != null) {
-                    for (String mobKey : mobsConfigSection.getKeys(false)) {
-                        mobs.put(mobKey, file.getBoolean("data." + key + ".Mobs" + mobKey));
-                    }
+            final int waterBubbles = playerSection.getInt("Water bubbles");
+            value.put("Water bubbles", waterBubbles);
+
+            final Map<String, Boolean> mobs = new HashMap<>();
+            ConfigurationSection mobsConfigSection = playerSection.getConfigurationSection("Mobs");
+            if (mobsConfigSection != null) {
+                for (String mobKey : mobsConfigSection.getKeys(false)) {
+                    mobs.put(mobKey, mobsConfigSection.getBoolean(mobKey));
                 }
-                value.put("Mobs", mobs);
+            }
+            value.put("Mobs", mobs);
 
-                final int fireTicks = file.getInt("data." + key + ".Fire ticks");
-                value.put("Fire ticks", fireTicks);
+            final int fireTicks = playerSection.getInt("Fire ticks");
+            value.put("Fire ticks", fireTicks);
 
-                final Location location = file.getLocation("data." + key + ".Location");
-                value.put("Location", location);
+            final Location location = playerSection.getLocation("Location");
+            value.put("Location", location);
 
-                stateMap.put(key, new State(value, plugin));
-            });
-        } catch (final NullPointerException ignored) {
+            stateMap.put(key, new State(value, plugin));
         }
     }
 }
