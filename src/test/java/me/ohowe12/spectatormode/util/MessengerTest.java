@@ -2,6 +2,7 @@ package me.ohowe12.spectatormode.util;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
+import be.seeseemelk.mockbukkit.command.ConsoleCommandSenderMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.testutils.TestUtils;
@@ -90,5 +91,14 @@ class MessengerTest {
         });
 
         playerMock.assertNoMoreSaid();
+    }
+
+    @Test
+    void send_ValidMessageToNonPlayer_Valid() {
+        ConsoleCommandSenderMock consoleMock = (ConsoleCommandSenderMock) server.getConsoleSender();
+        Messenger.send(consoleMock, "regular-message");
+
+        consoleMock.assertSaid("Hello world!");
+        consoleMock.assertNoMoreSaid();
     }
 }
