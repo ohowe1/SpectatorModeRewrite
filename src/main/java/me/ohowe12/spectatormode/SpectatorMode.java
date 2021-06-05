@@ -124,9 +124,9 @@ public class SpectatorMode extends JavaPlugin {
     private void checkUpdate() {
         UpdateChecker.getVersion(version -> {
             if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
-                pluginLogger.log(Logger.ANSI_CYAN + "SMP SPECTATOR MODE is all up to date at version " + this.getDescription().getVersion() + "!");
+                pluginLogger.log(Logger.CYAN + "SMP SPECTATOR MODE is all up to date at version " + this.getDescription().getVersion() + "!");
             } else {
-                pluginLogger.log(Logger.ANSI_RED + "A new version of SMP SPECTATOR MODE is available (version "
+                pluginLogger.log(Logger.RED + "A new version of SMP SPECTATOR MODE is available (version "
                         + version + ")! You are on version " + this.getDescription().getVersion() + ".");
             }
         }, this);

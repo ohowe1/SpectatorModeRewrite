@@ -24,6 +24,7 @@
 package me.ohowe12.spectatormode.state;
 
 import me.ohowe12.spectatormode.SpectatorMode;
+import me.ohowe12.spectatormode.util.Logger;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -57,7 +58,7 @@ public class StateHolder {
 
     public void addPlayer(@NotNull Player player) {
         Validate.notNull(player, "Player cannot be null!");
-        stateMap.put(player.getUniqueId().toString(), new State(player, plugin));
+        stateMap.put(player.getUniqueId().toString(), State.fromPlayer(player, plugin));
     }
 
     public boolean hasPlayer(@NotNull Player player) {
@@ -80,18 +81,14 @@ public class StateHolder {
         return stateMap.get(uuid.toString());
     }
 
-    public void removePlayer(@NotNull UUID uuid) {
-        Validate.notNull(uuid, "uuid cannot be null");
+    public void removePlayer(@NotNull Player player) {
+        Validate.notNull(player, "Player cannot be null");
+        UUID uuid = player.getUniqueId();
         if (!hasPlayer(uuid)) {
             return;
         }
-        stateMap.get(uuid.toString()).unPrepareMobs();
+        getPlayer(player).unPrepareMobs(player);
         stateMap.remove(uuid.toString());
-    }
-
-    public void removePlayer(@NotNull Player player) {
-        Validate.notNull(player, "Player cannot be null");
-        removePlayer(player.getUniqueId());
     }
 
     public Set<String> allPlayersInState() {
@@ -109,10 +106,13 @@ public class StateHolder {
         for (@NotNull final Map.Entry<String, State> entry : stateMap.entrySet()) {
             dataFile.set("data." + entry.getKey(), entry.getValue().serialize());
         }
+
         try {
             dataFile.save(dataFileLocation);
         } catch (final IOException e) {
-            e.printStackTrace();
+            plugin.getPluginLogger().log(Logger.RED + "Cannot save the data.yml file! This is not normal and should " +
+                    "be reported. Error message is as follows: ");
+            plugin.getPluginLogger().log(e.getMessage());
         }
     }
 
@@ -131,34 +131,40 @@ public class StateHolder {
     private void loadFromConfigurationSection(@NotNull ConfigurationSection section) {
         for (String key : section.getKeys(false)) {
             ConfigurationSection playerSection = section.getConfigurationSection(key);
-            if (playerSection == null) {
-                continue;
-            }
-            final Map<String, Object> value = new HashMap<>();
+            assert playerSection != null;
+            State.StateBuilder stateBuilder = new State.StateBuilder(plugin);
 
-            @SuppressWarnings("unchecked") final ArrayList<PotionEffect> potions =
-                    (ArrayList<PotionEffect>) playerSection.getList("Potions");
-            value.put("Potions", potions);
+            @SuppressWarnings("unchecked") final List<PotionEffect> potions =
+                    (List<PotionEffect>) playerSection.getList("Potions");
+            stateBuilder.setPotionEffects(potions);
 
-            final int waterBubbles = playerSection.getInt("Water bubbles");
-            value.put("Water bubbles", waterBubbles);
+            final int waterBubbles = playerSection.getInt("Water bubbles", 300);
+            stateBuilder.setWaterBubbles(waterBubbles);
 
-            final Map<String, Boolean> mobs = new HashMap<>();
-            ConfigurationSection mobsConfigSection = playerSection.getConfigurationSection("Mobs");
-            if (mobsConfigSection != null) {
-                for (String mobKey : mobsConfigSection.getKeys(false)) {
-                    mobs.put(mobKey, mobsConfigSection.getBoolean(mobKey));
-                }
-            }
-            value.put("Mobs", mobs);
+            ConfigurationSection mobsSection = playerSection.getConfigurationSection("Mobs");
+            stateBuilder.setMobIds(loadMobs(mobsSection));
 
-            final int fireTicks = playerSection.getInt("Fire ticks");
-            value.put("Fire ticks", fireTicks);
+            final int fireTicks = playerSection.getInt("Fire ticks", -20);
+            stateBuilder.setFireTicks(fireTicks);
 
             final Location location = playerSection.getLocation("Location");
-            value.put("Location", location);
+            stateBuilder.setPlayerLocation(location);
 
-            stateMap.put(key, new State(value, plugin));
+            stateMap.put(key, stateBuilder.build());
         }
+    }
+
+    private Map<String, Boolean> loadMobs(ConfigurationSection mobsSection) {
+        final Map<String, Boolean> mobs = new HashMap<>();
+        if (mobsSection != null) {
+            for (String mobKey : mobsSection.getKeys(false)) {
+                if (mobsSection.isList(mobKey)) {
+                    mobs.put(mobKey, mobsSection.getBooleanList(mobKey).get(0));
+                } else {
+                    mobs.put(mobKey, mobsSection.getBoolean(mobKey));
+                }
+            }
+        }
+        return mobs;
     }
 }

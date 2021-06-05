@@ -27,15 +27,15 @@ import me.ohowe12.spectatormode.SpectatorMode;
 
 public class Logger {
 
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_BLACK = "\u001B[30m";
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_YELLOW = "\u001B[33m";
-    public static final String ANSI_BLUE = "\u001B[34m";
-    public static final String ANSI_PURPLE = "\u001B[35m";
-    public static final String ANSI_CYAN = "\u001B[36m";
-    public static final String ANSI_WHITE = "\u001B[37m";
+    public static final String RESET = "\u001B[0m";
+    public static final String BLACK = "\u001B[30m";
+    public static final String RED = "\u001B[31m";
+    public static final String GREEN = "\u001B[32m";
+    public static final String YELLOW = "\u001B[33m";
+    public static final String BLUE = "\u001B[34m";
+    public static final String PURPLE = "\u001B[35m";
+    public static final String CYAN = "\u001B[36m";
+    public static final String WHITE = "\u001B[37m";
     private final SpectatorMode plugin;
     private final ConfigManager config;
     private final String PREFIX;
@@ -44,13 +44,13 @@ public class Logger {
     public Logger(SpectatorMode plugin) {
         this.plugin = plugin;
         config = plugin.getConfigManager();
-        PREFIX = ANSI_CYAN;
-        FOOTER = ANSI_RESET;
+        PREFIX = CYAN;
+        FOOTER = RESET;
     }
 
     public void debugLog(String message) {
         if (config.getBoolean("debug")) {
-            plugin.getLogger().info(ANSI_GREEN + "[Debug] " + PREFIX + message + FOOTER);
+            plugin.getLogger().info(GREEN + "[Debug] " + PREFIX + message + FOOTER);
         }
     }
 
