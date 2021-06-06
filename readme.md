@@ -4,7 +4,7 @@
 
 ---
 
-### This plugin is not really being actively developed. New features are however welcome. If you would like a new feature open a issue [here](https://github.com/carelesshippo/SpectatorModeRewrite/issues).
+### This plugin is not being actively developed. New features are however welcome. If you would like a new feature open a issue [here](https://github.com/carelesshippo/SpectatorModeRewrite/issues).
 
 Download on [SpigotMC](https://www.spigotmc.org/resources/smp-spectator-mode.77267/)
 
