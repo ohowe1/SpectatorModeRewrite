@@ -46,7 +46,7 @@ class MessengerTest {
     @Test
     void send_WithTarget_Valid() {
         PlayerMock otherPlayer = server.addPlayer("Player2");
-        Messenger.send(playerMock, otherPlayer, "message-with-target");
+        Messenger.send(playerMock, "message-with-target", otherPlayer);
 
         playerMock.assertSaid("Message with Player2");
         playerMock.assertNoMoreSaid();
@@ -65,7 +65,7 @@ class MessengerTest {
     @Test
     void send_WithAll_Valid() {
         PlayerMock otherPlayer = server.addPlayer("Player2");
-        Messenger.send(playerMock, otherPlayer, "message-with-all-features", "mocked player");
+        Messenger.send(playerMock, "message-with-all-features", otherPlayer, "mocked player");
 
         playerMock.assertSaid("Player2 is a mocked player");
         playerMock.assertNoMoreSaid();

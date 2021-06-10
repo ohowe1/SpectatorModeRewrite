@@ -31,10 +31,15 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class TestUtils {
     public static void assertEqualsColored(String expected, String actual) {
         assertEquals(ChatColor.translateAlternateColorCodes('&', expected), actual);
+    }
+
+    public static void assertNotEqualsColored(String expected, String actual) {
+        assertNotEquals(ChatColor.translateAlternateColorCodes('&', expected), actual);
     }
 
     public static void setConfigFileOfPlugin(SpectatorMode plugin, String configName) {

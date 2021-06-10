@@ -52,7 +52,13 @@ public class StateHolder {
     public StateHolder(SpectatorMode plugin, File dataFileLocation) {
         this.plugin = plugin;
         this.dataFileLocation = dataFileLocation;
-        this.dataFile = YamlConfiguration.loadConfiguration(dataFileLocation);
+        try {
+            this.dataFile = YamlConfiguration.loadConfiguration(dataFileLocation);
+        } catch (IllegalArgumentException exception) {
+            plugin.getPluginLogger().log(Logger.RED + "Your data.yml file is invalid!\n" +
+                    "This could be due to a world that has not been loaded in yet");
+            throw exception;
+        }
         load();
     }
 

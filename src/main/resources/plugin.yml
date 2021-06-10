@@ -3,9 +3,11 @@ version: ${project.version}
 main: me.ohowe12.spectatormode.SpectatorMode
 api-version: 1.16
 softdepend: [ Multiverse-Core, LuckPerms ]
-loadbefore:
-  - Essentials
+load: POSTWORLD
 
+commands:
+  s:
+    description: The main command for this plugin
 permissions:
   spectator.*:
     description: Give access to the entire permission node

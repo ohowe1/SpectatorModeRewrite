@@ -23,10 +23,8 @@
 
 package me.ohowe12.spectatormode;
 
-import dev.jorel.commandapi.CommandAPI;
-import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.IntegerArgument;
-import dev.jorel.commandapi.arguments.PlayerArgument;
+import co.aikar.commands.PaperCommandManager;
+import me.ohowe12.spectatormode.commands.SpectatorCommand;
 import me.ohowe12.spectatormode.context.SpectatorContextCalculator;
 import me.ohowe12.spectatormode.listener.OnCommandPreprocessListener;
 import me.ohowe12.spectatormode.listener.OnLogOnListener;
@@ -37,7 +35,6 @@ import me.ohowe12.spectatormode.util.Messenger;
 import me.ohowe12.spectatormode.util.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
@@ -72,20 +69,12 @@ public class SpectatorMode extends JavaPlugin {
     }
 
     @Override
-    public void onLoad() {
-        if (!unitTest) {
-            CommandAPI.onLoad(false);
-        }
-    }
-
-    @Override
     public void onEnable() {
         config = new ConfigManager(this, this.getConfig());
         pluginLogger = new Logger(this);
         spectatorManager = new SpectatorManager(this);
+        registerCommands();
         if (!unitTest) {
-            CommandAPI.onEnable(this);
-            registerCommands();
             addMetrics();
             if (config.getBoolean("update-checker")) {
                 checkUpdate();
@@ -133,56 +122,9 @@ public class SpectatorMode extends JavaPlugin {
     }
 
     public void registerCommands() {
-        CommandAPICommand enableCommand =
-                new CommandAPICommand("enable").withPermission("smpspectator.enable").executes((sender, args) -> {
-                    spectatorManager.setSpectatorEnabled(true);
-                    Messenger.send(sender, "enable-message");
-                });
+        PaperCommandManager manager = new PaperCommandManager(this);
 
-        CommandAPICommand disableCommand =
-                new CommandAPICommand("disable").withPermission("smpspectator.enable").executes((sender, args) -> {
-                    spectatorManager.setSpectatorEnabled(false);
-                    Messenger.send(sender, "disable-message");
-                });
-
-        CommandAPICommand reloadCommand =
-                new CommandAPICommand("reload").withPermission("smpspectator.reload").executes((sender, args) -> {
-                    reloadConfigManager();
-                    spectatorManager.getStateHolder().load();
-                    Messenger.send(sender, "reload-message");
-                });
-
-        CommandAPICommand effectCommand =
-                new CommandAPICommand("effect").withPermission("smpspectator.toggle").executesPlayer((player, args) -> {
-                    spectatorManager.togglePlayerEffects(player);
-                });
-
-        CommandAPICommand speedCommand =
-                new CommandAPICommand("speed").withPermission("smpspectator.speed").withArguments(new IntegerArgument("speed", 1, config.getInt("max-speed"))).executesPlayer((player, args) -> {
-                    player.setFlySpeed(Math.min(1f, (int) args[0] * 0.1f));
-                    Messenger.send(player, "speed-message", String.valueOf(args[0]));
-                });
-
-        CommandAPICommand forceCommand =
-                new CommandAPICommand("force").withPermission("smpspectator.force").withArguments(new PlayerArgument(
-                        "target")).executes((sender, args) -> {
-                    spectatorManager.togglePlayer((Player) args[0], true);
-                });
-
-        CommandAPICommand mainCommand = new CommandAPICommand("s").withAliases("smps").withPermission("smpspectator" +
-                ".use").executesPlayer((player,
-                                                                                                                                          args) -> {
-            spectatorManager.togglePlayer(player);
-        }).withSubcommand(enableCommand).withSubcommand(disableCommand).withSubcommand(reloadCommand).withSubcommand(effectCommand).withSubcommand(forceCommand);
-
-        if (config.getBoolean("speed")) {
-            mainCommand.withSubcommand(speedCommand);
-        }
-        if (config.getBoolean("seffect")) {
-            mainCommand.withSubcommand(effectCommand);
-        }
-
-        mainCommand.register();
+        manager.registerCommand(new SpectatorCommand(this));
     }
 
     public void registerListeners() {
