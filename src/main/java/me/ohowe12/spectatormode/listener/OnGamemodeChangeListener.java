@@ -7,11 +7,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 
-public class OnGamemodeChange implements Listener {
+public class OnGamemodeChangeListener implements Listener {
     private final SpectatorMode plugin;
     private final StateHolder stateHolder;
 
-    public OnGamemodeChange(SpectatorMode plugin) {
+    public OnGamemodeChangeListener(SpectatorMode plugin) {
         this.plugin = plugin;
         this.stateHolder = plugin.getSpectatorManager().getStateHolder();
     }
