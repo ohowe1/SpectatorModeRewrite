@@ -24,7 +24,10 @@
 package me.ohowe12.spectatormode.state;
 
 import me.ohowe12.spectatormode.SpectatorMode;
+import me.ohowe12.spectatormode.util.Logger;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -38,55 +41,70 @@ import java.util.*;
 public class StateHolder {
     private final Map<String, State> stateMap = new HashMap<>();
     private final SpectatorMode plugin;
+
+    private final File dataFileLocation;
     private final FileConfiguration dataFile;
 
     public StateHolder(SpectatorMode plugin) {
+        this(plugin, new File(plugin.getDataFolder(), "data.yml"));
+    }
+
+    public StateHolder(SpectatorMode plugin, File dataFileLocation) {
         this.plugin = plugin;
-        this.dataFile = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "data.yml"));
+        this.dataFileLocation = dataFileLocation;
+        try {
+            this.dataFile = YamlConfiguration.loadConfiguration(dataFileLocation);
+        } catch (IllegalArgumentException exception) {
+            plugin.getPluginLogger().log(Logger.RED + "Your data.yml file is invalid!\n" +
+                    "This could be due to a world that has not been loaded in yet");
+            throw exception;
+        }
         load();
     }
 
-    public void addPlayer(Player player) {
-        stateMap.put(player.getUniqueId().toString(), new State(player, plugin));
+    public void addPlayer(@NotNull Player player) {
+        Validate.notNull(player, "Player cannot be null!");
+        stateMap.put(player.getUniqueId().toString(), State.fromPlayer(player, plugin));
     }
 
-    public boolean hasPlayer(Player player) {
-        return hasPlayer(player.getUniqueId().toString());
+    public boolean hasPlayer(@NotNull Player player) {
+        Validate.notNull(player, "Player cannot be null");
+        return hasPlayer(player.getUniqueId());
     }
 
-    public boolean hasPlayer(String uuid) {
-        return stateMap.containsKey(uuid);
+    public boolean hasPlayer(@NotNull UUID uuid) {
+        Validate.notNull(uuid, "uuid cannot be null");
+        return stateMap.containsKey(uuid.toString());
     }
 
-    public State getPlayer(Player player) {
-        return getPlayer(player.getUniqueId().toString());
+    public State getPlayer(@NotNull Player player) {
+        Validate.notNull(player, "Player cannot be null");
+        return getPlayer(player.getUniqueId());
     }
 
-    public State getPlayer(String uuid) {
-        return stateMap.get(uuid);
+    public State getPlayer(@NotNull UUID uuid) {
+        Validate.notNull(uuid, "uuid cannot be null");
+        return stateMap.get(uuid.toString());
     }
 
-    public void removePlayer(String uuid) {
-        stateMap.get(uuid).unPrepareMobs();
-        stateMap.remove(uuid);
-    }
-
-    public void removePlayer(Player player) {
-        removePlayer(player.getUniqueId().toString());
+    public void removePlayer(@NotNull Player player) {
+        Validate.notNull(player, "Player cannot be null");
+        UUID uuid = player.getUniqueId();
+        if (!hasPlayer(uuid)) {
+            return;
+        }
+        getPlayer(player).unPrepareMobs(player);
+        stateMap.remove(uuid.toString());
     }
 
     public Set<String> allPlayersInState() {
         return stateMap.keySet();
     }
 
-    public Collection<State> allStates() {
-        return stateMap.values();
-    }
-
     public void save() {
         if (dataFile.getConfigurationSection("data") != null) {
             Objects.requireNonNull(dataFile.getConfigurationSection("data")).getKeys(false).forEach(key -> {
-                if (!hasPlayer(key)) {
+                if (!hasPlayer(UUID.fromString(key))) {
                     dataFile.set("data." + key, null);
                 }
             });
@@ -94,44 +112,65 @@ public class StateHolder {
         for (@NotNull final Map.Entry<String, State> entry : stateMap.entrySet()) {
             dataFile.set("data." + entry.getKey(), entry.getValue().serialize());
         }
+
         try {
-            dataFile.save(new File(plugin.getDataFolder(), "data.yml"));
+            dataFile.save(dataFileLocation);
         } catch (final IOException e) {
-            e.printStackTrace();
+            plugin.getPluginLogger().log(Logger.RED + "Cannot save the data.yml file! This is not normal and should " +
+                    "be reported. Error message is as follows: ");
+            plugin.getPluginLogger().log(e.getMessage());
         }
     }
 
     public void load() {
-        if (dataFile.getConfigurationSection("data") == null) {
+        load(dataFile);
+    }
+
+    public void load(FileConfiguration file) {
+        ConfigurationSection dataSection = file.getConfigurationSection("data");
+        if (dataSection == null) {
             return;
         }
-        try {
-            Objects.requireNonNull(dataFile.getConfigurationSection("data")).getKeys(false).forEach(key -> {
-                final Map<String, Object> value = new HashMap<>();
+        loadFromConfigurationSection(dataSection);
+    }
 
-                @SuppressWarnings("unchecked") final ArrayList<PotionEffect> potions =
-                        (ArrayList<PotionEffect>) dataFile
-                        .getList("data." + key + ".Potions");
-                value.put("Potions", potions);
+    private void loadFromConfigurationSection(@NotNull ConfigurationSection section) {
+        for (String key : section.getKeys(false)) {
+            ConfigurationSection playerSection = section.getConfigurationSection(key);
+            assert playerSection != null;
+            State.StateBuilder stateBuilder = new State.StateBuilder(plugin);
 
-                final int waterBubbles = dataFile.getInt("data." + key + ".Water bubbles");
-                value.put("Water bubbles", waterBubbles);
+            @SuppressWarnings("unchecked") final List<PotionEffect> potions =
+                    (List<PotionEffect>) playerSection.getList("Potions");
+            stateBuilder.setPotionEffects(potions);
 
-                final Map<String, Boolean> mobs = new HashMap<>();
-                for (String mobKey : dataFile.getConfigurationSection("data." + key + ".Mobs").getKeys(false)) {
-                    mobs.put(mobKey, dataFile.getBoolean("data." + key + ".Mobs" + mobKey));
-                }
-                value.put("Mobs", mobs);
+            final int waterBubbles = playerSection.getInt("Water bubbles", 300);
+            stateBuilder.setWaterBubbles(waterBubbles);
 
-                final int fireTicks = dataFile.getInt("data." + key + ".Fire ticks");
-                value.put("Fire ticks", fireTicks);
+            ConfigurationSection mobsSection = playerSection.getConfigurationSection("Mobs");
+            stateBuilder.setMobIds(loadMobs(mobsSection));
 
-                final Location location = dataFile.getLocation("data." + key + ".Location");
-                value.put("Location", location);
+            final int fireTicks = playerSection.getInt("Fire ticks", -20);
+            stateBuilder.setFireTicks(fireTicks);
 
-                stateMap.put(key, new State(value, plugin));
-            });
-        } catch (final NullPointerException ignored) {
+            final Location location = playerSection.getLocation("Location");
+            stateBuilder.setPlayerLocation(location);
+
+            stateMap.put(key, stateBuilder.build());
         }
+    }
+
+    private Map<String, Boolean> loadMobs(ConfigurationSection mobsSection) {
+        final Map<String, Boolean> mobs = new HashMap<>();
+        if (mobsSection != null) {
+            for (String mobKey : mobsSection.getKeys(false)) {
+                if (mobsSection.isList(mobKey)) {
+                    mobs.put(mobKey, mobsSection.getBooleanList(mobKey).get(0));
+                } else {
+                    mobs.put(mobKey, mobsSection.getBoolean(mobKey));
+                }
+            }
+        }
+        return mobs;
     }
 }

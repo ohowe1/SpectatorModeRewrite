@@ -45,18 +45,18 @@ public abstract class Messenger {
     }
 
     public static void send(@NotNull CommandSender sender, @NotNull String msgkey) {
-        send(sender, sender, msgkey, "");
+        send(sender, msgkey, sender, "");
     }
 
-    public static void send(@NotNull CommandSender sender, @NotNull CommandSender target, @NotNull String msgkey) {
-        send(sender, target, msgkey, "");
+    public static void send(@NotNull CommandSender sender, @NotNull String msgkey, @NotNull CommandSender target) {
+        send(sender, msgkey, target, "");
     }
 
     public static void send(@NotNull CommandSender sender, @NotNull String msgkey, @NotNull String extra) {
-        send(sender, sender, msgkey, extra);
+        send(sender, msgkey, sender, extra);
     }
 
-    public static void send(@NotNull CommandSender sender, @NotNull CommandSender target, @NotNull String msgkey,
+    public static void send(@NotNull CommandSender sender, @NotNull String msgkey, @NotNull CommandSender target,
                             @NotNull String extra) {
         String cfgmsg = Objects.requireNonNull(plugin.getConfigManager(), "Messenger not initialized")
                 .getColorizedString(msgkey)
@@ -64,9 +64,10 @@ public abstract class Messenger {
         ChatMessageType type = cfgmsg.startsWith("/actionbar/") ? ChatMessageType.ACTION_BAR : ChatMessageType.CHAT;
         cfgmsg = cfgmsg.replace("/actionbar/", "");
         cfgmsg += extra;
-        if (!(sender instanceof Player))
-            sender.sendMessage(cfgmsg);
-        else
+        if (sender instanceof Player) {
             ((Player) sender).spigot().sendMessage(type, new TextComponent(cfgmsg));
+        } else {
+            sender.sendMessage(cfgmsg);
+        }
     }
 }

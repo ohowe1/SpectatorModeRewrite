@@ -42,14 +42,8 @@ public class OnLogOnListener implements Listener {
     public void onLogOn(@NotNull final PlayerJoinEvent e) {
         final boolean teleportBack = plugin.getConfigManager().getBoolean("teleport-back");
         final Player player = e.getPlayer();
-        try {
-            if (plugin.getSpectatorManager().getStateHolder().hasPlayer(player)) {
-                if (teleportBack) {
-                    teleportPlayerBack(player);
-                }
-            }
-        } catch (final NullPointerException ignored) {
-            // Filler
+        if (plugin.getSpectatorManager().getStateHolder().hasPlayer(player) && teleportBack) {
+            teleportPlayerBack(player);
         }
     }
 

@@ -1,8 +1,10 @@
+[![Maintainability](https://api.codeclimate.com/v1/badges/b886095a96a861fe1a35/maintainability)](https://codeclimate.com/github/carelesshippo/SpectatorModeRewrite/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/b886095a96a861fe1a35/test_coverage)](https://codeclimate.com/github/carelesshippo/SpectatorModeRewrite/test_coverage)
 # SMP Spectator Mode
 
 ---
 
-### This plugin is not really being actively developed. New features are however welcome. If you would like a new feature open a issue [here](https://github.com/carelesshippo/SpectatorModeRewrite/issues).
+### This plugin is not being actively developed. New features are however welcome. If you would like a new feature open a issue [here](https://github.com/carelesshippo/SpectatorModeRewrite/issues).
 
 Download on [SpigotMC](https://www.spigotmc.org/resources/smp-spectator-mode.77267/)
 
@@ -11,7 +13,7 @@ Download on [SpigotMC](https://www.spigotmc.org/resources/smp-spectator-mode.772
 ## Default `config.yml`
 
 ```yml
-#  #   _____ __  __ _____     _____                 _        _               __  __           _
+#   _____ __  __ _____     _____                 _        _               __  __           _
 #  / ____|  \/  |  __ \   / ____|               | |      | |             |  \/  |         | |
 # | (___ | \  / | |__) | | (___  _ __   ___  ___| |_ __ _| |_ ___  _ __  | \  / | ___   __| | ___
 #  \___ \| |\/| |  ___/   \___ \| '_ \ / _ \/ __| __/ _` | __/ _ \| '__| | |\/| |/ _ \ / _` |/ _ \
@@ -23,23 +25,14 @@ Download on [SpigotMC](https://www.spigotmc.org/resources/smp-spectator-mode.772
 #If the command /s is enabled (/s enable overrules this)
 enabled: true
 
-#if players can change their fly speed in spectator mode
-speed: true
-
 #If a player receives the night vision effect while in spectator mode
 night-vision: true
 
 #If a player receives the conduit effect while in spectator mode
 conduit: true
 
-#the max speed a player is allowed to go (Minimum 1)
-max-speed: 5
-
 #If when a player logs on in spectator mode they will be teleported back
 teleport-back: false
-
-#The ability to toggle the effects in spectator mode
-seffect: true
 
 #Whether to enforce the worlds
 enforce-worlds: false
@@ -60,7 +53,6 @@ disallow-all-blocks: false
 
 #Specific blocks that a player cannot go through. the id
 disallowed-blocks: [ ]
-
 
 #How close a player can get to a block, to be used with disallow-all-blocks (percentage of block), adjust according to ping
 bubble-size: 35
@@ -88,9 +80,6 @@ disable-switching-message: false
 #If this is true, you won't get the survival-mode-message on join, if the server sent you back into survival
 silence-survival-mode-message-on-join: true
 
-#If this is true, the player will get temporarily replaced by a baby zombie, resembling them, when they go into spectator mode
-placeholder-mob: false
-
 #If this is true the message with a new version, or up to date message will appear
 update-checker: true
 
@@ -102,6 +91,9 @@ detach-leads: true
 
 # Save mobs. If your server is having lag issues it is advised to turn this off
 mobs: true
+
+# watch-gamemode. If another plugin or a command changes a player's gamemode while they are in spectator mode, the effects will be removed;
+watch-gamemode: true
 
 ### Message section ###
 #Adding /actionbar/ in front of a message, will make it appear in the actionbar instead of the chat
@@ -121,14 +113,8 @@ world-message: '&cHey you&l can not &r&cdo that in that world!'
 #Message sent when a player tries to execute /s but is below the minimum health
 health-message: '&cYou are below the minimum required health to preform this command!'
 
-#Message when user does not have permission to execute the command
-permission-message: '&cYou do not have permission to do that!'
-
 #Message when spectator mode is disabled and the user runs the command
 disabled-message: '&cSpectator Mode is &lnot &r&cenabled by the server!'
-
-#Message when a non-player runs the command with no arguments
-console-message: '&cYou are &lnot &ca player!'
 
 #Message when spectator mode has been disabled
 disable-message: '&dSpectator mode has been &ldisabled'
@@ -139,22 +125,13 @@ enable-message: '&dSpectator mode has been &lenabled'
 #Message when the config.yml is reloaded
 reload-message: '&bThe config file has been reloaded!'
 
-#Message when the speed is set. Speed is added at the end
-speed-message: '&bSpeed has been set to '
-
-#Message sent when an invalid speed is said
-invalid-speed-message: '&cThat is not a valid speed'
-
 #Message sent when an invalid player is forced into spectator mode
 invalid-player-message: '&cThat is not a valid player'
 
 #Message when forcing a player was successful. /target/ is the player
-force-success: '&bSuccessfully forced /target/ into '
+force-success: '&bSuccessfully forced /target/'
 
-#Message when forcing a player was not successful. /target/ is the player
-force-fail: '&cFailed to force /target/ into '
-
-#Message sent when a player tries to use the /seffect when not in spectator mode
+#Message sent when a player tries to use the /s effect when not in spectator mode
 no-spectator-message: '&cYou did not preform the /s command'
 
 #Message sent when a player tries to execute a command not allowed in spectator mode

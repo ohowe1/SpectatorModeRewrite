@@ -1,0 +1,38 @@
+# From john the potato in discord. Thanks!
+data:
+  2778fc60-d5f1-4783-9027-ae2f696a23d3:
+    Potions:
+      - ==: PotionEffect
+        effect: 1
+        duration: 274
+        amplifier: 1
+        ambient: true
+        has-particles: true
+        has-icon: true
+      - ==: PotionEffect
+        effect: 2
+        duration: 274
+        amplifier: 1
+        ambient: true
+        has-particles: true
+        has-icon: true
+    Water bubbles: 300
+    Mobs:
+      edf02864-427b-4d91-b73b-8e3f8d189d56:
+      - false
+      - true
+      d5f6dbc8-d610-4dda-a412-88e8f1d1d36e:
+      - false
+      - true
+      b8090f71-3e3e-4bf6-a080-8c42d02c22a2:
+      - false
+      - true
+    Fire ticks: -20
+    Location:
+      ==: org.bukkit.Location
+      world: world
+      x: 10
+      y: 30
+      z: 10
+      pitch: 10
+      yaw: 10

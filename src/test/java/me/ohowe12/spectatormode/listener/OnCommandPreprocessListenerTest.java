@@ -5,14 +5,14 @@ import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import me.ohowe12.spectatormode.SpectatorManager;
 import me.ohowe12.spectatormode.SpectatorMode;
-import me.ohowe12.spectatormode.utils.TestUtils;
+import me.ohowe12.spectatormode.testutils.TestUtils;
 import org.bukkit.GameMode;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static me.ohowe12.spectatormode.utils.TestUtils.assertEqualsColored;
+import static me.ohowe12.spectatormode.testutils.TestUtils.assertEqualsColored;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

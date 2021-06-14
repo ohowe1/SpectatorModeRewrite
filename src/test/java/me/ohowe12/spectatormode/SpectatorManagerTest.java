@@ -26,7 +26,7 @@ package me.ohowe12.spectatormode;
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
-import me.ohowe12.spectatormode.utils.TestUtils;
+import me.ohowe12.spectatormode.testutils.TestUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.potion.PotionEffectType;
@@ -34,7 +34,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static me.ohowe12.spectatormode.utils.TestUtils.assertEqualsColored;
+import static me.ohowe12.spectatormode.testutils.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -80,11 +80,11 @@ class SpectatorManagerTest {
     void testGivenEffects() {
         spectatorManager.togglePlayer(playerMock);
 
-        assertHasSpectatorEffects();
+        assertHasSpectatorEffects(playerMock);
 
         spectatorManager.togglePlayer(playerMock);
 
-        assertDoesNotHaveAnyEffects();
+        assertDoesNotHaveAnyEffects(playerMock);
     }
 
     @Test
@@ -93,11 +93,11 @@ class SpectatorManagerTest {
 
         spectatorManager.togglePlayer(playerMock);
 
-        assertDoesNotHaveAnyEffects();
+        assertDoesNotHaveAnyEffects(playerMock);
 
         spectatorManager.togglePlayer(playerMock);
 
-        assertDoesNotHaveAnyEffects();
+        assertDoesNotHaveAnyEffects(playerMock);
     }
 
     @Test
@@ -105,19 +105,10 @@ class SpectatorManagerTest {
         spectatorManager.togglePlayer(playerMock);
 
         spectatorManager.togglePlayerEffects(playerMock);
-        assertDoesNotHaveAnyEffects();
+        assertDoesNotHaveAnyEffects(playerMock);
 
         spectatorManager.togglePlayerEffects(playerMock);
-        assertHasSpectatorEffects();
-    }
-
-    private void assertDoesNotHaveAnyEffects() {
-        assertEquals(0, playerMock.getActivePotionEffects().size());
-    }
-
-    private void assertHasSpectatorEffects() {
-        assertTrue(playerMock.getActivePotionEffects().stream().anyMatch(e -> e.getType() == PotionEffectType.NIGHT_VISION));
-        assertTrue(playerMock.getActivePotionEffects().stream().anyMatch(e -> e.getType() == PotionEffectType.CONDUIT_POWER));
+        assertHasSpectatorEffects(playerMock);
     }
 
     @Test

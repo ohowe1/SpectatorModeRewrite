@@ -24,7 +24,7 @@
 package me.ohowe12.spectatormode.state;
 
 import me.ohowe12.spectatormode.SpectatorMode;
-import me.ohowe12.spectatormode.util.Logger;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -36,37 +36,32 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
-@SuppressWarnings("unchecked")
 public class State {
 
     private final SpectatorMode plugin;
-    private Player player;
-    private Location playerLocation;
-    private int fireTicks;
-    private ArrayList<PotionEffect> potionEffects;
-    private int waterBubbles;
-    private Map<String, Boolean> mobIds;
+    private final Location playerLocation;
+    private final int fireTicks;
+    private final List<PotionEffect> potionEffects;
+    private final int waterBubbles;
+    private final Map<String, Boolean> mobIds;
 
-    public State(@NotNull Player player, @NotNull SpectatorMode plugin) {
-        this.player = player;
+    public State(@NotNull StateBuilder builder, @NotNull SpectatorMode plugin) {
         this.plugin = plugin;
-        mobIds = new HashMap<>();
-        playerLocation = player.getLocation();
-        fireTicks = player.getFireTicks();
-        potionEffects = new ArrayList<>(player.getActivePotionEffects());
-        waterBubbles = player.getRemainingAir();
-
-        prepareMobs();
+        this.mobIds = builder.mobIds;
+        this.playerLocation = builder.playerLocation;
+        this.fireTicks = builder.fireTicks;
+        this.potionEffects = builder.potionEffects;
+        this.waterBubbles = builder.waterBubbles;
     }
 
-    public State(@NotNull Map<String, Object> serialized, @NotNull SpectatorMode plugin) {
-        this.plugin = plugin;
-        deserialize(serialized);
+    public static State fromPlayer(@NotNull Player player, @NotNull SpectatorMode plugin) {
+        Validate.notNull(player);
+        State state = new StateBuilder(plugin).setPlayerLocation(player.getLocation()).setFireTicks(player.getFireTicks()).setPotionEffects(new ArrayList<>(player.getActivePotionEffects())).setWaterBubbles(player.getRemainingAir()).build();
+        state.prepareMobs(player);
+
+        return state;
     }
 
     public Location getPlayerLocation() {
@@ -77,7 +72,7 @@ public class State {
         return fireTicks;
     }
 
-    public ArrayList<PotionEffect> getPotionEffects() {
+    public List<PotionEffect> getPotionEffects() {
         return potionEffects;
     }
 
@@ -89,10 +84,6 @@ public class State {
         return mobIds;
     }
 
-    public Player getPlayer() {
-        return player;
-    }
-
     public void resetPlayer(Player player) {
         player.teleport(getPlayerLocation());
         player.setFireTicks(getFireTicks());
@@ -100,22 +91,7 @@ public class State {
         player.setRemainingAir(getWaterBubbles());
     }
 
-    private void deserialize(@NotNull Map<String, Object> serialized) {
-        try {
-            playerLocation = (Location) serialized.get("Location");
-            fireTicks = (int) serialized.get("Fire ticks");
-            potionEffects = (ArrayList<PotionEffect>) serialized.get("Potions");
-            waterBubbles = (int) serialized.get("Water bubbles");
-            mobIds = (Map<String, Boolean>) serialized.get("Mobs");
-        } catch (ClassCastException exception) {
-            plugin.getPluginLogger().log(Logger.ANSI_RED + "There has been an error with your data.yml file!\nYou can" +
-                    " either fix this your self my removing the file and letting it regenerate itself, manually " +
-                    "fixing everything inside of it, or join the discord server for help. Please provide this error message with it:");
-            throw exception;
-        }
-    }
-
-    private void prepareMobs() {
+    private void prepareMobs(Player player) {
         if (!plugin.getConfigManager().getBoolean("mobs") || plugin.isUnitTest()) {
             return;
         }
@@ -123,18 +99,18 @@ public class State {
         Chunk defaultChunk = world.getChunkAt(getPlayerLocation());
         for (int x = 0; x <= 4; x++) {
             for (int z = 0; z <= 4; z++) {
-                processMobChunk(world.getChunkAt(defaultChunk.getX() + x, defaultChunk.getZ() + z));
+                processMobChunk(world.getChunkAt(defaultChunk.getX() + x, defaultChunk.getZ() + z), player);
             }
         }
     }
 
-    private void processMobChunk(Chunk chunk) {
+    private void processMobChunk(Chunk chunk, Player player) {
         for (Entity e : chunk.getEntities()) {
-            checkAndAddEntity(e);
+            checkAndAddEntity(e, player);
         }
     }
 
-    private void checkAndAddEntity(Entity entity) {
+    private void checkAndAddEntity(Entity entity, Player player) {
         if (entity instanceof LivingEntity) {
             @NotNull
             LivingEntity living = (LivingEntity) entity;
@@ -142,25 +118,25 @@ public class State {
                 return;
             }
             if (living.getRemoveWhenFarAway()) {
-                addLivingEntity(living);
+                addLivingEntity(living, player);
             }
         }
     }
 
-    private void addLivingEntity(LivingEntity living) {
+    private void addLivingEntity(LivingEntity living, Player player) {
         living.setRemoveWhenFarAway(false);
         boolean targeted = false;
         if (living instanceof Mob) {
             @NotNull
             Mob m = (Mob) living;
             if (m.getTarget() instanceof Player) {
-                targeted = player.equals(m.getTarget());
+                targeted = m.getTarget().equals(player);
             }
             mobIds.put(living.getUniqueId().toString(), targeted);
         }
     }
 
-    public void unPrepareMobs() {
+    public void unPrepareMobs(Player player) {
         if (plugin.getConfigManager().getBoolean("mobs") || plugin.isUnitTest()) {
             return;
         }
@@ -217,5 +193,47 @@ public class State {
         serialized.put("Water bubbles", waterBubbles);
         serialized.put("Mobs", mobIds);
         return serialized;
+    }
+
+    public static class StateBuilder {
+        private final SpectatorMode plugin;
+        private Location playerLocation;
+        private int fireTicks = -30;
+        private List<PotionEffect> potionEffects = new ArrayList<>();
+        private int waterBubbles = 300;
+        private Map<String, Boolean> mobIds = new HashMap<>();
+
+        public StateBuilder(SpectatorMode plugin) {
+            this.plugin = plugin;
+        }
+
+        public State build() {
+            return new State(this, plugin);
+        }
+
+        public StateBuilder setPlayerLocation(Location playerLocation) {
+            this.playerLocation = playerLocation;
+            return this;
+        }
+
+        public StateBuilder setFireTicks(int fireTicks) {
+            this.fireTicks = fireTicks;
+            return this;
+        }
+
+        public StateBuilder setPotionEffects(List<PotionEffect> potionEffects) {
+            this.potionEffects = potionEffects;
+            return this;
+        }
+
+        public StateBuilder setWaterBubbles(int waterBubbles) {
+            this.waterBubbles = waterBubbles;
+            return this;
+        }
+
+        public StateBuilder setMobIds(Map<String, Boolean> mobIds) {
+            this.mobIds = mobIds;
+            return this;
+        }
     }
 }

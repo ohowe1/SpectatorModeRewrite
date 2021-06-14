@@ -41,6 +41,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class SpectatorManager {
+    private static final PotionEffect NIGHT_VISION = new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 1);
+    private static final PotionEffect CONDUIT = new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000000, 1);
+
     private final StateHolder stateHolder;
     private final SpectatorMode plugin;
     private boolean spectatorEnabled;
@@ -106,10 +109,10 @@ public class SpectatorManager {
         if (stateHolder.hasPlayer(target)) {
             removeSpectatorEffects(target);
 
-            target.setGameMode(GameMode.SURVIVAL);
             stateHolder.getPlayer(target).resetPlayer(target);
-
             stateHolder.removePlayer(target);
+
+            target.setGameMode(GameMode.SURVIVAL);
 
             stateHolder.save();
 
@@ -160,16 +163,16 @@ public class SpectatorManager {
 
     private void addSpectatorEffectsIfEnabled(Player target) {
         if (plugin.getConfigManager().getBoolean("night-vision")) {
-            target.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 10));
+            target.addPotionEffect(NIGHT_VISION);
         }
         if (plugin.getConfigManager().getBoolean("conduit")) {
-            target.addPotionEffect(new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000000, 10));
+            target.addPotionEffect(CONDUIT);
         }
     }
 
-    private void removeSpectatorEffects(Player target) {
-        target.removePotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 10).getType());
-        target.removePotionEffect(new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000000, 10).getType());
+    public void removeSpectatorEffects(Player target) {
+        target.removePotionEffect(NIGHT_VISION.getType());
+        target.removePotionEffect(CONDUIT.getType());
     }
 
     private void removeLeads(Player target) {

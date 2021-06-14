@@ -36,6 +36,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 public class SpectatorContextCalculator implements ContextCalculator<Player> {
 
     private final SpectatorMode plugin;
+    private final String CONTEXT_NAME = "SMP Spectator";
 
     public SpectatorContextCalculator(SpectatorMode plugin) {
         this.plugin = plugin;
@@ -51,15 +52,15 @@ public class SpectatorContextCalculator implements ContextCalculator<Player> {
 
     @Override
     public void calculate(Player target, ContextConsumer contextConsumer) {
-        contextConsumer.accept("SMP Spectator",
-                plugin.getSpectatorManager().getStateHolder().hasPlayer(target) ? "true" : "false");
+        contextConsumer.accept(CONTEXT_NAME,
+                String.valueOf(plugin.getSpectatorManager().getStateHolder().hasPlayer(target)));
     }
 
     @Override
     public ContextSet estimatePotentialContexts() {
         ImmutableContextSet.Builder builder = ImmutableContextSet.builder();
-        builder.add("SMP Spectator", "true");
-        builder.add("SMP Spectator", "false");
+        builder.add(CONTEXT_NAME, String.valueOf(true));
+        builder.add(CONTEXT_NAME, String.valueOf(false));
         return builder.build();
     }
 

@@ -21,20 +21,27 @@
  * OUT OF OR IN
  */
 
-package me.ohowe12.spectatormode.utils;
+package me.ohowe12.spectatormode.testutils;
 
+import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import me.ohowe12.spectatormode.SpectatorMode;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestUtils {
     public static void assertEqualsColored(String expected, String actual) {
         assertEquals(ChatColor.translateAlternateColorCodes('&', expected), actual);
+    }
+
+    public static void assertNotEqualsColored(String expected, String actual) {
+        assertNotEquals(ChatColor.translateAlternateColorCodes('&', expected), actual);
     }
 
     public static void setConfigFileOfPlugin(SpectatorMode plugin, String configName) {
@@ -42,5 +49,13 @@ public class TestUtils {
                 YamlConfiguration.loadConfiguration(new File("src/test/resources/configs/" + configName));
         configuration.setDefaults(plugin.getConfig());
         plugin.setConfigManagerConfigFile(configuration);
+    }
+    public static void assertDoesNotHaveAnyEffects(PlayerMock playerMock) {
+        assertEquals(0, playerMock.getActivePotionEffects().size());
+    }
+
+    public static void assertHasSpectatorEffects(PlayerMock playerMock) {
+        assertTrue(playerMock.getActivePotionEffects().stream().anyMatch(e -> e.getType() == PotionEffectType.NIGHT_VISION));
+        assertTrue(playerMock.getActivePotionEffects().stream().anyMatch(e -> e.getType() == PotionEffectType.CONDUIT_POWER));
     }
 }

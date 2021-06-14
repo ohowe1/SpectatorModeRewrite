@@ -3,16 +3,17 @@ version: ${project.version}
 main: me.ohowe12.spectatormode.SpectatorMode
 api-version: 1.16
 softdepend: [ Multiverse-Core, LuckPerms ]
-loadbefore:
-  - Essentials
+load: POSTWORLD
 
+commands:
+  s:
+    description: The main command for this plugin
 permissions:
   spectator.*:
     description: Give access to the entire permission node
     children:
       smpspectator.use: true
       smpspectator.enable: true
-      smpspectator.speed: true
       smpspectator.bypass: true
       smpspectator.force: true
       smpspectator.toggle: true
@@ -21,9 +22,6 @@ permissions:
     default: op
   smpspectator.enable:
     description: Be able to enable and disable spectator mode from the /s command
-    default: op
-  smpspectator.speed:
-    description: Be able to change fly speed in spectator mode
     default: op
   smpspectator.bypass:
     description: Be able to bypass the y-level and block restrictions
