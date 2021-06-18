@@ -142,7 +142,7 @@ public class SpectatorManager {
             List<Entity> entites = player.getNearbyEntities(closestAllowed, closestAllowed, closestAllowed);
             for (Entity entity : entites) {
                 if (entity instanceof Monster) {
-                    Messenger.send(player, "mob-to-close-message");
+                    Messenger.send(player, "mob-too-close-message");
                     return false;
                 }
             }
