@@ -1,12 +1,14 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/b886095a96a861fe1a35/maintainability)](https://codeclimate.com/github/carelesshippo/SpectatorModeRewrite/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/b886095a96a861fe1a35/test_coverage)](https://codeclimate.com/github/carelesshippo/SpectatorModeRewrite/test_coverage)
+
 # SMP Spectator Mode
 
 ---
 
 ### This plugin is not being actively developed. New features are however welcome. If you would like a new feature open a issue [here](https://github.com/carelesshippo/SpectatorModeRewrite/issues).
 
-Download on [SpigotMC](https://www.spigotmc.org/resources/smp-spectator-mode.77267/)
+Download on
+[SpigotMC](https://www.spigotmc.org/resources/smp-spectator-mode.77267/)
 
 <details><summary>Default config file</summary>
 <p>
@@ -37,7 +39,7 @@ teleport-back: false
 #Whether to enforce the worlds
 enforce-worlds: false
 #The names of the worlds spectator mode is allowed in
-worlds-allowed: [ world, world_nether, world_the_end ]
+worlds-allowed: [world, world_nether, world_the_end]
 
 #If the y level is limited to the number in y-level in spectator mode
 enforce-y: false
@@ -52,7 +54,7 @@ disallow-non-transparent-blocks: false
 disallow-all-blocks: false
 
 #Specific blocks that a player cannot go through. the id
-disallowed-blocks: [ ]
+disallowed-blocks: []
 
 #How close a player can get to a block, to be used with disallow-all-blocks (percentage of block), adjust according to ping
 bubble-size: 35
@@ -69,7 +71,7 @@ minimum-health: 0
 #Prevents players from using the spectator teleport hot bar
 prevent-teleport: false
 #Prevents these commands from being executed unless you have the smpspectator.bypass permission. Example list: [back, return, home, homes, tpaccept, tpyes, warp, warps]
-bad-commands: [ ]
+bad-commands: []
 
 #Prevents players from going past the world border in spectator mode
 enforce-world-border: true
@@ -99,53 +101,58 @@ watch-gamemode: true
 #Adding /actionbar/ in front of a message, will make it appear in the actionbar instead of the chat
 
 #Message when gamemode set to spectator mode
-spectator-mode-message: '&9Setting gamemode to &b&lSPECTATOR MODE'
+spectator-mode-message: "&9Setting gamemode to &b&lSPECTATOR MODE"
 
 #Message when gamemode set to survival mode
-survival-mode-message: '&9Setting gamemode to &b&lSURVIVAL MODE'
+survival-mode-message: "&9Setting gamemode to &b&lSURVIVAL MODE"
 
 #Message when user preforms the command while falling (error message)
-falling-message: '&cHey you &lcan not &r&cdo that while falling!'
+falling-message: "&cHey you &lcan not &r&cdo that while falling!"
 
 #Message when user preforms command in world it is not allowed in
-world-message: '&cHey you&l can not &r&cdo that in that world!'
+world-message: "&cHey you&l can not &r&cdo that in that world!"
 
 #Message sent when a player tries to execute /s but is below the minimum health
-health-message: '&cYou are below the minimum required health to preform this command!'
+health-message:
+  "&cYou are below the minimum required health to preform this command!"
 
 #Message when spectator mode is disabled and the user runs the command
-disabled-message: '&cSpectator Mode is &lnot &r&cenabled by the server!'
+disabled-message: "&cSpectator Mode is &lnot &r&cenabled by the server!"
 
 #Message when spectator mode has been disabled
-disable-message: '&dSpectator mode has been &ldisabled'
+disable-message: "&dSpectator mode has been &ldisabled"
 
 #Message when spectator mode has been enabled
-enable-message: '&dSpectator mode has been &lenabled'
+enable-message: "&dSpectator mode has been &lenabled"
 
 #Message when the config.yml is reloaded
-reload-message: '&bThe config file has been reloaded!'
+reload-message: "&bThe config file has been reloaded!"
 
 #Message sent when an invalid player is forced into spectator mode
-invalid-player-message: '&cThat is not a valid player'
+invalid-player-message: "&cThat is not a valid player"
 
 #Message when forcing a player was successful. /target/ is the player
-force-success: '&bSuccessfully forced /target/'
+force-success: "&bSuccessfully forced /target/"
 
 #Message sent when a player tries to use the /s effect when not in spectator mode
-no-spectator-message: '&cYou did not preform the /s command'
+no-spectator-message: "&cYou did not preform the /s command"
 
 #Message sent when a player tries to execute a command not allowed in spectator mode
-bad-command-message: '&cYou can not execute that command while in spectator mode'
+bad-command-message:
+  "&cYou can not execute that command while in spectator mode"
 
 #Message sent when a player executes /s while in spectator mode but did not use it to get into spectator mode
-not-in-state-message: '&cYou did not use this command to get into spectator mode!'
+not-in-state-message:
+  "&cYou did not use this command to get into spectator mode!"
 
 #Message sent when a player tries to use /s when they are to close to a hostile mob (See closest-hostile)
-mob-too-close-message: '&cYou are too close to a hostile mob to enter spectator mode'
+mob-too-close-message:
+  "&cYou are too close to a hostile mob to enter spectator mode"
 
 #Get debug logs
 debug: false
 ```
+
 </p>
 </details>
 
@@ -157,13 +164,15 @@ debug: false
 
 `smpspectator.use`: Be able to use the /s command
 
-`smpspectator.enable`: Be able to enable and disable spectator mode from the /s command
+`smpspectator.enable`: Be able to enable and disable spectator mode from the /s
+command
 
 `smpspectator.speed`: Be able to change fly speed in spectator mode
 
 `smpspectator.bypass`: Be able to bypass the y-level and block restrictions
 
-`smpspectator.force`: Be able to force other players into and out of spectator mode
+`smpspectator.force`: Be able to force other players into and out of spectator
+mode
 
 `smpspectator.toggle`: Be able to use the /seffect command
 
@@ -171,4 +180,3 @@ debug: false
 
 </p>
 </details>
-
