@@ -158,7 +158,7 @@ debug: false
 
 <details><summary>Permissions</summary>
 <p>
-  
+
 ## Permissions for SMP Spectator Mode
 `spectator.*`: Give access to the entire permission node
 
