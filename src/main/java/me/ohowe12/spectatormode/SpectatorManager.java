@@ -10,8 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,6 +23,10 @@
 
 package me.ohowe12.spectatormode;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import me.ohowe12.spectatormode.state.StateHolder;
 import me.ohowe12.spectatormode.util.Messenger;
 import org.bukkit.GameMode;
@@ -35,180 +39,192 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 public class SpectatorManager {
-    private static final PotionEffect NIGHT_VISION = new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 1);
-    private static final PotionEffect CONDUIT = new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000000, 1);
+  private static final PotionEffect NIGHT_VISION =
+      new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 1);
+  private static final PotionEffect CONDUIT =
+      new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000000, 1);
 
-    private final StateHolder stateHolder;
-    private final SpectatorMode plugin;
-    private boolean spectatorEnabled;
+  private final StateHolder stateHolder;
+  private final SpectatorMode plugin;
+  private boolean spectatorEnabled;
 
-    public SpectatorManager(SpectatorMode plugin) {
-        this.plugin = plugin;
-        this.stateHolder = new StateHolder(plugin);
-        this.spectatorEnabled = plugin.getConfigManager().getBoolean("enabled");
+  public SpectatorManager(SpectatorMode plugin) {
+    this.plugin = plugin;
+    this.stateHolder = new StateHolder(plugin);
+    this.spectatorEnabled = plugin.getConfigManager().getBoolean("enabled");
+  }
+
+  public boolean isSpectatorEnabled() { return spectatorEnabled; }
+
+  public void setSpectatorEnabled(boolean spectatorEnabled) {
+    this.spectatorEnabled = spectatorEnabled;
+  }
+
+  public StateHolder getStateHolder() { return stateHolder; }
+
+  public void togglePlayer(Player player, boolean forced,
+                           boolean silenceMessages) {
+    if (!spectatorEnabled && !forced) {
+      Messenger.send(player, "disabled-message");
+      return;
     }
-
-    public boolean isSpectatorEnabled() {
-        return spectatorEnabled;
+    if (player.getGameMode() == GameMode.SPECTATOR) {
+      toggleToSurvival(player, silenceMessages);
+    } else {
+      toggleToSpectator(player, forced, silenceMessages);
     }
+  }
 
-    public void setSpectatorEnabled(boolean spectatorEnabled) {
-        this.spectatorEnabled = spectatorEnabled;
+  public void togglePlayer(Player player, boolean forced) {
+    togglePlayer(player, forced, false);
+  }
+
+  public void togglePlayer(Player player) { togglePlayer(player, false); }
+
+  private void toggleToSpectator(Player target, boolean forced,
+                                 boolean messagesForcedSilenced) {
+    if (canGoIntoSpectator(target, forced)) {
+      if (stateHolder.hasPlayer(target)) {
+        stateHolder.removePlayer(target);
+      }
+
+      stateHolder.addPlayer(target);
+      removeAllPotionEffects(target);
+      removeLeads(target);
+
+      target.setGameMode(GameMode.SPECTATOR);
+      addSpectatorEffectsIfEnabled(target);
+
+      stateHolder.save();
+
+      sendMessageIfNotSilenced(target, GameMode.SPECTATOR,
+                               messagesForcedSilenced);
     }
+  }
 
-    public StateHolder getStateHolder() {
-        return stateHolder;
+  private void toggleToSurvival(Player target, boolean messagesForcedSilenced) {
+    if (stateHolder.hasPlayer(target)) {
+      removeSpectatorEffects(target);
+
+      stateHolder.getPlayer(target).resetPlayer(target);
+      stateHolder.removePlayer(target);
+
+      target.setGameMode(GameMode.SURVIVAL);
+
+      stateHolder.save();
+
+      sendMessageIfNotSilenced(target, GameMode.SURVIVAL,
+                               messagesForcedSilenced);
+    } else {
+      Messenger.send(target, "not-in-state-message");
     }
+  }
 
-    public void togglePlayer(Player player, boolean forced, boolean silenceMessages) {
-        if (!spectatorEnabled && !forced) {
-            Messenger.send(player, "disabled-message");
-            return;
-        }
-        if (player.getGameMode() == GameMode.SPECTATOR) {
-            toggleToSurvival(player, silenceMessages);
-        } else {
-            toggleToSpectator(player, forced, silenceMessages);
-        }
+  private boolean canGoIntoSpectator(Player player, boolean forced) {
+    if (forced || player.hasPermission("smpspectator.bypass")) {
+      return true;
     }
-
-    public void togglePlayer(Player player, boolean forced) {
-        togglePlayer(player, forced, false);
+    // Has fall damage
+    if (player.getFallDistance() > 0) {
+      Messenger.send(player, "falling-message");
+      return false;
     }
-
-    public void togglePlayer(Player player) {
-        togglePlayer(player, false);
+    // Health
+    if (player.getHealth() <
+        plugin.getConfigManager().getDouble("minimum-health")) {
+      Messenger.send(player, "health-message");
+      return false;
     }
-
-    private void toggleToSpectator(Player target, boolean forced, boolean messagesForcedSilenced) {
-        if (canGoIntoSpectator(target, forced)) {
-            if (stateHolder.hasPlayer(target)) {
-                stateHolder.removePlayer(target);
-            }
-
-            stateHolder.addPlayer(target);
-            removeAllPotionEffects(target);
-            removeLeads(target);
-
-            target.setGameMode(GameMode.SPECTATOR);
-            addSpectatorEffectsIfEnabled(target);
-
-            stateHolder.save();
-
-            sendMessageIfNotSilenced(target, GameMode.SPECTATOR, messagesForcedSilenced);
+    // Closest mob
+    double closestAllowed =
+        plugin.getConfigManager().getDouble("closest-hostile");
+    if (closestAllowed != 0) {
+      List<Entity> entites = player.getNearbyEntities(
+          closestAllowed, closestAllowed, closestAllowed);
+      for (Entity entity : entites) {
+        if (entity instanceof Monster) {
+          Messenger.send(player, "mob-too-close-message");
+          return false;
         }
+      }
     }
-
-    private void toggleToSurvival(Player target, boolean messagesForcedSilenced) {
-        if (stateHolder.hasPlayer(target)) {
-            removeSpectatorEffects(target);
-
-            stateHolder.getPlayer(target).resetPlayer(target);
-            stateHolder.removePlayer(target);
-
-            target.setGameMode(GameMode.SURVIVAL);
-
-            stateHolder.save();
-
-            sendMessageIfNotSilenced(target, GameMode.SURVIVAL, messagesForcedSilenced);
-        } else {
-            Messenger.send(target, "not-in-state-message");
-        }
+    // Worlds
+    if (!plugin.getConfigManager()
+             .getList("worlds-allowed")
+             .contains(player.getWorld().getName()) &&
+        plugin.getConfigManager().getBoolean("enforce-worlds")) {
+      Messenger.send(player, "world-message");
+      return false;
     }
+    return true;
+  }
 
-    private boolean canGoIntoSpectator(Player player, boolean forced) {
-        if (forced || player.hasPermission("smpspectator.bypass")) {
-            return true;
-        }
-        // Has fall damage
-        if (player.getFallDistance() > 0) {
-            Messenger.send(player, "falling-message");
-            return false;
-        }
-        // Health
-        if (player.getHealth() < plugin.getConfigManager().getDouble("minimum-health")) {
-            Messenger.send(player, "health-message");
-            return false;
-        }
-        // Closest mob
-        double closestAllowed = plugin.getConfigManager().getDouble("closest-hostile");
-        if (closestAllowed != 0) {
-            List<Entity> entites = player.getNearbyEntities(closestAllowed, closestAllowed, closestAllowed);
-            for (Entity entity : entites) {
-                if (entity instanceof Monster) {
-                    Messenger.send(player, "mob-too-close-message");
-                    return false;
-                }
-            }
-        }
-        // Worlds
-        if (!plugin.getConfigManager().getList("worlds-allowed").contains(player.getWorld().getName()) && plugin.getConfigManager().getBoolean("enforce-worlds")) {
-            Messenger.send(player, "world-message");
-            return false;
-        }
-        return true;
+  private void removeAllPotionEffects(Player target) {
+    for (PotionEffect e : target.getActivePotionEffects()) {
+      target.removePotionEffect(e.getType());
     }
+  }
 
-    private void removeAllPotionEffects(Player target) {
-        for (PotionEffect e : target.getActivePotionEffects()) {
-            target.removePotionEffect(e.getType());
-        }
+  private void addSpectatorEffectsIfEnabled(Player target) {
+    if (plugin.getConfigManager().getBoolean("night-vision")) {
+      target.addPotionEffect(NIGHT_VISION);
     }
+    if (plugin.getConfigManager().getBoolean("conduit")) {
+      target.addPotionEffect(CONDUIT);
+    }
+  }
 
-    private void addSpectatorEffectsIfEnabled(Player target) {
-        if (plugin.getConfigManager().getBoolean("night-vision")) {
-            target.addPotionEffect(NIGHT_VISION);
-        }
-        if (plugin.getConfigManager().getBoolean("conduit")) {
-            target.addPotionEffect(CONDUIT);
-        }
-    }
+  public void removeSpectatorEffects(Player target) {
+    target.removePotionEffect(NIGHT_VISION.getType());
+    target.removePotionEffect(CONDUIT.getType());
+  }
 
-    public void removeSpectatorEffects(Player target) {
-        target.removePotionEffect(NIGHT_VISION.getType());
-        target.removePotionEffect(CONDUIT.getType());
+  private void removeLeads(Player target) {
+    if (plugin.isUnitTest()) {
+      return;
     }
+    List<LivingEntity> leads =
+        target.getNearbyEntities(11, 11, 11)
+            .stream()
+            .filter(entity -> entity instanceof LivingEntity)
+            .map(entity -> (LivingEntity)entity)
+            .filter(LivingEntity::isLeashed)
+            .filter(entity -> entity.getLeashHolder() instanceof Player)
+            .filter(entity -> entity.getLeashHolder().equals(target))
+            .collect(Collectors.toList());
+    for (LivingEntity entity : leads) {
+      entity.setLeashHolder(null);
+      HashMap<Integer, ItemStack> failedItems =
+          target.getInventory().addItem(new ItemStack(Material.LEAD));
+      for (Map.Entry<Integer, ItemStack> item : failedItems.entrySet()) {
+        target.getWorld().dropItemNaturally(target.getLocation(),
+                                            item.getValue());
+      }
+    }
+  }
 
-    private void removeLeads(Player target) {
-        if (plugin.isUnitTest()) {
-            return;
-        }
-        List<LivingEntity> leads = target.getNearbyEntities(11, 11, 11).stream()
-                .filter(entity -> entity instanceof LivingEntity).map(entity -> (LivingEntity) entity)
-                .filter(LivingEntity::isLeashed).filter(entity -> entity.getLeashHolder() instanceof Player)
-                .filter(entity -> entity.getLeashHolder().equals(target)).collect(Collectors.toList());
-        for (LivingEntity entity : leads) {
-            entity.setLeashHolder(null);
-            HashMap<Integer, ItemStack> failedItems = target.getInventory().addItem(new ItemStack(Material.LEAD));
-            for (Map.Entry<Integer, ItemStack> item : failedItems.entrySet()) {
-                target.getWorld().dropItemNaturally(target.getLocation(), item.getValue());
-            }
-        }
+  private void sendMessageIfNotSilenced(Player target, GameMode gameMode,
+                                        boolean forceSilence) {
+    if (!plugin.getConfigManager().getBoolean("disable-switching-message") ||
+        forceSilence) {
+      Messenger.send(target, gameMode == GameMode.SURVIVAL
+                                 ? "survival-mode-message"
+                                 : "spectator-mode-message");
     }
+  }
 
-    private void sendMessageIfNotSilenced(Player target, GameMode gameMode, boolean forceSilence) {
-        if (!plugin.getConfigManager().getBoolean("disable-switching-message") || forceSilence) {
-            Messenger.send(target, gameMode == GameMode.SURVIVAL ? "survival-mode-message" : "spectator-mode-message");
-        }
+  public void togglePlayerEffects(Player player) {
+    if (!stateHolder.hasPlayer(player)) {
+      Messenger.send(player, "no-spectator-message");
+      return;
     }
-
-    public void togglePlayerEffects(Player player) {
-        if (!stateHolder.hasPlayer(player)) {
-            Messenger.send(player, "no-spectator-message");
-            return;
-        }
-        if (player.hasPotionEffect(PotionEffectType.NIGHT_VISION)
-                || player.hasPotionEffect(PotionEffectType.CONDUIT_POWER)) {
-            player.removePotionEffect(PotionEffectType.NIGHT_VISION);
-            player.removePotionEffect(PotionEffectType.CONDUIT_POWER);
-        } else {
-            addSpectatorEffectsIfEnabled(player);
-        }
+    if (player.hasPotionEffect(PotionEffectType.NIGHT_VISION) ||
+        player.hasPotionEffect(PotionEffectType.CONDUIT_POWER)) {
+      player.removePotionEffect(PotionEffectType.NIGHT_VISION);
+      player.removePotionEffect(PotionEffectType.CONDUIT_POWER);
+    } else {
+      addSpectatorEffectsIfEnabled(player);
     }
+  }
 }
