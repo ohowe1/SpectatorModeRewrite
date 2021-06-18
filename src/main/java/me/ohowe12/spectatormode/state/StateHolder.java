@@ -25,6 +25,7 @@ package me.ohowe12.spectatormode.state;
 
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.util.Logger;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -55,8 +56,12 @@ public class StateHolder {
         try {
             this.dataFile = YamlConfiguration.loadConfiguration(dataFileLocation);
         } catch (IllegalArgumentException exception) {
-            plugin.getPluginLogger().log(Logger.RED + "Your data.yml file is invalid!\n" +
-                    "This could be due to a world that has not been loaded in yet");
+            plugin.getPluginLogger()
+                    .log(
+                            Logger.RED
+                                    + "Your data.yml file is invalid!\n"
+                                    + "This could be due to a world that has not been loaded in"
+                                    + " yet");
             throw exception;
         }
         load();
@@ -103,11 +108,14 @@ public class StateHolder {
 
     public void save() {
         if (dataFile.getConfigurationSection("data") != null) {
-            Objects.requireNonNull(dataFile.getConfigurationSection("data")).getKeys(false).forEach(key -> {
-                if (!hasPlayer(UUID.fromString(key))) {
-                    dataFile.set("data." + key, null);
-                }
-            });
+            Objects.requireNonNull(dataFile.getConfigurationSection("data"))
+                    .getKeys(false)
+                    .forEach(
+                            key -> {
+                                if (!hasPlayer(UUID.fromString(key))) {
+                                    dataFile.set("data." + key, null);
+                                }
+                            });
         }
         for (@NotNull final Map.Entry<String, State> entry : stateMap.entrySet()) {
             dataFile.set("data." + entry.getKey(), entry.getValue().serialize());
@@ -116,8 +124,11 @@ public class StateHolder {
         try {
             dataFile.save(dataFileLocation);
         } catch (final IOException e) {
-            plugin.getPluginLogger().log(Logger.RED + "Cannot save the data.yml file! This is not normal and should " +
-                    "be reported. Error message is as follows: ");
+            plugin.getPluginLogger()
+                    .log(
+                            Logger.RED
+                                    + "Cannot save the data.yml file! This is not normal and should"
+                                    + " be reported. Error message is as follows: ");
             plugin.getPluginLogger().log(e.getMessage());
         }
     }
@@ -140,7 +151,8 @@ public class StateHolder {
             assert playerSection != null;
             State.StateBuilder stateBuilder = new State.StateBuilder(plugin);
 
-            @SuppressWarnings("unchecked") final List<PotionEffect> potions =
+            @SuppressWarnings("unchecked")
+            final List<PotionEffect> potions =
                     (List<PotionEffect>) playerSection.getList("Potions");
             stateBuilder.setPotionEffects(potions);
 

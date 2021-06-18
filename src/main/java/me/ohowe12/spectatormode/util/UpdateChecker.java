@@ -35,22 +35,24 @@ import java.util.Scanner;
 
 public class UpdateChecker {
 
-    private UpdateChecker() {
-
-    }
-
+    private UpdateChecker() {}
 
     public static void getVersion(final @NotNull Consumer<String> consumer, Plugin plugin) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            try (InputStream inputStream = new URL(
-                    "https://api.spigotmc.org/legacy/update.php?resource=77267")
-                    .openStream(); Scanner scanner = new Scanner(inputStream)) {
-                if (scanner.hasNext()) {
-                    consumer.accept(scanner.next());
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        Bukkit.getScheduler()
+                .runTaskAsynchronously(
+                        plugin,
+                        () -> {
+                            try (InputStream inputStream =
+                                            new URL(
+                                                            "https://api.spigotmc.org/legacy/update.php?resource=77267")
+                                                    .openStream();
+                                    Scanner scanner = new Scanner(inputStream)) {
+                                if (scanner.hasNext()) {
+                                    consumer.accept(scanner.next());
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
     }
 }

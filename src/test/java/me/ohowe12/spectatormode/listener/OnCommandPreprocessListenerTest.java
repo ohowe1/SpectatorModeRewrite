@@ -1,20 +1,23 @@
 package me.ohowe12.spectatormode.listener;
 
+import static me.ohowe12.spectatormode.testutils.TestUtils.assertEqualsColored;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
+
 import me.ohowe12.spectatormode.SpectatorManager;
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.testutils.TestUtils;
+
 import org.bukkit.GameMode;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static me.ohowe12.spectatormode.testutils.TestUtils.assertEqualsColored;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OnCommandPreprocessListenerTest {
     ServerMock serverMock;
@@ -56,7 +59,9 @@ class OnCommandPreprocessListenerTest {
         assert event != null;
         new OnCommandPreprocessListener(plugin).onCommandEvent(event);
 
-        assertEqualsColored("&cYou can not execute that command while in spectator mode", playerMock.nextMessage());
+        assertEqualsColored(
+                "&cYou can not execute that command while in spectator mode",
+                playerMock.nextMessage());
         assertTrue(event.isCancelled());
     }
 
@@ -75,11 +80,13 @@ class OnCommandPreprocessListenerTest {
     @Test
     void testCommandWithSemiColon() {
         assert playerMock != null;
-        PlayerCommandPreprocessEvent otherEvent = new PlayerCommandPreprocessEvent(playerMock, "/exampleplugin" +
-                ":testcommand");
+        PlayerCommandPreprocessEvent otherEvent =
+                new PlayerCommandPreprocessEvent(playerMock, "/exampleplugin" + ":testcommand");
         new OnCommandPreprocessListener(plugin).onCommandEvent(otherEvent);
 
-        assertEqualsColored("&cYou can not execute that command while in spectator mode", playerMock.nextMessage());
+        assertEqualsColored(
+                "&cYou can not execute that command while in spectator mode",
+                playerMock.nextMessage());
         assertTrue(otherEvent.isCancelled());
     }
 
@@ -99,9 +106,9 @@ class OnCommandPreprocessListenerTest {
     @Test
     void testJustSlash() {
         // here to just make sure we dont get index out of bounds or something like that
-        new OnCommandPreprocessListener(plugin).onCommandEvent(new PlayerCommandPreprocessEvent(playerMock, "/"));
+        new OnCommandPreprocessListener(plugin)
+                .onCommandEvent(new PlayerCommandPreprocessEvent(playerMock, "/"));
 
         assertTrue(true);
     }
-
 }

@@ -24,6 +24,7 @@
 package me.ohowe12.spectatormode;
 
 import co.aikar.commands.PaperCommandManager;
+
 import me.ohowe12.spectatormode.commands.SpectatorCommand;
 import me.ohowe12.spectatormode.context.SpectatorContextCalculator;
 import me.ohowe12.spectatormode.listener.OnCommandPreprocessListener;
@@ -34,6 +35,7 @@ import me.ohowe12.spectatormode.util.ConfigManager;
 import me.ohowe12.spectatormode.util.Logger;
 import me.ohowe12.spectatormode.util.Messenger;
 import me.ohowe12.spectatormode.util.UpdateChecker;
+
 import org.bstats.bukkit.Metrics;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -56,7 +58,11 @@ public class SpectatorMode extends JavaPlugin {
         unitTest = false;
     }
 
-    protected SpectatorMode(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
+    protected SpectatorMode(
+            JavaPluginLoader loader,
+            PluginDescriptionFile description,
+            File dataFolder,
+            File file) {
         super(loader, description, dataFolder, file);
         unitTest = true;
     }
@@ -112,14 +118,26 @@ public class SpectatorMode extends JavaPlugin {
     }
 
     private void checkUpdate() {
-        UpdateChecker.getVersion(version -> {
-            if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
-                pluginLogger.log(Logger.CYAN + "SMP SPECTATOR MODE is all up to date at version " + this.getDescription().getVersion() + "!");
-            } else {
-                pluginLogger.log(Logger.RED + "A new version of SMP SPECTATOR MODE is available (version "
-                        + version + ")! You are on version " + this.getDescription().getVersion() + ".");
-            }
-        }, this);
+        UpdateChecker.getVersion(
+                version -> {
+                    if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
+                        pluginLogger.log(
+                                Logger.CYAN
+                                        + "SMP SPECTATOR MODE is all up to date at version "
+                                        + this.getDescription().getVersion()
+                                        + "!");
+                    } else {
+                        pluginLogger.log(
+                                Logger.RED
+                                        + "A new version of SMP SPECTATOR MODE is available"
+                                        + " (version "
+                                        + version
+                                        + ")! You are on version "
+                                        + this.getDescription().getVersion()
+                                        + ".");
+                    }
+                },
+                this);
     }
 
     public void registerCommands() {
@@ -152,5 +170,4 @@ public class SpectatorMode extends JavaPlugin {
     public Logger getPluginLogger() {
         return pluginLogger;
     }
-
 }

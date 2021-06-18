@@ -2,9 +2,11 @@ package me.ohowe12.spectatormode.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
+
 import me.ohowe12.spectatormode.SpectatorManager;
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.util.Messenger;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -16,6 +18,7 @@ public class SpectatorCommand extends BaseCommand {
     public SpectatorCommand(SpectatorMode plugin) {
         this(plugin, plugin.getSpectatorManager());
     }
+
     public SpectatorCommand(SpectatorMode plugin, SpectatorManager spectatorManager) {
         this.plugin = plugin;
         this.spectatorManager = spectatorManager;

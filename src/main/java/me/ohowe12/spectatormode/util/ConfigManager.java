@@ -24,6 +24,7 @@
 package me.ohowe12.spectatormode.util;
 
 import me.ohowe12.spectatormode.SpectatorMode;
+
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -67,8 +68,7 @@ public class ConfigManager {
     }
 
     public @NotNull String getColorizedString(@NotNull final String path) {
-        return ChatColor.translateAlternateColorCodes('&',
-                getString(path));
+        return ChatColor.translateAlternateColorCodes('&', getString(path));
     }
 
     public boolean getBoolean(@NotNull final String path) {

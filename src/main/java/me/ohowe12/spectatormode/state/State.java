@@ -24,6 +24,7 @@
 package me.ohowe12.spectatormode.state;
 
 import me.ohowe12.spectatormode.SpectatorMode;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -58,7 +59,13 @@ public class State {
 
     public static State fromPlayer(@NotNull Player player, @NotNull SpectatorMode plugin) {
         Validate.notNull(player);
-        State state = new StateBuilder(plugin).setPlayerLocation(player.getLocation()).setFireTicks(player.getFireTicks()).setPotionEffects(new ArrayList<>(player.getActivePotionEffects())).setWaterBubbles(player.getRemainingAir()).build();
+        State state =
+                new StateBuilder(plugin)
+                        .setPlayerLocation(player.getLocation())
+                        .setFireTicks(player.getFireTicks())
+                        .setPotionEffects(new ArrayList<>(player.getActivePotionEffects()))
+                        .setWaterBubbles(player.getRemainingAir())
+                        .build();
         state.prepareMobs(player);
 
         return state;
@@ -99,7 +106,8 @@ public class State {
         Chunk defaultChunk = world.getChunkAt(getPlayerLocation());
         for (int x = 0; x <= 4; x++) {
             for (int z = 0; z <= 4; z++) {
-                processMobChunk(world.getChunkAt(defaultChunk.getX() + x, defaultChunk.getZ() + z), player);
+                processMobChunk(
+                        world.getChunkAt(defaultChunk.getX() + x, defaultChunk.getZ() + z), player);
             }
         }
     }
@@ -112,8 +120,7 @@ public class State {
 
     private void checkAndAddEntity(Entity entity, Player player) {
         if (entity instanceof LivingEntity) {
-            @NotNull
-            LivingEntity living = (LivingEntity) entity;
+            @NotNull LivingEntity living = (LivingEntity) entity;
             if (entity instanceof Player) {
                 return;
             }
@@ -127,8 +134,7 @@ public class State {
         living.setRemoveWhenFarAway(false);
         boolean targeted = false;
         if (living instanceof Mob) {
-            @NotNull
-            Mob m = (Mob) living;
+            @NotNull Mob m = (Mob) living;
             if (m.getTarget() instanceof Player) {
                 targeted = m.getTarget().equals(player);
             }
@@ -140,12 +146,10 @@ public class State {
         if (plugin.getConfigManager().getBoolean("mobs") || plugin.isUnitTest()) {
             return;
         }
-        @NotNull
-        Location loc = getPlayerLocation();
+        @NotNull Location loc = getPlayerLocation();
         World world = loc.getWorld();
 
-        @NotNull
-        Chunk defaultChunk = world.getChunkAt(loc);
+        @NotNull Chunk defaultChunk = world.getChunkAt(loc);
 
         loadChunks(world, defaultChunk.getX(), defaultChunk.getZ());
 
@@ -166,7 +170,6 @@ public class State {
         }
 
         unloadChunks(world, defaultChunk.getX(), defaultChunk.getZ());
-
     }
 
     private void loadChunks(World world, int defaultX, int defaultZ) {

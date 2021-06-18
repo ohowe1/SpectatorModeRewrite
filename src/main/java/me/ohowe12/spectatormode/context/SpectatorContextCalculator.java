@@ -24,11 +24,13 @@
 package me.ohowe12.spectatormode.context;
 
 import me.ohowe12.spectatormode.SpectatorMode;
+
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.context.ContextCalculator;
 import net.luckperms.api.context.ContextConsumer;
 import net.luckperms.api.context.ContextSet;
 import net.luckperms.api.context.ImmutableContextSet;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -43,7 +45,8 @@ public class SpectatorContextCalculator implements ContextCalculator<Player> {
     }
 
     public static void initializeSpectatorContext(SpectatorMode plugin) {
-        RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+        RegisteredServiceProvider<LuckPerms> provider =
+                Bukkit.getServicesManager().getRegistration(LuckPerms.class);
         if (provider != null) {
             LuckPerms api = provider.getProvider();
             api.getContextManager().registerCalculator(new SpectatorContextCalculator(plugin));
@@ -52,7 +55,8 @@ public class SpectatorContextCalculator implements ContextCalculator<Player> {
 
     @Override
     public void calculate(Player target, ContextConsumer contextConsumer) {
-        contextConsumer.accept(CONTEXT_NAME,
+        contextConsumer.accept(
+                CONTEXT_NAME,
                 String.valueOf(plugin.getSpectatorManager().getStateHolder().hasPlayer(target)));
     }
 
@@ -63,5 +67,4 @@ public class SpectatorContextCalculator implements ContextCalculator<Player> {
         builder.add(CONTEXT_NAME, String.valueOf(false));
         return builder.build();
     }
-
 }

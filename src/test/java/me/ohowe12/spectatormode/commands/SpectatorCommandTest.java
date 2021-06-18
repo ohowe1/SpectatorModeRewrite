@@ -1,19 +1,21 @@
 package me.ohowe12.spectatormode.commands;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
+
 import me.ohowe12.spectatormode.SpectatorManager;
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.testutils.TestUtils;
+
 import org.bukkit.GameMode;
 import org.bukkit.potion.PotionEffectType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpectatorCommandTest {
     ServerMock serverMock;
@@ -104,7 +106,8 @@ public class SpectatorCommandTest {
         playerMock.addAttachment(plugin, "smpspectator.reload", true);
         playerMock.performCommand("spectatormode:s reload");
 
-        TestUtils.assertEqualsColored("&bThe config file has been reloaded!", playerMock.nextMessage());
+        TestUtils.assertEqualsColored(
+                "&bThe config file has been reloaded!", playerMock.nextMessage());
     }
 
     @Test
@@ -168,7 +171,8 @@ public class SpectatorCommandTest {
     }
 
     private void assertPermissionMessageSent() {
-        TestUtils.assertEqualsColored("&cI'm sorry, but you do not have permission to perform this command.",
+        TestUtils.assertEqualsColored(
+                "&cI'm sorry, but you do not have permission to perform this command.",
                 playerMock.nextMessage());
     }
 }
