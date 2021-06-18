@@ -141,7 +141,7 @@ bad-command-message: '&cYou can not execute that command while in spectator mode
 not-in-state-message: '&cYou did not use this command to get into spectator mode!'
 
 #Message sent when a player tries to use /s when they are to close to a hostile mob (See closest-hostile)
-mob-to-close-message: '&cYou are to close to a hostile mob to enter spectator mode'
+mob-too-close-message: '&cYou are too close to a hostile mob to enter spectator mode'
 
 #Get debug logs
 debug: false
