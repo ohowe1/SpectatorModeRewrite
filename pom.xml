@@ -112,6 +112,14 @@
                                     <pattern>co.aikar.locales</pattern>
                                     <shadedPattern>me.ohowe12.spectatormode.locales</shadedPattern> <!-- Replace this -->
                                 </relocation>
+                                <relocation>
+                                    <pattern>
+                                        org.bstats.bukkit
+                                    </pattern>
+                                    <shadedPattern>
+                                        me.ohowe12.spectatormode.bstats
+                                    </shadedPattern>
+                                </relocation>
                             </relocations>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
