@@ -25,10 +25,10 @@ package me.ohowe12.spectatormode.listener;
 
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.util.Messenger;
+
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -67,10 +67,13 @@ public class OnMoveListener implements Listener {
     private boolean shouldCancelMoveEvent(PlayerMoveEvent moveEvent) {
         final boolean enforceY = plugin.getConfigManager().getBoolean("enforce-y");
         final boolean enforceDistance = plugin.getConfigManager().getBoolean("enforce-distance");
-        final boolean enforceWorldBorder = plugin.getConfigManager().getBoolean("enforce-world-border");
+        final boolean enforceWorldBorder =
+                plugin.getConfigManager().getBoolean("enforce-world-border");
 
-        return (enforceY && checkAndEnforceY(moveEvent)) || isCollidingAndCollidingNotAllowed(moveEvent)
-                || (enforceDistance && distanceTooFar(moveEvent)) || (enforceWorldBorder && outsideWorldBorder(moveEvent));
+        return (enforceY && checkAndEnforceY(moveEvent))
+                || isCollidingAndCollidingNotAllowed(moveEvent)
+                || (enforceDistance && distanceTooFar(moveEvent))
+                || (enforceWorldBorder && outsideWorldBorder(moveEvent));
     }
 
     private boolean outsideWorldBorder(PlayerMoveEvent moveEvent) {
@@ -100,13 +103,16 @@ public class OnMoveListener implements Listener {
     }
 
     public boolean isCollidingAndCollidingNotAllowed(@NotNull PlayerMoveEvent moveEvent) {
-        final boolean enforceNonTransparent = plugin.getConfigManager().getBoolean("disallow-non-transparent-blocks");
-        final boolean enforceAllBlocks = plugin.getConfigManager().getBoolean("disallow-all-blocks");
-        final List<String> disallowedBlocks = (List<String>) plugin.getConfigManager().getList("disallowed-blocks");
-
+        final boolean enforceNonTransparent =
+                plugin.getConfigManager().getBoolean("disallow-non-transparent-blocks");
+        final boolean enforceAllBlocks =
+                plugin.getConfigManager().getBoolean("disallow-all-blocks");
+        final List<String> disallowedBlocks =
+                (List<String>) plugin.getConfigManager().getList("disallowed-blocks");
 
         final float bubbleSize = plugin.getConfigManager().getInt("bubble-size") / 100.0f;
-        if (moveEvent.getTo() == null || !(enforceNonTransparent || enforceAllBlocks || disallowedBlocks.size() > 0))
+        if (moveEvent.getTo() == null
+                || !(enforceNonTransparent || enforceAllBlocks || disallowedBlocks.size() > 0))
             return false;
         for (int x = -1; x < 2; x++) {
             for (int y = 0; y < 3; y++) {
@@ -116,7 +122,9 @@ public class OnMoveListener implements Listener {
                     Material mat = block.getType();
                     Vector toVect = moveEvent.getTo().toVector().clone().add(new Vector(0, 1.6, 0));
                     if (mat.isSolid() && toVect.isInAABB(bb.getMin(), bb.getMax())) {
-                        return enforceAllBlocks || (mat.isOccluding() && enforceNonTransparent) || disallowedBlocks.stream().anyMatch(mat.name()::equalsIgnoreCase);
+                        return enforceAllBlocks
+                                || (mat.isOccluding() && enforceNonTransparent)
+                                || disallowedBlocks.stream().anyMatch(mat.name()::equalsIgnoreCase);
                     }
                 }
             }
@@ -126,8 +134,11 @@ public class OnMoveListener implements Listener {
 
     private boolean distanceTooFar(PlayerMoveEvent moveEvent) {
         final int distance = plugin.getConfigManager().getInt("distance");
-        final Location originalLocation = plugin.getSpectatorManager().getStateHolder().getPlayer(moveEvent.getPlayer())
-                .getPlayerLocation();
+        final Location originalLocation =
+                plugin.getSpectatorManager()
+                        .getStateHolder()
+                        .getPlayer(moveEvent.getPlayer())
+                        .getPlayerLocation();
         Location toLocation = moveEvent.getTo();
         if (toLocation == null) {
             return false;

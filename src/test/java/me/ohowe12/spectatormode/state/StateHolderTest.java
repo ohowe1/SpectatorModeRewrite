@@ -1,9 +1,13 @@
 package me.ohowe12.spectatormode.state;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
+
 import me.ohowe12.spectatormode.SpectatorMode;
+
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -18,8 +22,6 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class StateHolderTest {
 
     private ServerMock server;
@@ -28,7 +30,6 @@ class StateHolderTest {
     private PlayerMock playerMock;
 
     private File fileLocation;
-
 
     @BeforeEach
     void setUp() {
@@ -167,8 +168,8 @@ class StateHolderTest {
 
         stateHolder.save();
 
-        ConfigurationSection dataSection = YamlConfiguration.loadConfiguration(fileLocation).getConfigurationSection(
-                "data");
+        ConfigurationSection dataSection =
+                YamlConfiguration.loadConfiguration(fileLocation).getConfigurationSection("data");
 
         assertNotNull(dataSection);
         assertTrue(dataSection.contains(playerMock.getUniqueId().toString()));
@@ -178,15 +179,19 @@ class StateHolderTest {
     @Test
     void load_OnePlayer_GetsCorrectPlayerData() {
         FileConfiguration configuration =
-                YamlConfiguration.loadConfiguration(new File("src/test/resources/data/oneplayerdata.yml"));
+                YamlConfiguration.loadConfiguration(
+                        new File("src/test/resources/data/oneplayerdata.yml"));
         stateHolder.load(configuration);
 
         assertEquals(1, stateHolder.allPlayersInState().size());
 
-        State playerState = stateHolder.getPlayer(UUID.fromString("2778fc60-d5f1-4783-9027-ae2f696a23d3"));
+        State playerState =
+                stateHolder.getPlayer(UUID.fromString("2778fc60-d5f1-4783-9027-ae2f696a23d3"));
         assertEquals(300, playerState.getWaterBubbles());
         assertEquals(-20, playerState.getFireTicks());
-        assertEquals(new Location(playerMock.getWorld(), 10, 30, 10, 10, 10), playerState.getPlayerLocation());
+        assertEquals(
+                new Location(playerMock.getWorld(), 10, 30, 10, 10, 10),
+                playerState.getPlayerLocation());
         assertEquals(3, playerState.getMobIds().size());
         assertFalse(playerState.getMobIds().get("edf02864-427b-4d91-b73b-8e3f8d189d56"));
         assertEquals(2, playerState.getPotionEffects().size());
@@ -195,12 +200,14 @@ class StateHolderTest {
     @Test
     void load_OnePlayerLegacy_GetsCorrectMobData() {
         FileConfiguration configuration =
-                YamlConfiguration.loadConfiguration(new File("src/test/resources/data/oneplayerdatalegacy.yml"));
+                YamlConfiguration.loadConfiguration(
+                        new File("src/test/resources/data/oneplayerdatalegacy.yml"));
         stateHolder.load(configuration);
 
         assertEquals(1, stateHolder.allPlayersInState().size());
 
-        State playerState = stateHolder.getPlayer(UUID.fromString("2778fc60-d5f1-4783-9027-ae2f696a23d3"));
+        State playerState =
+                stateHolder.getPlayer(UUID.fromString("2778fc60-d5f1-4783-9027-ae2f696a23d3"));
         assertEquals(3, playerState.getMobIds().size());
         assertFalse(playerState.getMobIds().get("edf02864-427b-4d91-b73b-8e3f8d189d56"));
     }

@@ -23,20 +23,19 @@
 
 package me.ohowe12.spectatormode;
 
+import static me.ohowe12.spectatormode.testutils.TestUtils.*;
+
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
+
 import me.ohowe12.spectatormode.testutils.TestUtils;
+
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.potion.PotionEffectType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static me.ohowe12.spectatormode.testutils.TestUtils.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SpectatorManagerTest {
 
@@ -138,7 +137,8 @@ class SpectatorManagerTest {
 
         spectatorManager.togglePlayer(playerMock);
 
-        assertEqualsColored("&cHey you &lcan not &r&cdo that while falling!", playerMock.nextMessage());
+        assertEqualsColored(
+                "&cHey you &lcan not &r&cdo that while falling!", playerMock.nextMessage());
         playerMock.assertGameMode(GameMode.SURVIVAL);
     }
 
@@ -150,7 +150,8 @@ class SpectatorManagerTest {
 
         spectatorManager.togglePlayer(playerMock);
 
-        assertEqualsColored("&cYou are below the minimum required health to preform this command!",
+        assertEqualsColored(
+                "&cYou are below the minimum required health to preform this command!",
                 playerMock.nextMessage());
         playerMock.assertGameMode(GameMode.SURVIVAL);
     }
@@ -161,9 +162,8 @@ class SpectatorManagerTest {
 
         spectatorManager.togglePlayer(playerMock);
 
-        assertEqualsColored("&cHey you&l can not &r&cdo that in that world!", playerMock.nextMessage());
+        assertEqualsColored(
+                "&cHey you&l can not &r&cdo that in that world!", playerMock.nextMessage());
         playerMock.assertGameMode(GameMode.SURVIVAL);
     }
-
-
 }

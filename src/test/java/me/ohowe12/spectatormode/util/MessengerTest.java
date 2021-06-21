@@ -1,16 +1,18 @@
 package me.ohowe12.spectatormode.util;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.command.ConsoleCommandSenderMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
+
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.testutils.TestUtils;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MessengerTest {
 
@@ -77,7 +79,8 @@ class MessengerTest {
     void send_ActionBar_Valid() {
         Messenger.send(playerMock, "action-bar-test");
 
-        // This test doesn't really test much but /actionbar/ being removed cause mockbukkit just saids a "vanilla"
+        // This test doesn't really test much but /actionbar/ being removed cause mockbukkit just
+        // saids a "vanilla"
         // message on chat components
 
         playerMock.assertSaid("This should be on your action bar");
@@ -86,9 +89,11 @@ class MessengerTest {
 
     @Test
     void send_NotValidMessage_FailsNullPointer() {
-        assertThrows(NullPointerException.class, () -> {
-            Messenger.send(playerMock, "not-a-config-value");
-        });
+        assertThrows(
+                NullPointerException.class,
+                () -> {
+                    Messenger.send(playerMock, "not-a-config-value");
+                });
 
         playerMock.assertNoMoreSaid();
     }

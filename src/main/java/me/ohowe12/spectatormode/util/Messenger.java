@@ -24,8 +24,10 @@
 package me.ohowe12.spectatormode.util;
 
 import me.ohowe12.spectatormode.SpectatorMode;
+
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -36,9 +38,7 @@ public abstract class Messenger {
 
     private static SpectatorMode plugin;
 
-    private Messenger() {
-
-    }
+    private Messenger() {}
 
     public static void init(@NotNull SpectatorMode plugin) {
         Messenger.plugin = plugin;
@@ -48,20 +48,29 @@ public abstract class Messenger {
         send(sender, msgkey, sender, "");
     }
 
-    public static void send(@NotNull CommandSender sender, @NotNull String msgkey, @NotNull CommandSender target) {
+    public static void send(
+            @NotNull CommandSender sender, @NotNull String msgkey, @NotNull CommandSender target) {
         send(sender, msgkey, target, "");
     }
 
-    public static void send(@NotNull CommandSender sender, @NotNull String msgkey, @NotNull String extra) {
+    public static void send(
+            @NotNull CommandSender sender, @NotNull String msgkey, @NotNull String extra) {
         send(sender, msgkey, sender, extra);
     }
 
-    public static void send(@NotNull CommandSender sender, @NotNull String msgkey, @NotNull CommandSender target,
-                            @NotNull String extra) {
-        String cfgmsg = Objects.requireNonNull(plugin.getConfigManager(), "Messenger not initialized")
-                .getColorizedString(msgkey)
-                .replace("/target/", target.getName());
-        ChatMessageType type = cfgmsg.startsWith("/actionbar/") ? ChatMessageType.ACTION_BAR : ChatMessageType.CHAT;
+    public static void send(
+            @NotNull CommandSender sender,
+            @NotNull String msgkey,
+            @NotNull CommandSender target,
+            @NotNull String extra) {
+        String cfgmsg =
+                Objects.requireNonNull(plugin.getConfigManager(), "Messenger not initialized")
+                        .getColorizedString(msgkey)
+                        .replace("/target/", target.getName());
+        ChatMessageType type =
+                cfgmsg.startsWith("/actionbar/")
+                        ? ChatMessageType.ACTION_BAR
+                        : ChatMessageType.CHAT;
         cfgmsg = cfgmsg.replace("/actionbar/", "");
         cfgmsg += extra;
         if (sender instanceof Player) {

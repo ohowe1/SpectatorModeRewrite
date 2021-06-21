@@ -1,18 +1,20 @@
 package me.ohowe12.spectatormode.context;
 
+import static org.mockito.Mockito.*;
+
 import me.ohowe12.spectatormode.SpectatorManager;
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.state.StateHolder;
+
 import net.luckperms.api.context.ContextConsumer;
 import net.luckperms.api.context.ImmutableContextSet;
+
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockedStatic;
-
-import static org.mockito.Mockito.*;
 
 class SpectatorContextCalculatorTest {
 
@@ -29,7 +31,6 @@ class SpectatorContextCalculatorTest {
         stateHolderMock = mock(StateHolder.class);
         playerMock = mock(Player.class);
         contextConsumerMock = mock(ContextConsumer.class);
-
 
         when(pluginMock.getSpectatorManager()).thenReturn(spectatorManagerMock);
         when(spectatorManagerMock.getStateHolder()).thenReturn(stateHolderMock);
@@ -48,7 +49,7 @@ class SpectatorContextCalculatorTest {
 
     @Test
     void estimatePotentialContexts_Correct() {
-        try (MockedStatic<ImmutableContextSet> mocked = mockStatic(ImmutableContextSet.class)){
+        try (MockedStatic<ImmutableContextSet> mocked = mockStatic(ImmutableContextSet.class)) {
             ImmutableContextSet.Builder builderMock = mock(ImmutableContextSet.Builder.class);
             when(builderMock.add(anyString(), anyString())).thenReturn(builderMock);
             mocked.when(ImmutableContextSet::builder).thenReturn(builderMock);

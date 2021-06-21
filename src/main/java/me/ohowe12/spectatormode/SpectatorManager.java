@@ -25,6 +25,7 @@ package me.ohowe12.spectatormode;
 
 import me.ohowe12.spectatormode.state.StateHolder;
 import me.ohowe12.spectatormode.util.Messenger;
+
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -41,8 +42,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class SpectatorManager {
-    private static final PotionEffect NIGHT_VISION = new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 1);
-    private static final PotionEffect CONDUIT = new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000000, 1);
+    private static final PotionEffect NIGHT_VISION =
+            new PotionEffect(PotionEffectType.NIGHT_VISION, 10000000, 1);
+    private static final PotionEffect CONDUIT =
+            new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000000, 1);
 
     private final StateHolder stateHolder;
     private final SpectatorMode plugin;
@@ -139,16 +142,20 @@ public class SpectatorManager {
         // Closest mob
         double closestAllowed = plugin.getConfigManager().getDouble("closest-hostile");
         if (closestAllowed != 0) {
-            List<Entity> entites = player.getNearbyEntities(closestAllowed, closestAllowed, closestAllowed);
+            List<Entity> entites =
+                    player.getNearbyEntities(closestAllowed, closestAllowed, closestAllowed);
             for (Entity entity : entites) {
                 if (entity instanceof Monster) {
-                    Messenger.send(player, "mob-to-close-message");
+                    Messenger.send(player, "mob-too-close-message");
                     return false;
                 }
             }
         }
         // Worlds
-        if (!plugin.getConfigManager().getList("worlds-allowed").contains(player.getWorld().getName()) && plugin.getConfigManager().getBoolean("enforce-worlds")) {
+        if (!plugin.getConfigManager()
+                        .getList("worlds-allowed")
+                        .contains(player.getWorld().getName())
+                && plugin.getConfigManager().getBoolean("enforce-worlds")) {
             Messenger.send(player, "world-message");
             return false;
         }
@@ -179,13 +186,18 @@ public class SpectatorManager {
         if (plugin.isUnitTest()) {
             return;
         }
-        List<LivingEntity> leads = target.getNearbyEntities(11, 11, 11).stream()
-                .filter(entity -> entity instanceof LivingEntity).map(entity -> (LivingEntity) entity)
-                .filter(LivingEntity::isLeashed).filter(entity -> entity.getLeashHolder() instanceof Player)
-                .filter(entity -> entity.getLeashHolder().equals(target)).collect(Collectors.toList());
+        List<LivingEntity> leads =
+                target.getNearbyEntities(11, 11, 11).stream()
+                        .filter(entity -> entity instanceof LivingEntity)
+                        .map(entity -> (LivingEntity) entity)
+                        .filter(LivingEntity::isLeashed)
+                        .filter(entity -> entity.getLeashHolder() instanceof Player)
+                        .filter(entity -> entity.getLeashHolder().equals(target))
+                        .collect(Collectors.toList());
         for (LivingEntity entity : leads) {
             entity.setLeashHolder(null);
-            HashMap<Integer, ItemStack> failedItems = target.getInventory().addItem(new ItemStack(Material.LEAD));
+            HashMap<Integer, ItemStack> failedItems =
+                    target.getInventory().addItem(new ItemStack(Material.LEAD));
             for (Map.Entry<Integer, ItemStack> item : failedItems.entrySet()) {
                 target.getWorld().dropItemNaturally(target.getLocation(), item.getValue());
             }
@@ -194,7 +206,11 @@ public class SpectatorManager {
 
     private void sendMessageIfNotSilenced(Player target, GameMode gameMode, boolean forceSilence) {
         if (!plugin.getConfigManager().getBoolean("disable-switching-message") || forceSilence) {
-            Messenger.send(target, gameMode == GameMode.SURVIVAL ? "survival-mode-message" : "spectator-mode-message");
+            Messenger.send(
+                    target,
+                    gameMode == GameMode.SURVIVAL
+                            ? "survival-mode-message"
+                            : "spectator-mode-message");
         }
     }
 

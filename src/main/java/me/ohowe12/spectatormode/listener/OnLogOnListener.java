@@ -24,6 +24,7 @@
 package me.ohowe12.spectatormode.listener;
 
 import me.ohowe12.spectatormode.SpectatorMode;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -48,7 +49,8 @@ public class OnLogOnListener implements Listener {
     }
 
     private void teleportPlayerBack(@NotNull final Player player) {
-        final boolean silent = plugin.getConfigManager().getBoolean("silence-survival-mode-message-on-join");
+        final boolean silent =
+                plugin.getConfigManager().getBoolean("silence-survival-mode-message-on-join");
         plugin.getPluginLogger().debugLog("Sending player back to survival mode");
         plugin.getSpectatorManager().togglePlayer(player, true, silent);
     }
