@@ -24,7 +24,8 @@
   -->
 
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.ohowe12</groupId>
@@ -111,7 +112,8 @@
                                 </relocation>
                                 <relocation>
                                     <pattern>co.aikar.locales</pattern>
-                                    <shadedPattern>me.ohowe12.spectatormode.locales</shadedPattern> <!-- Replace this -->
+                                    <shadedPattern>me.ohowe12.spectatormode.locales
+                                    </shadedPattern> <!-- Replace this -->
                                 </relocation>
                                 <relocation>
                                     <pattern>
