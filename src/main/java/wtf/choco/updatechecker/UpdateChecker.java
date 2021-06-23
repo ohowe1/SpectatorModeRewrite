@@ -4,6 +4,10 @@ import com.google.common.base.Preconditions;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
+import org.apache.commons.lang.math.NumberUtils;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,12 +16,6 @@ import java.net.URL;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang.math.NumberUtils;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * A utility class to assist in checking for updates for plugins uploaded to
@@ -34,7 +32,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class UpdateChecker {
 
-    /** The default version scheme for this update checker */
+    /**
+     * The default version scheme for this update checker
+     */
     public static final VersionScheme VERSION_SCHEME_DECIMAL = (first, second) -> {
         String[] firstSplit = splitVersionInfo(first), secondSplit = splitVersionInfo(second);
         if (firstSplit == null || secondSplit == null) {
@@ -104,11 +104,9 @@ public final class UpdateChecker {
 
                 if (latest == null) {
                     return new UpdateResult(UpdateReason.UNSUPPORTED_VERSION_SCHEME);
-                }
-                else if (latest.equals(pluginVersion)) {
+                } else if (latest.equals(pluginVersion)) {
                     return new UpdateResult(pluginVersion.equals(currentVersion) ? UpdateReason.UP_TO_DATE : UpdateReason.UNRELEASED_VERSION);
-                }
-                else if (latest.equals(currentVersion)) {
+                } else if (latest.equals(currentVersion)) {
                     return new UpdateResult(UpdateReason.NEW_UPDATE, latest);
                 }
             } catch (IOException e) {
@@ -141,12 +139,11 @@ public final class UpdateChecker {
      * If an instance of UpdateChecker has already been initialized, this method will act
      * similarly to {@link #get()} (which is recommended after initialization).
      *
-     * @param plugin the plugin for which to check updates. Cannot be null
-     * @param pluginID the ID of the plugin as identified in the SpigotMC resource link.
-     * For example, "https://www.spigotmc.org/resources/veinminer.<b>12038</b>/" would
-     * expect "12038" as a value. The value must be greater than 0
+     * @param plugin        the plugin for which to check updates. Cannot be null
+     * @param pluginID      the ID of the plugin as identified in the SpigotMC resource link.
+     *                      For example, "https://www.spigotmc.org/resources/veinminer.<b>12038</b>/" would
+     *                      expect "12038" as a value. The value must be greater than 0
      * @param versionScheme a custom version scheme parser. Cannot be null
-     *
      * @return the UpdateChecker instance
      */
     @NotNull
@@ -163,11 +160,10 @@ public final class UpdateChecker {
      * If an instance of UpdateChecker has already been initialized, this method will act
      * similarly to {@link #get()} (which is recommended after initialization).
      *
-     * @param plugin the plugin for which to check updates. Cannot be null
+     * @param plugin   the plugin for which to check updates. Cannot be null
      * @param pluginID the ID of the plugin as identified in the SpigotMC resource link.
-     * For example, "https://www.spigotmc.org/resources/veinminer.<b>12038</b>/" would
-     * expect "12038" as a value. The value must be greater than 0
-     *
+     *                 For example, "https://www.spigotmc.org/resources/veinminer.<b>12038</b>/" would
+     *                 expect "12038" as a value. The value must be greater than 0
      * @return the UpdateChecker instance
      */
     @NotNull
@@ -209,9 +205,8 @@ public final class UpdateChecker {
          * is assumed that at least one of the two versions are unsupported by this
          * version scheme parser.
          *
-         * @param first the first version to check
+         * @param first  the first version to check
          * @param second the second version to check
-         *
          * @return the greater of the two versions. null if unsupported version schemes
          */
         @Nullable String compareVersions(@NotNull String first, @NotNull String second);
@@ -221,7 +216,7 @@ public final class UpdateChecker {
     /**
      * A constant reason for the result of {@link UpdateResult}.
      */
-    public static enum UpdateReason {
+    public enum UpdateReason {
 
         /**
          * A new update is available for download on SpigotMC.
@@ -264,7 +259,7 @@ public final class UpdateChecker {
          * The plugin is up to date with the version released on SpigotMC's resources
          * section.
          */
-        UP_TO_DATE;
+        UP_TO_DATE
 
     }
 
