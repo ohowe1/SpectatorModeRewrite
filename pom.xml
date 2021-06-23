@@ -71,7 +71,7 @@
                 <configuration>
                     <excludes>
                         <exclude>org/bstats/bukkit/*</exclude>
-                        <exclude>wtf.choco.updatechecker/*</exclude>
+                        <exclude>wtf/choco/updatechecker/*</exclude>
                     </excludes>
                 </configuration>
             </plugin>
