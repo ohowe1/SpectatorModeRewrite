@@ -70,7 +70,8 @@
                 </executions>
                 <configuration>
                     <excludes>
-                        org/bstats/bukkit/*
+                        <exclude>org/bstats/bukkit/*</exclude>
+                        <exclude>wtf.choco.updatechecker/*</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -118,6 +119,14 @@
                                     </pattern>
                                     <shadedPattern>
                                         me.ohowe12.spectatormode.bstats
+                                    </shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>
+                                        wtf.choco.updatechecker
+                                    </pattern>
+                                    <shadedPattern>
+                                        me.ohowe12.spectatormode.updatechecker
                                     </shadedPattern>
                                 </relocation>
                             </relocations>
