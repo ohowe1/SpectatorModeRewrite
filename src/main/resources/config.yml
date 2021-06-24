@@ -80,6 +80,9 @@ mobs: true
 # watch-gamemode. If another plugin or a command changes a player's gamemode while they are in spectator mode, the effects will be removed;
 watch-gamemode: true
 
+# If they are falling, disallow spectator mode
+prevent-falling: true
+
 ### Message section ###
 #Adding /actionbar/ in front of a message, will make it appear in the actionbar instead of the chat
 
