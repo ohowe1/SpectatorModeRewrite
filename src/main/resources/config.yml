@@ -128,5 +128,8 @@ not-in-state-message: '&cYou did not use this command to get into spectator mode
 #Message sent when a player tries to use /s when they are to close to a hostile mob (See closest-hostile)
 mob-too-close-message: '&cYou are too close to a hostile mob to enter spectator mode'
 
+#Message sent when a player teleports when not allowed to
+unallowed-teleport-message: '&cYou are not allowed to teleport in spectator mode'
+
 #Get debug logs
 debug: false

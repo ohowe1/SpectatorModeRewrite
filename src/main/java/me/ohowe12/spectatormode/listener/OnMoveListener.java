@@ -51,15 +51,15 @@ public class OnMoveListener implements Listener {
 
     @EventHandler
     public void onMove(@NotNull final PlayerMoveEvent moveEvent) {
-        if (shouldDoNotSkipEvent(moveEvent) && shouldCancelMoveEvent(moveEvent)) {
+        if (shouldProcessEvent(moveEvent) && shouldCancelMoveEvent(moveEvent)) {
             cancelPlayerMoveEvent(moveEvent);
         }
     }
 
     @EventHandler
     public void onTeleport(@NotNull final PlayerTeleportEvent teleportEvent) {
-        if (shouldCancelTeleport(teleportEvent) && shouldDoNotSkipEvent(teleportEvent)) {
-            Messenger.send(teleportEvent.getPlayer(), "permission-message");
+        if (shouldCancelTeleport(teleportEvent) && shouldProcessEvent(teleportEvent)) {
+            Messenger.send(teleportEvent.getPlayer(), "unallowed-teleport-message");
             teleportEvent.setCancelled(true);
         }
     }
@@ -147,11 +147,11 @@ public class OnMoveListener implements Listener {
     }
 
     private boolean shouldCancelTeleport(PlayerTeleportEvent teleportEvent) {
-        return (teleportEvent.getCause().equals(PlayerTeleportEvent.TeleportCause.SPECTATE))
+        return (teleportEvent.getCause() == PlayerTeleportEvent.TeleportCause.SPECTATE)
                 && plugin.getConfigManager().getBoolean("prevent-teleport");
     }
 
-    private boolean shouldDoNotSkipEvent(PlayerEvent event) {
+    private boolean shouldProcessEvent(PlayerEvent event) {
         return !event.getPlayer().hasPermission("smpspectator.bypass")
                 && plugin.getSpectatorManager().getStateHolder().hasPlayer(event.getPlayer())
                 && event.getPlayer().getGameMode() == GameMode.SPECTATOR;

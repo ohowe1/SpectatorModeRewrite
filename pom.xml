@@ -182,7 +182,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>18.0.0</version>
+            <version>21.0.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -206,8 +206,8 @@
         <dependency>
             <groupId>com.github.seeseemelk</groupId>
             <artifactId>MockBukkit</artifactId>
-            <version>v1.16-SNAPSHOT</version>
-            <scope>test</scope>
+            <version>73573805b1</version>
+	    <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
