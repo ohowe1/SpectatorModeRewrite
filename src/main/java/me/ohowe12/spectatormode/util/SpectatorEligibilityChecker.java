@@ -4,9 +4,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 
-import java.io.ObjectInputFilter;
-
 public class SpectatorEligibilityChecker {
+
+    private SpectatorEligibilityChecker() {}
 
     public static EligibilityStatus getStatus(Player player, boolean forced, ConfigManager configManager) {
         if (forced || player.hasPermission("smpspectator.bypass")) {
