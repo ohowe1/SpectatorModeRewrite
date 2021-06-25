@@ -27,6 +27,7 @@ import static me.ohowe12.spectatormode.testutils.TestUtils.*;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
+import be.seeseemelk.mockbukkit.WorldMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 
 import me.ohowe12.spectatormode.testutils.TestUtils;
@@ -65,7 +66,7 @@ class SpectatorManagerTest {
     }
 
     @Test
-    void testTogglePlayerGamemodeChange() {
+    void togglePlayer_Valid_SwitchesGameMode() {
         playerMock.assertGameMode(GameMode.SURVIVAL);
 
         spectatorManager.togglePlayer(playerMock);
@@ -76,7 +77,7 @@ class SpectatorManagerTest {
     }
 
     @Test
-    void testGivenEffects() {
+    void togglePlayer_Valid_HasEffects() {
         spectatorManager.togglePlayer(playerMock);
 
         assertHasSpectatorEffects(playerMock);
@@ -87,7 +88,7 @@ class SpectatorManagerTest {
     }
 
     @Test
-    void testNotGivenEffectsWhenDisabled() {
+    void togglePlayer_EffectsDisabled_NoEffects() {
         TestUtils.setConfigFileOfPlugin(plugin, "disabledeffects.yml");
 
         spectatorManager.togglePlayer(playerMock);
@@ -100,7 +101,7 @@ class SpectatorManagerTest {
     }
 
     @Test
-    void testToggleEffectsCommand() {
+    void togglePlayerEffects_Valid_GivenAndRemovedEffects() {
         spectatorManager.togglePlayer(playerMock);
 
         spectatorManager.togglePlayerEffects(playerMock);
@@ -111,7 +112,7 @@ class SpectatorManagerTest {
     }
 
     @Test
-    void testTogglePlayerMessageSent() {
+    void togglePlayer_Valid_MessagesSent() {
         spectatorManager.togglePlayer(playerMock);
         assertEqualsColored("&9Setting gamemode to &b&lSPECTATOR MODE", playerMock.nextMessage());
 
@@ -120,7 +121,7 @@ class SpectatorManagerTest {
     }
 
     @Test
-    void testTogglePlayerLocationChange() {
+    void togglePlayer_MovesThenTogglesBack_TeleportedBack() {
         Location originalLocation = playerMock.getLocation();
 
         spectatorManager.togglePlayer(playerMock);
@@ -132,7 +133,7 @@ class SpectatorManagerTest {
     }
 
     @Test
-    void testTogglePlayerWithBadFallDamage() {
+    void togglePlayer_WithFallDistance_NoGameModeChange() {
         playerMock.setFallDistance(10);
 
         spectatorManager.togglePlayer(playerMock);
@@ -143,7 +144,17 @@ class SpectatorManagerTest {
     }
 
     @Test
-    void testTogglePlayerWithBadHealth() {
+    void togglePlayer_WithFallDistancePreventionDisabled_GameModeChange() {
+        TestUtils.setConfigFileOfPlugin(plugin, "falldistancedisabled.yml");
+        playerMock.setFallDistance(10);
+
+        spectatorManager.togglePlayer(playerMock);
+
+        playerMock.assertGameMode(GameMode.SPECTATOR);
+    }
+
+    @Test
+    void togglePlayer_BadHealth_NoGameModeChange() {
         TestUtils.setConfigFileOfPlugin(plugin, "badhealth.yml");
 
         playerMock.setHealth(4);
@@ -157,7 +168,16 @@ class SpectatorManagerTest {
     }
 
     @Test
-    void testTogglePlayerWithBadWorld() {
+    void togglePlayer_BadHealthEnabledButAbove_GameModeChange() {
+        TestUtils.setConfigFileOfPlugin(plugin, "badhealth.yml");
+
+        playerMock.setHealth(5);
+
+        playerMock.assertGameMode(GameMode.SURVIVAL);
+    }
+
+    @Test
+    void togglePlayer_BadWorld_NoGameModeChange() {
         TestUtils.setConfigFileOfPlugin(plugin, "badworld.yml");
 
         spectatorManager.togglePlayer(playerMock);
@@ -165,5 +185,16 @@ class SpectatorManagerTest {
         assertEqualsColored(
                 "&cHey you&l can not &r&cdo that in that world!", playerMock.nextMessage());
         playerMock.assertGameMode(GameMode.SURVIVAL);
+    }
+
+    @Test
+    void togglePlayer_BadWorldEnabledAndInValidWorld_GameModeChange() {
+        TestUtils.setConfigFileOfPlugin(plugin, "badworld.yml");
+        WorldMock newWorld = serverMock.addSimpleWorld("umaybeinthisworld");
+        playerMock.teleport(newWorld.getSpawnLocation());
+
+        spectatorManager.togglePlayer(playerMock);
+
+        playerMock.assertGameMode(GameMode.SPECTATOR);
     }
 }
