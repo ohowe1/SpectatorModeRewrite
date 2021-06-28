@@ -148,7 +148,9 @@ public class StateHolder {
     private void loadFromConfigurationSection(@NotNull ConfigurationSection section) {
         for (String key : section.getKeys(false)) {
             ConfigurationSection playerSection = section.getConfigurationSection(key);
-            assert playerSection != null;
+            if (playerSection == null) {
+                continue;
+            }
             State.StateBuilder stateBuilder = new State.StateBuilder(plugin);
 
             @SuppressWarnings("unchecked")
