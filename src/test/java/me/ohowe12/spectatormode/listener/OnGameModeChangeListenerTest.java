@@ -22,7 +22,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class OnGamemodeChangeListenerTest {
+public class OnGameModeChangeListenerTest {
     ServerMock serverMock;
     SpectatorMode plugin;
 
@@ -52,8 +52,8 @@ public class OnGamemodeChangeListenerTest {
     void gameModeChange_InState_RemovedFromStateAndEffectsRemoved() {
         spectatorManager.togglePlayer(playerMock);
 
-        new OnGamemodeChangeListener(plugin)
-                .onGamemodeChange(new PlayerGameModeChangeEvent(playerMock, GameMode.SURVIVAL));
+        new OnGameModeChangeListener(plugin)
+                .onGameModeChange(new PlayerGameModeChangeEvent(playerMock, GameMode.SURVIVAL));
         playerMock.setGameMode(GameMode.SURVIVAL);
 
         assertFalse(spectatorManager.getStateHolder().hasPlayer(playerMock));
@@ -66,8 +66,8 @@ public class OnGamemodeChangeListenerTest {
         playerMock.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 10000, 1));
         playerMock.addPotionEffect(new PotionEffect(PotionEffectType.CONDUIT_POWER, 10000, 1));
 
-        new OnGamemodeChangeListener(plugin)
-                .onGamemodeChange(new PlayerGameModeChangeEvent(playerMock, GameMode.SURVIVAL));
+        new OnGameModeChangeListener(plugin)
+                .onGameModeChange(new PlayerGameModeChangeEvent(playerMock, GameMode.SURVIVAL));
         playerMock.setGameMode(GameMode.SURVIVAL);
 
         assertHasSpectatorEffects(playerMock);
@@ -79,8 +79,8 @@ public class OnGamemodeChangeListenerTest {
 
         spectatorManager.togglePlayer(playerMock);
 
-        new OnGamemodeChangeListener(plugin)
-                .onGamemodeChange(new PlayerGameModeChangeEvent(playerMock, GameMode.SURVIVAL));
+        new OnGameModeChangeListener(plugin)
+                .onGameModeChange(new PlayerGameModeChangeEvent(playerMock, GameMode.SURVIVAL));
         playerMock.setGameMode(GameMode.SURVIVAL);
 
         assertTrue(spectatorManager.getStateHolder().hasPlayer(playerMock));

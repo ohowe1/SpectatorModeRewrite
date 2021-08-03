@@ -28,6 +28,7 @@ import me.ohowe12.spectatormode.util.Logger;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -41,6 +42,7 @@ import java.util.*;
 
 public class StateHolder {
     private final Map<String, State> stateMap = new HashMap<>();
+    private final List<Player> toRemoveOnFullLogin = new ArrayList<>();
     private final SpectatorMode plugin;
 
     private final File dataFileLocation;
@@ -143,6 +145,18 @@ public class StateHolder {
             return;
         }
         loadFromConfigurationSection(dataSection);
+    }
+
+    public void addToRemoveOnFullLogin(Player player) {
+        this.toRemoveOnFullLogin.add(player);
+    }
+
+    public boolean shouldRemoveOnFullLogin(Player player) {
+        return toRemoveOnFullLogin.contains(player);
+    }
+
+    public void removeFromToRemoveOnFullLogin(Player player) {
+        toRemoveOnFullLogin.remove(player);
     }
 
     private void loadFromConfigurationSection(@NotNull ConfigurationSection section) {
