@@ -18,7 +18,7 @@ public class SpectatorEligibilityChecker {
         if (player.getHealth() < configManager.getDouble("minimum-health")) {
             return EligibilityStatus.HEALTH;
         }
-        if(configManager.getBoolean("enforce-y") && player.getLocation().getY() < configManager.getInt("y-level")) {
+        if(configManager.getBoolean("enforce-y") && player.getLocation().getY() <= configManager.getInt("y-level")) {
             return EligibilityStatus.YLEVEL;
         }
         double closestAllowed = configManager.getDouble("closest-hostile");
