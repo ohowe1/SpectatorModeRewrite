@@ -134,5 +134,8 @@ mob-too-close-message: '&cYou are too close to a hostile mob to enter spectator 
 #Message sent when a player teleports when not allowed to
 unallowed-teleport-message: '&cYou are not allowed to teleport in spectator mode'
 
+#Message sent when a player is below the enforced y-level limit
+y-level-limit-message: '&cYou are below the enforced y-level limit'
+
 #Get debug logs
 debug: false
