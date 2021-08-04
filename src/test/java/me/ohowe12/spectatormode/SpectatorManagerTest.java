@@ -37,6 +37,8 @@ import org.bukkit.Location;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class SpectatorManagerTest {
 
@@ -196,5 +198,30 @@ class SpectatorManagerTest {
         spectatorManager.togglePlayer(playerMock);
 
         playerMock.assertGameMode(GameMode.SPECTATOR);
+    }
+
+    @ParameterizedTest
+    @ValueSource(doubles = {2.1, 3})
+    void togglePlayer_YEnabledAndGoodY_GameModeChange(double yLevel) {
+        TestUtils.setConfigFileOfPlugin(plugin, "badyenabled.yml");
+
+        playerMock.teleport(new Location(playerMock.getWorld(), 0, yLevel, 0));
+
+        spectatorManager.togglePlayer(playerMock);
+
+        playerMock.assertGameMode(GameMode.SPECTATOR);
+    }
+
+    @ParameterizedTest
+    @ValueSource(doubles = {2, 1})
+    void togglePlayer_YEnabledAndBadY_NoGameModeChange(double yLevel) {
+        TestUtils.setConfigFileOfPlugin(plugin, "badyenabled.yml");
+
+        playerMock.teleport(new Location(playerMock.getWorld(), 0, yLevel, 0));
+
+        spectatorManager.togglePlayer(playerMock);
+
+        playerMock.assertGameMode(GameMode.SURVIVAL);
+        assertEqualsColored("&cYou are below the enforced y-level limit", playerMock.nextMessage());
     }
 }
