@@ -18,6 +18,9 @@ public class SpectatorEligibilityChecker {
         if (player.getHealth() < configManager.getDouble("minimum-health")) {
             return EligibilityStatus.HEALTH;
         }
+        if(configManager.getBoolean("enforce-y") && player.getLocation().getY() <= configManager.getInt("y-level")) {
+            return EligibilityStatus.YLEVEL;
+        }
         double closestAllowed = configManager.getDouble("closest-hostile");
         if (closestAllowed != 0) {
             for (Entity entity : player.getNearbyEntities(closestAllowed, closestAllowed, closestAllowed)) {
@@ -37,7 +40,8 @@ public class SpectatorEligibilityChecker {
         FALLING("falling-message"),
         HEALTH("health-message"),
         MOB("mob-too-close-message"),
-        WORLDS("world-message");
+        WORLDS("world-message"),
+        YLEVEL("y-level-limit-message");
 
         private final String message;
 
