@@ -104,14 +104,14 @@ spectator-mode-message: '&9Setting gamemode to &b&lSPECTATOR MODE'
 #Message when gamemode set to survival mode
 survival-mode-message: '&9Setting gamemode to &b&lSURVIVAL MODE'
 
-#Message when user preforms the command while falling (error message)
+#Message when user performs the command while falling (error message)
 falling-message: '&cHey you &lcan not &r&cdo that while falling!'
 
-#Message when user preforms command in world it is not allowed in
+#Message when user performs command in world it is not allowed in
 world-message: '&cHey you&l can not &r&cdo that in that world!'
 
 #Message sent when a player tries to execute /s but is below the minimum health
-health-message: '&cYou are below the minimum required health to preform this command!'
+health-message: '&cYou are below the minimum required health to perform this command!'
 
 #Message when spectator mode is disabled and the user runs the command
 disabled-message: '&cSpectator Mode is &lnot &r&cenabled by the server!'
@@ -132,7 +132,7 @@ invalid-player-message: '&cThat is not a valid player'
 force-success: '&bSuccessfully forced /target/'
 
 #Message sent when a player tries to use the /s effect when not in spectator mode
-no-spectator-message: '&cYou did not preform the /s command'
+no-spectator-message: '&cYou did not perform the /s command'
 
 #Message sent when a player tries to execute a command not allowed in spectator mode
 bad-command-message: '&cYou can not execute that command while in spectator mode'
