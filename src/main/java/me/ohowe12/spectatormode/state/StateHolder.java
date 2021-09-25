@@ -25,15 +25,15 @@ package me.ohowe12.spectatormode.state;
 
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.util.Logger;
-
+import me.ohowe12.spectatormode.util.Messenger;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class StateHolder {
+    private final Map<Player, BukkitTask> playersAwaitingSpectator = new HashMap<>();
     private final Map<String, State> stateMap = new HashMap<>();
     private final List<Player> toRemoveOnFullLogin = new ArrayList<>();
     private final SpectatorMode plugin;
@@ -167,8 +168,7 @@ public class StateHolder {
             }
             State.StateBuilder stateBuilder = new State.StateBuilder(plugin);
 
-            @SuppressWarnings("unchecked")
-            final List<PotionEffect> potions =
+            @SuppressWarnings("unchecked") final List<PotionEffect> potions =
                     (List<PotionEffect>) playerSection.getList("Potions");
             stateBuilder.setPotionEffects(potions);
 
@@ -200,5 +200,21 @@ public class StateHolder {
             }
         }
         return mobs;
+    }
+
+    public void addPlayerAwaiting(Player player, Runnable task) {
+        playersAwaitingSpectator.put(player, plugin.getServer().getScheduler().runTaskLater(plugin, task, plugin.getConfigManager().getInt("stand-still-ticks")));
+    }
+
+    public void removePlayerAwaitingFromRan(Player player) {
+        playersAwaitingSpectator.remove(player);
+    }
+
+    public void removePlayerAwaitingFromMoved(Player player) {
+        if (playersAwaitingSpectator.containsKey(player)) {
+            playersAwaitingSpectator.get(player).cancel();
+            playersAwaitingSpectator.remove(player);
+            Messenger.send(player, "moved-message");
+        }
     }
 }

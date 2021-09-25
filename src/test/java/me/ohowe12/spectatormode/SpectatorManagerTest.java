@@ -54,6 +54,7 @@ class SpectatorManagerTest {
         plugin = MockBukkit.load(SpectatorMode.class);
 
         serverMock.setPlayers(0);
+
         playerMock = serverMock.addPlayer();
         playerMock.setGameMode(GameMode.SURVIVAL);
 
@@ -72,10 +73,13 @@ class SpectatorManagerTest {
         playerMock.assertGameMode(GameMode.SURVIVAL);
 
         spectatorManager.togglePlayer(playerMock);
+
         playerMock.assertGameMode(GameMode.SPECTATOR);
 
         spectatorManager.togglePlayer(playerMock);
+
         playerMock.assertGameMode(GameMode.SURVIVAL);
+
     }
 
     @Test
@@ -223,5 +227,38 @@ class SpectatorManagerTest {
 
         playerMock.assertGameMode(GameMode.SURVIVAL);
         assertEqualsColored("&cYou are below the enforced y-level limit", playerMock.nextMessage());
+    }
+
+    @Test
+    void togglePlayer_TimeDelayOnNoMove_GameModeChangeAfterTime() {
+        TestUtils.setConfigFileOfPlugin(plugin, "timedelay.yml");
+
+        spectatorManager.togglePlayer(playerMock);
+
+        assertEqualsColored("&bStand still to be put into spectator mode!", playerMock.nextMessage());
+
+        serverMock.getScheduler().performTicks(9);
+        playerMock.assertGameMode(GameMode.SURVIVAL);
+        serverMock.getScheduler().performOneTick();
+
+        playerMock.assertGameMode(GameMode.SPECTATOR);
+    }
+
+    @Test
+    void togglePlayer_TimeDelayOnWithMove_NoGameModeChangeAfterTime() {
+        TestUtils.setConfigFileOfPlugin(plugin, "timedelay.yml");
+
+        spectatorManager.togglePlayer(playerMock);
+
+        assertEqualsColored("&bStand still to be put into spectator mode!", playerMock.nextMessage());
+
+        serverMock.getScheduler().performTicks(4);
+        playerMock.simulatePlayerMove(new Location(playerMock.getWorld(), 0, 1, 0));
+        assertEqualsColored("&cYou moved! Spectator mode has been cancelled", playerMock.nextMessage());
+
+        playerMock.assertGameMode(GameMode.SURVIVAL);
+        serverMock.getScheduler().performTicks(6);
+
+        playerMock.assertGameMode(GameMode.SURVIVAL);
     }
 }

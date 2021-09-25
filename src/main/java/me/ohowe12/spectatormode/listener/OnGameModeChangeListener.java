@@ -23,7 +23,7 @@ public class OnGameModeChangeListener implements Listener {
                 && gameModeChangeEvent.getNewGameMode() != GameMode.SPECTATOR
                 && stateHolder.hasPlayer(gameModeChangeEvent.getPlayer())) {
             stateHolder.removePlayer(gameModeChangeEvent.getPlayer());
-            if (plugin.getServer().getOnlinePlayers().contains(gameModeChangeEvent.getPlayer())) {
+            if (gameModeChangeEvent.getPlayer().isOnline()) {
                 plugin.getSpectatorManager().removeSpectatorEffects(gameModeChangeEvent.getPlayer());
             } else {
                 stateHolder.addToRemoveOnFullLogin(gameModeChangeEvent.getPlayer());

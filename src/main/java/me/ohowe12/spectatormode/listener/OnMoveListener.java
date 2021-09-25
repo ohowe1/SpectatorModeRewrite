@@ -25,8 +25,10 @@ package me.ohowe12.spectatormode.listener;
 
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.util.Messenger;
-
-import org.bukkit.*;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -51,6 +53,9 @@ public class OnMoveListener implements Listener {
 
     @EventHandler
     public void onMove(@NotNull final PlayerMoveEvent moveEvent) {
+        if (moveEvent.getTo() != null && (moveEvent.getFrom().getY() != moveEvent.getTo().getY() || moveEvent.getFrom().getX() != moveEvent.getTo().getX() || moveEvent.getFrom().getZ() != moveEvent.getTo().getZ())) {
+            plugin.getSpectatorManager().getStateHolder().removePlayerAwaitingFromMoved(moveEvent.getPlayer());
+        }
         if (shouldProcessEvent(moveEvent) && shouldCancelMoveEvent(moveEvent)) {
             cancelPlayerMoveEvent(moveEvent);
         }

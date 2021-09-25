@@ -27,7 +27,7 @@ worlds-allowed: [ world, world_nether, world_the_end ]
 #If the y level is limited to the number in y-level in spectator mode
 enforce-y: false
 
-#see above (players can not go below this level)
+#see above (players can not go below this level) integer
 y-level: 0
 
 #If a player is not allowed to go through non-see-through able blocks in spectator mode
@@ -39,13 +39,13 @@ disallow-all-blocks: false
 #Specific blocks that a player cannot go through. the id
 disallowed-blocks: [ ]
 
-#How close a player can get to a block, to be used with disallow-all-blocks (percentage of block), adjust according to ping
+#How close a player can get to a block, to be used with disallow-all-blocks (percentage of block), adjust according to ping. integer
 bubble-size: 35
 
 #Whether to make it so players can not go past a certain distance in spectator mode. The permission smpspectator.bypass bypasses this
 enforce-distance: false
 
-#See above (blocks)
+#See above (blocks) integer
 distance: 64
 
 #The minimum health a player can have to activate /s
@@ -55,6 +55,9 @@ minimum-health: 0
 prevent-teleport: false
 #Prevents these commands from being executed unless you have the smpspectator.bypass permission. Example list: [back, return, home, homes, tpaccept, tpyes, warp, warps]
 bad-commands: [ ]
+
+#If this is above 0, the player has to be still for the next X seconds after preforming the command to enter spectator mode. int
+stand-still-ticks: 0
 
 #Prevents players from going past the world border in spectator mode
 enforce-world-border: true
@@ -68,7 +71,7 @@ silence-survival-mode-message-on-join: true
 #If this is true the message with a new version, or up to date message will appear
 update-checker: true
 
-# If a hostile mob is within this distance, the player will not be allowed into spectator mode. 0 is off
+# If a hostile mob is within this distance, the player will not be allowed into spectator mode. 0 is off.
 closest-hostile: 0
 
 # This will detach leads when a player enters spectator mode with /s
@@ -136,6 +139,12 @@ unallowed-teleport-message: '&cYou are not allowed to teleport in spectator mode
 
 #Message sent when a player is below the enforced y-level limit
 y-level-limit-message: '&cYou are below the enforced y-level limit'
+
+#Message sent when a player is told to stand still
+stand-still-message: '&bStand still to be put into spectator mode!'
+
+#Message sent when player does not stand still
+moved-message: '&cYou moved! Spectator mode has been cancelled'
 
 #Get debug logs
 debug: false

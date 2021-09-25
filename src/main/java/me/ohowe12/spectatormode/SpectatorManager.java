@@ -78,7 +78,15 @@ public class SpectatorManager {
         if (player.getGameMode() == GameMode.SPECTATOR) {
             toggleToSurvival(player, silenceMessages);
         } else {
-            toggleToSpectator(player, forced, silenceMessages);
+            if (plugin.getConfigManager().getInt("stand-still-ticks") > 0 && !forced && !player.hasPermission("smpspectator.bypass")) {
+                Messenger.send(player, "stand-still-message");
+                stateHolder.addPlayerAwaiting(player, () -> {
+                    toggleToSpectator(player, false, silenceMessages);
+                    stateHolder.removePlayerAwaitingFromRan(player);
+                });
+            } else {
+                toggleToSpectator(player, forced, silenceMessages);
+            }
         }
     }
 
