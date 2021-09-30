@@ -26,6 +26,7 @@ package me.ohowe12.spectatormode;
 import me.ohowe12.spectatormode.state.StateHolder;
 import me.ohowe12.spectatormode.util.Messenger;
 
+import me.ohowe12.spectatormode.util.SpectatorEligibilityChecker;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -77,7 +78,15 @@ public class SpectatorManager {
         if (player.getGameMode() == GameMode.SPECTATOR) {
             toggleToSurvival(player, silenceMessages);
         } else {
-            toggleToSpectator(player, forced, silenceMessages);
+            if (plugin.getConfigManager().getInt("stand-still-ticks") > 0 && !forced && !player.hasPermission("smpspectator.bypass")) {
+                Messenger.send(player, "stand-still-message");
+                stateHolder.addPlayerAwaiting(player, () -> {
+                    toggleToSpectator(player, false, silenceMessages);
+                    stateHolder.removePlayerAwaitingFromRan(player);
+                });
+            } else {
+                toggleToSpectator(player, forced, silenceMessages);
+            }
         }
     }
 
@@ -126,40 +135,14 @@ public class SpectatorManager {
     }
 
     private boolean canGoIntoSpectator(Player player, boolean forced) {
-        if (forced || player.hasPermission("smpspectator.bypass")) {
+        SpectatorEligibilityChecker.EligibilityStatus status = SpectatorEligibilityChecker.getStatus(player, forced, plugin.getConfigManager());
+
+        if (status == SpectatorEligibilityChecker.EligibilityStatus.CAN_GO) {
             return true;
         }
-        // Has fall damage
-        if (player.getFallDistance() > 0) {
-            Messenger.send(player, "falling-message");
-            return false;
-        }
-        // Health
-        if (player.getHealth() < plugin.getConfigManager().getDouble("minimum-health")) {
-            Messenger.send(player, "health-message");
-            return false;
-        }
-        // Closest mob
-        double closestAllowed = plugin.getConfigManager().getDouble("closest-hostile");
-        if (closestAllowed != 0) {
-            List<Entity> entites =
-                    player.getNearbyEntities(closestAllowed, closestAllowed, closestAllowed);
-            for (Entity entity : entites) {
-                if (entity instanceof Monster) {
-                    Messenger.send(player, "mob-too-close-message");
-                    return false;
-                }
-            }
-        }
-        // Worlds
-        if (!plugin.getConfigManager()
-                        .getList("worlds-allowed")
-                        .contains(player.getWorld().getName())
-                && plugin.getConfigManager().getBoolean("enforce-worlds")) {
-            Messenger.send(player, "world-message");
-            return false;
-        }
-        return true;
+
+        Messenger.send(player, status.getMessage());
+        return false;
     }
 
     private void removeAllPotionEffects(Player target) {

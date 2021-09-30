@@ -57,4 +57,10 @@ public class Logger {
     public void log(String message) {
         plugin.getLogger().info(PREFIX + message + FOOTER);
     }
+
+    public void logIfNotInTests(String message) {
+        if (!plugin.isUnitTest()) {
+            log(message);
+        }
+    }
 }

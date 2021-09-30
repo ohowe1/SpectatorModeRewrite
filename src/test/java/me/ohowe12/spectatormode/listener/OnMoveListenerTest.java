@@ -1,14 +1,10 @@
 package me.ohowe12.spectatormode.listener;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
-
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.testutils.TestUtils;
-
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -18,6 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class OnMoveListenerTest {
 
@@ -39,6 +37,7 @@ class OnMoveListenerTest {
         plugin.reloadConfig();
 
         plugin.getSpectatorManager().togglePlayer(playerMock);
+        playerMock.nextMessage();
     }
 
     @AfterEach
@@ -110,6 +109,18 @@ class OnMoveListenerTest {
         assertMoveEventNotCanceled(event);
     }
 
+    @Test
+    void checkCancelable_HasBypass_Allowed() {
+        TestUtils.setConfigFileOfPlugin(plugin, "baddistanceenabled.yml");
+
+        playerMock.addAttachment(plugin, "smpspectator.bypass", true);
+
+        PlayerMoveEvent event =
+                playerMock.simulatePlayerMove(playerMock.getLocation().add(6, 0, 0));
+
+        assertMoveEventNotCanceled(event);
+    }
+
     //    World border not yet implemented in MockBukkit. Awaiting pull request merge
     //    @Test
     //    void checkWorldBorder_EnabledAndOutside_Cancelled() {
@@ -157,17 +168,53 @@ class OnMoveListenerTest {
     }
 
     @Test
-    void checkTeleport_TeleportDisallowed_Allowed() {
+    void checkTeleport_TeleportDisallowed_NoTeleport() {
         TestUtils.setConfigFileOfPlugin(plugin, "badteleportenabled.yml");
 
-        playerMock.teleport(
+        boolean teleportResult = playerMock.teleport(
                 new Location(playerMock.getWorld(), 10, 10, 10),
                 PlayerTeleportEvent.TeleportCause.SPECTATE);
 
-        // Will fail until mockbukkit patches
-        //        playerMock.assertNotTeleported();
-        //        assertEquals(new Location(playerMock.getWorld(), 0, 5, 0),
-        // playerMock.getLocation());
-        assertTrue(true);
+        TestUtils.assertEqualsColored("&cYou are not allowed to teleport in spectator mode", playerMock.nextMessage());
+        assertFalse(teleportResult);
+        playerMock.assertNotTeleported();
+        assertEquals(new Location(playerMock.getWorld(), 0, 5, 0),
+                playerMock.getLocation());
+    }
+
+    @Test
+    void checkTeleport_TeleportDisallowedButDifferentCause_Teleport() {
+        TestUtils.setConfigFileOfPlugin(plugin, "badteleportenabled.yml");
+
+        Location teleportLocation = new Location(playerMock.getWorld(), 10, 10, 10);
+
+        boolean teleportResult = playerMock.teleport(
+                teleportLocation,
+                PlayerTeleportEvent.TeleportCause.PLUGIN);
+
+        playerMock.assertNoMoreSaid();
+        assertTrue(teleportResult);
+        playerMock.assertTeleported(teleportLocation, 0);
+        assertEquals(new Location(playerMock.getWorld(), 10, 10, 10),
+                playerMock.getLocation());
+    }
+
+    @Test
+    void checkTeleport_TeleportDisallowedButHasBypass_Teleport() {
+        TestUtils.setConfigFileOfPlugin(plugin, "badteleportenabled.yml");
+
+        playerMock.addAttachment(plugin, "smpspectator.bypass", true);
+
+        Location teleportLocation = new Location(playerMock.getWorld(), 10, 10, 10);
+
+        boolean teleportResult = playerMock.teleport(
+                teleportLocation,
+                PlayerTeleportEvent.TeleportCause.SPECTATE);
+
+        playerMock.assertNoMoreSaid();
+        assertTrue(teleportResult);
+        playerMock.assertTeleported(teleportLocation, 0);
+        assertEquals(new Location(playerMock.getWorld(), 10, 10, 10),
+                playerMock.getLocation());
     }
 }

@@ -28,13 +28,13 @@ import co.aikar.commands.PaperCommandManager;
 import me.ohowe12.spectatormode.commands.SpectatorCommand;
 import me.ohowe12.spectatormode.context.SpectatorContextCalculator;
 import me.ohowe12.spectatormode.listener.OnCommandPreprocessListener;
-import me.ohowe12.spectatormode.listener.OnGamemodeChangeListener;
+import me.ohowe12.spectatormode.listener.OnGameModeChangeListener;
 import me.ohowe12.spectatormode.listener.OnLogOnListener;
 import me.ohowe12.spectatormode.listener.OnMoveListener;
 import me.ohowe12.spectatormode.util.ConfigManager;
 import me.ohowe12.spectatormode.util.Logger;
 import me.ohowe12.spectatormode.util.Messenger;
-import me.ohowe12.spectatormode.util.UpdateChecker;
+import wtf.choco.updatechecker.UpdateChecker;
 
 import org.bstats.bukkit.Metrics;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -81,11 +81,11 @@ public class SpectatorMode extends JavaPlugin {
         pluginLogger = new Logger(this);
         spectatorManager = new SpectatorManager(this);
         registerCommands();
+        if (config.getBoolean("update-checker")) {
+            checkUpdate();
+        }
         if (!unitTest) {
             addMetrics();
-            if (config.getBoolean("update-checker")) {
-                checkUpdate();
-            }
             initializeLuckPermsContext();
         }
 
@@ -118,26 +118,15 @@ public class SpectatorMode extends JavaPlugin {
     }
 
     private void checkUpdate() {
-        UpdateChecker.getVersion(
-                version -> {
-                    if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
-                        pluginLogger.log(
-                                Logger.CYAN
-                                        + "SMP SPECTATOR MODE is all up to date at version "
-                                        + this.getDescription().getVersion()
-                                        + "!");
-                    } else {
-                        pluginLogger.log(
-                                Logger.RED
-                                        + "A new version of SMP SPECTATOR MODE is available"
-                                        + " (version "
-                                        + version
-                                        + ")! You are on version "
-                                        + this.getDescription().getVersion()
-                                        + ".");
-                    }
-                },
-                this);
+        UpdateChecker.init(this, 77267).requestUpdateCheck().whenComplete(((updateResult, throwable) -> {
+            if (updateResult.getReason() == UpdateChecker.UpdateReason.NEW_UPDATE) {
+                pluginLogger.logIfNotInTests(Logger.RED + "A new version of SMP Spectator Mode is available!");
+            } else if (updateResult.getReason() == UpdateChecker.UpdateReason.UP_TO_DATE || updateResult.getReason() == UpdateChecker.UpdateReason.UNRELEASED_VERSION) {
+                pluginLogger.logIfNotInTests(Logger.CYAN + "You are up to date on SMP Spectator Mode!");
+            } else {
+                pluginLogger.logIfNotInTests(Logger.YELLOW + "An error occurred when checking for SMP Spectator Mode updates. Reason: " + updateResult.getReason());
+            }
+        }));
     }
 
     public void registerCommands() {
@@ -150,7 +139,7 @@ public class SpectatorMode extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new OnMoveListener(this), this);
         getServer().getPluginManager().registerEvents(new OnLogOnListener(this), this);
         getServer().getPluginManager().registerEvents(new OnCommandPreprocessListener(this), this);
-        getServer().getPluginManager().registerEvents(new OnGamemodeChangeListener(this), this);
+        getServer().getPluginManager().registerEvents(new OnGameModeChangeListener(this), this);
     }
 
     @NotNull

@@ -24,18 +24,19 @@
   -->
 
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.ohowe12</groupId>
     <artifactId>SpectatorMode</artifactId>
-    <version>2.1.1</version>
+    <version>2.1.5</version>
     <packaging>jar</packaging>
 
     <name>SpectatorMode</name>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>16</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -70,7 +71,8 @@
                 </executions>
                 <configuration>
                     <excludes>
-                        org/bstats/bukkit/*
+                        <exclude>org/bstats/bukkit/*</exclude>
+                        <exclude>wtf/choco/updatechecker/*</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -110,7 +112,8 @@
                                 </relocation>
                                 <relocation>
                                     <pattern>co.aikar.locales</pattern>
-                                    <shadedPattern>me.ohowe12.spectatormode.locales</shadedPattern> <!-- Replace this -->
+                                    <shadedPattern>me.ohowe12.spectatormode.locales
+                                    </shadedPattern> <!-- Replace this -->
                                 </relocation>
                                 <relocation>
                                     <pattern>
@@ -118,6 +121,14 @@
                                     </pattern>
                                     <shadedPattern>
                                         me.ohowe12.spectatormode.bstats
+                                    </shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>
+                                        wtf.choco.updatechecker
+                                    </pattern>
+                                    <shadedPattern>
+                                        me.ohowe12.spectatormode.updatechecker
                                     </shadedPattern>
                                 </relocation>
                             </relocations>
@@ -141,10 +152,6 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-        <repository>
             <id>aikar</id>
             <url>https://repo.aikar.co/content/groups/aikar/</url>
         </repository>
@@ -165,37 +172,37 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.16.5-R0.1-SNAPSHOT</version>
+            <version>1.17.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>18.0.0</version>
+            <version>22.0.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.7.0</version>
+            <version>5.8.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>3.10.0</version>
+            <version>3.12.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-inline</artifactId>
-            <version>3.10.0</version>
+            <version>3.12.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.github.seeseemelk</groupId>
-            <artifactId>MockBukkit</artifactId>
-            <version>v1.16-SNAPSHOT</version>
+            <artifactId>MockBukkit-v1.17</artifactId>
+            <version>1.10.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

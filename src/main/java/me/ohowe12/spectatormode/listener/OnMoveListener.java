@@ -25,8 +25,10 @@ package me.ohowe12.spectatormode.listener;
 
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.util.Messenger;
-
-import org.bukkit.*;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -51,15 +53,18 @@ public class OnMoveListener implements Listener {
 
     @EventHandler
     public void onMove(@NotNull final PlayerMoveEvent moveEvent) {
-        if (shouldDoNotSkipEvent(moveEvent) && shouldCancelMoveEvent(moveEvent)) {
+        if (moveEvent.getTo() != null && (moveEvent.getFrom().getY() != moveEvent.getTo().getY() || moveEvent.getFrom().getX() != moveEvent.getTo().getX() || moveEvent.getFrom().getZ() != moveEvent.getTo().getZ())) {
+            plugin.getSpectatorManager().getStateHolder().removePlayerAwaitingFromMoved(moveEvent.getPlayer());
+        }
+        if (shouldProcessEvent(moveEvent) && shouldCancelMoveEvent(moveEvent)) {
             cancelPlayerMoveEvent(moveEvent);
         }
     }
 
     @EventHandler
     public void onTeleport(@NotNull final PlayerTeleportEvent teleportEvent) {
-        if (shouldCancelTeleport(teleportEvent) && shouldDoNotSkipEvent(teleportEvent)) {
-            Messenger.send(teleportEvent.getPlayer(), "permission-message");
+        if (shouldCancelTeleport(teleportEvent) && shouldProcessEvent(teleportEvent)) {
+            Messenger.send(teleportEvent.getPlayer(), "unallowed-teleport-message");
             teleportEvent.setCancelled(true);
         }
     }
@@ -147,11 +152,11 @@ public class OnMoveListener implements Listener {
     }
 
     private boolean shouldCancelTeleport(PlayerTeleportEvent teleportEvent) {
-        return (teleportEvent.getCause().equals(PlayerTeleportEvent.TeleportCause.SPECTATE))
+        return (teleportEvent.getCause() == PlayerTeleportEvent.TeleportCause.SPECTATE)
                 && plugin.getConfigManager().getBoolean("prevent-teleport");
     }
 
-    private boolean shouldDoNotSkipEvent(PlayerEvent event) {
+    private boolean shouldProcessEvent(PlayerEvent event) {
         return !event.getPlayer().hasPermission("smpspectator.bypass")
                 && plugin.getSpectatorManager().getStateHolder().hasPlayer(event.getPlayer())
                 && event.getPlayer().getGameMode() == GameMode.SPECTATOR;

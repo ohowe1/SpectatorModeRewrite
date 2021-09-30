@@ -8,22 +8,26 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 
-public class OnGamemodeChangeListener implements Listener {
+public class OnGameModeChangeListener implements Listener {
     private final SpectatorMode plugin;
     private final StateHolder stateHolder;
 
-    public OnGamemodeChangeListener(SpectatorMode plugin) {
+    public OnGameModeChangeListener(SpectatorMode plugin) {
         this.plugin = plugin;
         this.stateHolder = plugin.getSpectatorManager().getStateHolder();
     }
 
     @EventHandler
-    public void onGamemodeChange(PlayerGameModeChangeEvent gameModeChangeEvent) {
+    public void onGameModeChange(PlayerGameModeChangeEvent gameModeChangeEvent) {
         if (plugin.getConfigManager().getBoolean("watch-gamemode")
                 && gameModeChangeEvent.getNewGameMode() != GameMode.SPECTATOR
                 && stateHolder.hasPlayer(gameModeChangeEvent.getPlayer())) {
             stateHolder.removePlayer(gameModeChangeEvent.getPlayer());
-            plugin.getSpectatorManager().removeSpectatorEffects(gameModeChangeEvent.getPlayer());
+            if (gameModeChangeEvent.getPlayer().isOnline()) {
+                plugin.getSpectatorManager().removeSpectatorEffects(gameModeChangeEvent.getPlayer());
+            } else {
+                stateHolder.addToRemoveOnFullLogin(gameModeChangeEvent.getPlayer());
+            }
         }
     }
 }

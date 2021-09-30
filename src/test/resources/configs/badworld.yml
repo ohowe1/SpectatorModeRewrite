@@ -2,4 +2,4 @@
 
 # Changed worlds and worlds-allowed
 enforce-worlds: true
-worlds-allowed: [ aworldyouarenotin ]
+worlds-allowed: [ aworldyouarenotin, umaybeinthisworld ]
