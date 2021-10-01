@@ -42,7 +42,7 @@ worlds-allowed: [ world, world_nether, world_the_end ]
 #If the y level is limited to the number in y-level in spectator mode
 enforce-y: false
 
-#see above (players can not go below this level)
+#see above (players can not go below this level) integer
 y-level: 0
 
 #If a player is not allowed to go through non-see-through able blocks in spectator mode
@@ -54,13 +54,13 @@ disallow-all-blocks: false
 #Specific blocks that a player cannot go through. the id
 disallowed-blocks: [ ]
 
-#How close a player can get to a block, to be used with disallow-all-blocks (percentage of block), adjust according to ping
+#How close a player can get to a block, to be used with disallow-all-blocks (percentage of block), adjust according to ping. integer
 bubble-size: 35
 
 #Whether to make it so players can not go past a certain distance in spectator mode. The permission smpspectator.bypass bypasses this
 enforce-distance: false
 
-#See above (blocks)
+#See above (blocks) integer
 distance: 64
 
 #The minimum health a player can have to activate /s
@@ -70,6 +70,9 @@ minimum-health: 0
 prevent-teleport: false
 #Prevents these commands from being executed unless you have the smpspectator.bypass permission. Example list: [back, return, home, homes, tpaccept, tpyes, warp, warps]
 bad-commands: [ ]
+
+#If this is above 0, the player has to be still for the next X seconds after preforming the command to enter spectator mode. int
+stand-still-ticks: 0
 
 #Prevents players from going past the world border in spectator mode
 enforce-world-border: true
@@ -83,7 +86,7 @@ silence-survival-mode-message-on-join: true
 #If this is true the message with a new version, or up to date message will appear
 update-checker: true
 
-# If a hostile mob is within this distance, the player will not be allowed into spectator mode. 0 is off
+# If a hostile mob is within this distance, the player will not be allowed into spectator mode. 0 is off.
 closest-hostile: 0
 
 # This will detach leads when a player enters spectator mode with /s
@@ -95,6 +98,9 @@ mobs: true
 # watch-gamemode. If another plugin or a command changes a player's gamemode while they are in spectator mode, the effects will be removed;
 watch-gamemode: true
 
+# If they are falling, disallow spectator mode
+prevent-falling: true
+
 ### Message section ###
 #Adding /actionbar/ in front of a message, will make it appear in the actionbar instead of the chat
 
@@ -104,14 +110,14 @@ spectator-mode-message: '&9Setting gamemode to &b&lSPECTATOR MODE'
 #Message when gamemode set to survival mode
 survival-mode-message: '&9Setting gamemode to &b&lSURVIVAL MODE'
 
-#Message when user performs the command while falling (error message)
+#Message when user preforms the command while falling (error message)
 falling-message: '&cHey you &lcan not &r&cdo that while falling!'
 
-#Message when user performs command in world it is not allowed in
+#Message when user preforms command in world it is not allowed in
 world-message: '&cHey you&l can not &r&cdo that in that world!'
 
 #Message sent when a player tries to execute /s but is below the minimum health
-health-message: '&cYou are below the minimum required health to perform this command!'
+health-message: '&cYou are below the minimum required health to preform this command!'
 
 #Message when spectator mode is disabled and the user runs the command
 disabled-message: '&cSpectator Mode is &lnot &r&cenabled by the server!'
@@ -132,7 +138,7 @@ invalid-player-message: '&cThat is not a valid player'
 force-success: '&bSuccessfully forced /target/'
 
 #Message sent when a player tries to use the /s effect when not in spectator mode
-no-spectator-message: '&cYou did not perform the /s command'
+no-spectator-message: '&cYou did not preform the /s command'
 
 #Message sent when a player tries to execute a command not allowed in spectator mode
 bad-command-message: '&cYou can not execute that command while in spectator mode'
@@ -142,6 +148,18 @@ not-in-state-message: '&cYou did not use this command to get into spectator mode
 
 #Message sent when a player tries to use /s when they are to close to a hostile mob (See closest-hostile)
 mob-too-close-message: '&cYou are too close to a hostile mob to enter spectator mode'
+
+#Message sent when a player teleports when not allowed to
+unallowed-teleport-message: '&cYou are not allowed to teleport in spectator mode'
+
+#Message sent when a player is below the enforced y-level limit
+y-level-limit-message: '&cYou are below the enforced y-level limit'
+
+#Message sent when a player is told to stand still
+stand-still-message: '&bStand still to be put into spectator mode!'
+
+#Message sent when player does not stand still
+moved-message: '&cYou moved! Spectator mode has been cancelled'
 
 #Get debug logs
 debug: false
