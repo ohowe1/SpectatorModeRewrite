@@ -148,7 +148,11 @@ public class OnMoveListener implements Listener {
         if (toLocation == null) {
             return false;
         }
-        return (originalLocation.distance(toLocation)) > distance;
+        if(originalLocation.getWorld().equals(toLocation.getWorld())) {
+            return (originalLocation.distance(toLocation)) > distance;
+        } else {
+            return true;
+        }
     }
 
     private boolean shouldCancelTeleport(PlayerTeleportEvent teleportEvent) {
