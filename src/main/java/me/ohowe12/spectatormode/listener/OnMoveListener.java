@@ -42,7 +42,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Objects;
 
-@SuppressWarnings("unchecked")
 public class OnMoveListener implements Listener {
 
     private final SpectatorMode plugin;
@@ -52,7 +51,7 @@ public class OnMoveListener implements Listener {
     }
 
     @EventHandler
-    public void onMove(@NotNull final PlayerMoveEvent moveEvent) {
+    public void onMove(@NotNull PlayerMoveEvent moveEvent) {
         if (moveEvent.getTo() != null && (moveEvent.getFrom().getY() != moveEvent.getTo().getY() || moveEvent.getFrom().getX() != moveEvent.getTo().getX() || moveEvent.getFrom().getZ() != moveEvent.getTo().getZ())) {
             plugin.getSpectatorManager().getStateHolder().removePlayerAwaitingFromMoved(moveEvent.getPlayer());
         }
@@ -62,7 +61,7 @@ public class OnMoveListener implements Listener {
     }
 
     @EventHandler
-    public void onTeleport(@NotNull final PlayerTeleportEvent teleportEvent) {
+    public void onTeleport(@NotNull PlayerTeleportEvent teleportEvent) {
         if (shouldCancelTeleport(teleportEvent) && shouldProcessEvent(teleportEvent)) {
             Messenger.send(teleportEvent.getPlayer(), "unallowed-teleport-message");
             teleportEvent.setCancelled(true);
@@ -70,15 +69,18 @@ public class OnMoveListener implements Listener {
     }
 
     private boolean shouldCancelMoveEvent(PlayerMoveEvent moveEvent) {
-        final boolean enforceY = plugin.getConfigManager().getBoolean("enforce-y");
-        final boolean enforceDistance = plugin.getConfigManager().getBoolean("enforce-distance");
-        final boolean enforceWorldBorder =
+        boolean enforceY = plugin.getConfigManager().getBoolean("enforce-y");
+        boolean enforceDistance = plugin.getConfigManager().getBoolean("enforce-distance");
+        boolean enforceWorldBorder =
                 plugin.getConfigManager().getBoolean("enforce-world-border");
+        boolean hasToBeSpectating = plugin.getConfigManager().getBoolean("only-spectating-no-free-movement");
 
-        return (enforceY && checkAndEnforceY(moveEvent))
+        return (hasToBeSpectating && isNotSpectating(moveEvent))
+                || (enforceY && checkAndEnforceY(moveEvent))
                 || isCollidingAndCollidingNotAllowed(moveEvent)
                 || (enforceDistance && distanceTooFar(moveEvent))
-                || (enforceWorldBorder && outsideWorldBorder(moveEvent));
+                || (enforceWorldBorder && outsideWorldBorder(moveEvent)
+        );
     }
 
     private boolean outsideWorldBorder(PlayerMoveEvent moveEvent) {
@@ -93,8 +95,13 @@ public class OnMoveListener implements Listener {
         return !world.getWorldBorder().isInside(toLocation);
     }
 
+    private boolean isNotSpectating(PlayerMoveEvent moveEvent) {
+        return moveEvent.getPlayer().getSpectatorTarget() == null;
+    }
+
+
     private boolean checkAndEnforceY(PlayerMoveEvent moveEvent) {
-        int yLevel = plugin.getConfigManager().getInt("y-level");
+        double yLevel = plugin.getConfigManager().getDouble("y-level");
         Location toLocation = moveEvent.getTo();
         if (toLocation == null) {
             return false;
@@ -107,12 +114,13 @@ public class OnMoveListener implements Listener {
         moveEvent.setCancelled(true);
     }
 
+    @SuppressWarnings("unchecked")
     public boolean isCollidingAndCollidingNotAllowed(@NotNull PlayerMoveEvent moveEvent) {
-        final boolean enforceNonTransparent =
+        boolean enforceNonTransparent =
                 plugin.getConfigManager().getBoolean("disallow-non-transparent-blocks");
-        final boolean enforceAllBlocks =
+        boolean enforceAllBlocks =
                 plugin.getConfigManager().getBoolean("disallow-all-blocks");
-        final List<String> disallowedBlocks =
+        List<String> disallowedBlocks =
                 (List<String>) plugin.getConfigManager().getList("disallowed-blocks");
 
         final float bubbleSize = plugin.getConfigManager().getInt("bubble-size") / 100.0f;
@@ -138,8 +146,8 @@ public class OnMoveListener implements Listener {
     }
 
     private boolean distanceTooFar(PlayerMoveEvent moveEvent) {
-        final int distance = plugin.getConfigManager().getInt("distance");
-        final Location originalLocation =
+        int distance = plugin.getConfigManager().getInt("distance");
+        Location originalLocation =
                 plugin.getSpectatorManager()
                         .getStateHolder()
                         .getPlayer(moveEvent.getPlayer())
@@ -165,4 +173,5 @@ public class OnMoveListener implements Listener {
                 && plugin.getSpectatorManager().getStateHolder().hasPlayer(event.getPlayer())
                 && event.getPlayer().getGameMode() == GameMode.SPECTATOR;
     }
+
 }
