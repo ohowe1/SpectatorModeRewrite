@@ -148,9 +148,9 @@ stand-still-message: '&bStand still to be put into spectator mode!'
 # Message sent when player does not stand still
 moved-message: '&cYou moved! Spectator mode has been cancelled'
 
-#vanish upon entering spectator mode. This will make em un-vanish once they exit spectator mode.
-#the player will be vanished regardless if they have supervanish permissions if you enable this option.
-#if you don't want players to enter vanish when using spectator mode with /gamemode, disable watch-gamemode
+# vanish upon entering spectator mode. This will make em un-vanish once they exit spectator mode.
+# the player will be vanished regardless if they have supervanish permissions if you enable this option.
+# if you don't want players to enter vanish when using spectator mode with /gamemode, disable watch-gamemode
 supervanish-hook: false
 
 # Get debug logs
