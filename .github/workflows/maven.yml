@@ -35,7 +35,6 @@ jobs:
       if: success()
       uses: actions/upload-artifact@v2.3.1
       with:
-        name: 'Spectator Mode jar'
         path: target/SpectatorMode-*.jar
     - name: Test & publish code coverage
       uses: paambaati/codeclimate-action@v2.7.5
