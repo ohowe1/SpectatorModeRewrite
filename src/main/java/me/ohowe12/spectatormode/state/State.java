@@ -143,7 +143,7 @@ public class State {
     }
 
     public void unPrepareMobs(Player player) {
-        if (plugin.getConfigManager().getBoolean("mobs") || plugin.isUnitTest()) {
+        if (!plugin.getConfigManager().getBoolean("mobs") || plugin.isUnitTest()) {
             return;
         }
         @NotNull Location loc = getPlayerLocation();

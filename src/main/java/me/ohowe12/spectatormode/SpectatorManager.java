@@ -23,15 +23,14 @@
 
 package me.ohowe12.spectatormode;
 
+import de.myzelyam.api.vanish.VanishAPI;
 import me.ohowe12.spectatormode.state.StateHolder;
 import me.ohowe12.spectatormode.util.Messenger;
 
 import me.ohowe12.spectatormode.util.SpectatorEligibilityChecker;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -158,9 +157,15 @@ public class SpectatorManager {
         if (plugin.getConfigManager().getBoolean("conduit")) {
             target.addPotionEffect(CONDUIT);
         }
+        if (plugin.getConfigManager().getBoolean("supervanish-hook")) {
+            VanishAPI.hidePlayer(target);
+        }
     }
 
     public void removeSpectatorEffects(Player target) {
+        if (plugin.getConfigManager().getBoolean("supervanish-hook")) {
+            VanishAPI.showPlayer(target);
+        }
         target.removePotionEffect(NIGHT_VISION.getType());
         target.removePotionEffect(CONDUIT.getType());
     }
