@@ -61,7 +61,7 @@ stand-still-ticks: 0
 # Prevents players from going past the world border in spectator mode
 enforce-world-border: true
 
-# If this is true, players will not see the Setting gamemode messages
+# If this is true, players will not see the setting gamemode messages
 disable-switching-message: false
 
 # If this is true, you won't get the survival-mode-message on join, if the server sent you back into survival
@@ -87,6 +87,14 @@ prevent-falling: true
 
 # Only allow spectating entities and no free movement
 only-spectating-no-free-movement: false
+
+# Only allow players to stay in spectator mode for this many ticks. -1 for no limit
+spectator-ticks: -1
+
+# vanish upon entering spectator mode. This will make em un-vanish once they exit spectator mode.
+# the player will be vanished regardless if they have supervanish permissions if you enable this option.
+# if you don't want players to enter vanish when using spectator mode with /gamemode, disable watch-gamemode
+supervanish-hook: false
 
 ### Message section ###
 #Adding /actionbar/ in front of a message, will make it appear in the actionbar instead of the chat
@@ -148,10 +156,8 @@ stand-still-message: '&bStand still to be put into spectator mode!'
 # Message sent when player does not stand still
 moved-message: '&cYou moved! Spectator mode has been cancelled'
 
-# vanish upon entering spectator mode. This will make em un-vanish once they exit spectator mode.
-# the player will be vanished regardless if they have supervanish permissions if you enable this option.
-# if you don't want players to enter vanish when using spectator mode with /gamemode, disable watch-gamemode
-supervanish-hook: false
+# Message sent when player has reached there time limit in spectator mode
+times-up-message: '&cTime limit reached! Toggling gamemode to &b&lSURVIVAL MODE'
 
 # Get debug logs
 debug: false

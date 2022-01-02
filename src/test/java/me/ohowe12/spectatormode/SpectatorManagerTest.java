@@ -261,4 +261,33 @@ class SpectatorManagerTest {
 
         playerMock.assertGameMode(GameMode.SURVIVAL);
     }
+
+    @Test
+    void togglePlayer_WaitsForKicked_Kicked() {
+        TestUtils.setConfigFileOfPlugin(plugin, "kickedin5ticks.yml");
+
+        spectatorManager.togglePlayer(playerMock);
+        playerMock.nextMessage();
+
+        serverMock.getScheduler().performTicks(4);
+        playerMock.assertGameMode(GameMode.SPECTATOR);
+        serverMock.getScheduler().performOneTick();
+        playerMock.assertGameMode(GameMode.SURVIVAL);
+        assertEqualsColored("&cTime limit reached! Toggling gamemode to &b&lSURVIVAL MODE", playerMock.nextMessage());
+    }
+
+    @Test
+    void togglePlayer_TogglesBefore_NotToggledAgain() {
+        TestUtils.setConfigFileOfPlugin(plugin, "kickedin5ticks.yml");
+
+        spectatorManager.togglePlayer(playerMock);
+        playerMock.nextMessage();
+
+        serverMock.getScheduler().performTicks(4);
+        spectatorManager.togglePlayer(playerMock);
+        playerMock.nextMessage();
+        serverMock.getScheduler().performOneTick();
+        playerMock.assertGameMode(GameMode.SURVIVAL);
+        playerMock.assertNoMoreSaid();
+    }
 }
