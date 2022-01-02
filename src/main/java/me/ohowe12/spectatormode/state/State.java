@@ -35,6 +35,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -48,7 +49,7 @@ public class State {
     private final int waterBubbles;
     private final Map<String, Boolean> mobIds;
 
-    public State(@NotNull StateBuilder builder, @NotNull SpectatorMode plugin) {
+    public State(StateBuilder builder, SpectatorMode plugin) {
         this.plugin = plugin;
         this.mobIds = builder.mobIds;
         this.playerLocation = builder.playerLocation;
@@ -57,7 +58,7 @@ public class State {
         this.waterBubbles = builder.waterBubbles;
     }
 
-    public static State fromPlayer(@NotNull Player player, @NotNull SpectatorMode plugin) {
+    public static State fromPlayer(Player player, SpectatorMode plugin) {
         Validate.notNull(player);
         State state =
                 new StateBuilder(plugin)
