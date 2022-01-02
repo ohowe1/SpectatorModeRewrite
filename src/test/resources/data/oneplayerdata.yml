@@ -1,6 +1,5 @@
-# From john the potato in discord. Thanks!
 data:
-  2778fc60-d5f1-4783-9027-ae2f696a23d3:
+  304ddf45-a2d1-4c73-94f4-210f2192b708:
     Potions:
       - ==: PotionEffect
         effect: 1
@@ -30,3 +29,4 @@ data:
       z: 10
       pitch: 10
       yaw: 10
+    Needs survival: false

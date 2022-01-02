@@ -186,7 +186,7 @@ class StateHolderTest {
         assertEquals(1, stateHolder.allPlayersInState().size());
 
         State playerState =
-                stateHolder.getPlayer(UUID.fromString("2778fc60-d5f1-4783-9027-ae2f696a23d3"));
+                stateHolder.getPlayer(UUID.fromString("304ddf45-a2d1-4c73-94f4-210f2192b708"));
         assertEquals(300, playerState.getWaterBubbles());
         assertEquals(-20, playerState.getFireTicks());
         assertEquals(
@@ -207,7 +207,7 @@ class StateHolderTest {
         assertEquals(1, stateHolder.allPlayersInState().size());
 
         State playerState =
-                stateHolder.getPlayer(UUID.fromString("2778fc60-d5f1-4783-9027-ae2f696a23d3"));
+                stateHolder.getPlayer(UUID.fromString("304ddf45-a2d1-4c73-94f4-210f2192b708"));
         assertEquals(3, playerState.getMobIds().size());
         assertFalse(playerState.getMobIds().get("edf02864-427b-4d91-b73b-8e3f8d189d56"));
     }

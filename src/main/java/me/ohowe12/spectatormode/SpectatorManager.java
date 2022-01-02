@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class SpectatorManager {
     private static final PotionEffect NIGHT_VISION =
@@ -97,13 +98,16 @@ public class SpectatorManager {
         togglePlayer(player, false);
     }
 
-    private void toggleToSpectator(Player target, boolean forced, boolean messagesForcedSilenced) {
+    public void toggleToSpectator(Player target, boolean forced, boolean messagesForcedSilenced) {
+        plugin.getPluginLogger().debugLog("Toggling " + target.getName() + " to spectator mode");
         if (canGoIntoSpectator(target, forced)) {
             if (stateHolder.hasPlayer(target)) {
                 stateHolder.removePlayer(target);
             }
 
             stateHolder.addPlayer(target);
+
+            addToKickers(target);
             removeAllPotionEffects(target);
             removeLeads(target);
 
@@ -116,13 +120,15 @@ public class SpectatorManager {
         }
     }
 
-    private void toggleToSurvival(Player target, boolean messagesForcedSilenced) {
+    public void toggleToSurvival(Player target, boolean messagesForcedSilenced) {
+        plugin.getPluginLogger().debugLog("Toggling" + target.getName() + " to survival mode");
         if (stateHolder.hasPlayer(target)) {
             removeSpectatorEffects(target);
 
             stateHolder.getPlayer(target).resetPlayer(target);
             stateHolder.removePlayer(target);
 
+            removeFromKicker(target);
             target.setGameMode(GameMode.SURVIVAL);
 
             stateHolder.save();
@@ -130,6 +136,18 @@ public class SpectatorManager {
             sendMessageIfNotSilenced(target, GameMode.SURVIVAL, messagesForcedSilenced);
         } else {
             Messenger.send(target, "not-in-state-message");
+        }
+    }
+
+    private void addToKickers(Player target) {
+        if (plugin.getConfigManager().getInt("spectator-ticks") > 0) {
+            stateHolder.addPlayerKicker(target);
+        }
+    }
+
+    private void removeFromKicker(Player target) {
+        if (plugin.getConfigManager().getInt("spectator-ticks") > 0) {
+            stateHolder.cancelKicker(target);
         }
     }
 
@@ -193,7 +211,7 @@ public class SpectatorManager {
     }
 
     private void sendMessageIfNotSilenced(Player target, GameMode gameMode, boolean forceSilence) {
-        if (!plugin.getConfigManager().getBoolean("disable-switching-message") || forceSilence) {
+        if (!plugin.getConfigManager().getBoolean("disable-switching-message") && !forceSilence) {
             Messenger.send(
                     target,
                     gameMode == GameMode.SURVIVAL

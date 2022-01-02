@@ -27,6 +27,8 @@ import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.util.Logger;
 import me.ohowe12.spectatormode.util.Messenger;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -44,6 +46,7 @@ public class StateHolder {
     private final Map<Player, BukkitTask> playersAwaitingSpectator = new HashMap<>();
     private final Map<String, State> stateMap = new HashMap<>();
     private final List<Player> toRemoveOnFullLogin = new ArrayList<>();
+    private final Map<Player, BukkitTask> kickers = new HashMap<>();
     private final SpectatorMode plugin;
 
     private final File dataFileLocation;
@@ -184,6 +187,9 @@ public class StateHolder {
             final Location location = playerSection.getLocation("Location");
             stateBuilder.setPlayerLocation(location);
 
+            final boolean needsSurvival = playerSection.getBoolean("Needs survival", false);
+            stateBuilder.setNeedsSurvival(needsSurvival);
+
             stateMap.put(key, stateBuilder.build());
         }
     }
@@ -216,5 +222,30 @@ public class StateHolder {
             playersAwaitingSpectator.remove(player);
             Messenger.send(player, "moved-message");
         }
+    }
+
+    public void addPlayerKicker(Player player) {
+        kickers.put(player, plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+            kickers.remove(player);
+            if (player.getGameMode() != GameMode.SPECTATOR) {
+                plugin.getPluginLogger().debugLog("Player not in spectator when task ended");
+                return;
+            }
+            if (!player.isOnline()) {
+                getPlayer(player).setNeedsSurvival(true);
+                save();
+                return;
+            }
+            plugin.getSpectatorManager().togglePlayer(player, true, true);
+            Messenger.send(player, "times-up-message");
+        }, plugin.getConfigManager().getInt("spectator-ticks")));
+    }
+
+    public void cancelKicker(Player player) {
+        BukkitTask task = kickers.get(player);
+        if (task != null) {
+            task.cancel();
+        }
+        kickers.remove(player);
     }
 }
