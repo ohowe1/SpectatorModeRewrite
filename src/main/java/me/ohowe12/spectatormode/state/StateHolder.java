@@ -187,6 +187,9 @@ public class StateHolder {
             final Location location = playerSection.getLocation("Location");
             stateBuilder.setPlayerLocation(location);
 
+            final boolean needsSurvival = playerSection.getBoolean("Needs survival", false);
+            stateBuilder.setNeedsSurvival(needsSurvival);
+
             stateMap.put(key, stateBuilder.build());
         }
     }
@@ -225,6 +228,12 @@ public class StateHolder {
         kickers.put(player, plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             kickers.remove(player);
             if (player.getGameMode() != GameMode.SPECTATOR) {
+                plugin.getPluginLogger().debugLog("Player not in spectator when task ended");
+                return;
+            }
+            if (!player.isOnline()) {
+                getPlayer(player).setNeedsSurvival(true);
+                save();
                 return;
             }
             plugin.getSpectatorManager().togglePlayer(player, true, true);

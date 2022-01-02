@@ -99,6 +99,7 @@ public class SpectatorManager {
     }
 
     public void toggleToSpectator(Player target, boolean forced, boolean messagesForcedSilenced) {
+        plugin.getPluginLogger().debugLog("Toggling " + target.getName() + " to spectator mode");
         if (canGoIntoSpectator(target, forced)) {
             if (stateHolder.hasPlayer(target)) {
                 stateHolder.removePlayer(target);
@@ -120,6 +121,7 @@ public class SpectatorManager {
     }
 
     public void toggleToSurvival(Player target, boolean messagesForcedSilenced) {
+        plugin.getPluginLogger().debugLog("Toggling" + target.getName() + " to survival mode");
         if (stateHolder.hasPlayer(target)) {
             removeSpectatorEffects(target);
 
