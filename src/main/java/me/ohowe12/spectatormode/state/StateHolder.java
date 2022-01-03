@@ -216,11 +216,28 @@ public class StateHolder {
         playersAwaitingSpectator.remove(player);
     }
 
-    public void removePlayerAwaitingFromMoved(Player player) {
+    public boolean isPlayerAwaiting(Player player) {
+        return playersAwaitingSpectator.containsKey(player);
+    }
+
+    private boolean removeAndCancelPlayerAwaiting(Player player) {
         if (playersAwaitingSpectator.containsKey(player)) {
             playersAwaitingSpectator.get(player).cancel();
             playersAwaitingSpectator.remove(player);
+            return true;
+        }
+        return false;
+    }
+
+    public void removePlayerAwaitingFromMoved(Player player) {
+        if (removeAndCancelPlayerAwaiting(player)) {
             Messenger.send(player, "moved-message");
+        }
+    }
+
+    public void removePlayerAwaitingFromCanceled(Player player) {
+        if (removeAndCancelPlayerAwaiting(player)) {
+            Messenger.send(player, "spec-cancel-message");
         }
     }
 

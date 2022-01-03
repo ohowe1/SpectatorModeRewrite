@@ -55,7 +55,7 @@ prevent-teleport: false
 # Prevents these commands from being executed unless you have the smpspectator.bypass permission. Example list: [back, return, home, homes, tpaccept, tpyes, warp, warps]
 bad-commands: [ ]
 
-# If this is above 0, the player has to be still for the next X seconds after preforming the command to enter spectator mode. int
+# If this is above 0, the player has to be still for the next X ticks (20 a second normally) after preforming the command to enter spectator mode. int
 stand-still-ticks: 0
 
 # Prevents players from going past the world border in spectator mode
@@ -158,6 +158,9 @@ moved-message: '&cYou moved! Spectator mode has been cancelled'
 
 # Message sent when player has reached there time limit in spectator mode
 times-up-message: '&cTime limit reached! Toggling gamemode to &b&lSURVIVAL MODE'
+
+# Message sent when player is awaiting spectator and preforms the command again
+spec-cancel-message: '&cSpectator mode has been cancelled'
 
 # Get debug logs
 debug: false
