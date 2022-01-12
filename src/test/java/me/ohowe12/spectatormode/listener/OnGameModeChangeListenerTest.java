@@ -14,6 +14,7 @@ import me.ohowe12.spectatormode.SpectatorManager;
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.testutils.TestUtils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.potion.PotionEffect;
@@ -45,6 +46,7 @@ public class OnGameModeChangeListenerTest {
 
     @AfterEach
     void tearDown() {
+        Bukkit.getScheduler().cancelTasks(plugin);
         MockBukkit.unmock();
     }
 

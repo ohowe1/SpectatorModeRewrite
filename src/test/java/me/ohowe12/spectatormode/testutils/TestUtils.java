@@ -39,11 +39,15 @@ import java.io.File;
 
 public class TestUtils {
     public static void assertEqualsColored(String expected, String actual) {
+        assertEqualsColoredNoPrepend("&f" + expected, actual);
+    }
+
+    public static void assertEqualsColoredNoPrepend(String expected, String actual) {
         assertEquals(ChatColor.translateAlternateColorCodes('&', expected), actual);
     }
 
     public static void assertNotEqualsColored(String expected, String actual) {
-        assertNotEquals(ChatColor.translateAlternateColorCodes('&', expected), actual);
+        assertNotEquals("§f" + ChatColor.translateAlternateColorCodes('&', expected), actual);
     }
 
     public static void setConfigFileOfPlugin(SpectatorMode plugin, String configName) {

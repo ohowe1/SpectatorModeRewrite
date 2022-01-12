@@ -10,6 +10,7 @@ import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.testutils.TestUtils;
 
+import org.bukkit.Bukkit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,7 @@ class MessengerTest {
 
     @AfterEach
     void tearDown() {
+        Bukkit.getScheduler().cancelTasks(plugin);
         MockBukkit.unmock();
     }
 
@@ -41,7 +43,7 @@ class MessengerTest {
     void send_SenderKey_Valid() {
         Messenger.send(playerMock, "regular-message");
 
-        playerMock.assertSaid("Hello world!");
+        playerMock.assertSaid("§fHello world!");
         playerMock.assertNoMoreSaid();
     }
 
@@ -50,7 +52,7 @@ class MessengerTest {
         PlayerMock otherPlayer = server.addPlayer("Player2");
         Messenger.send(playerMock, "message-with-target", otherPlayer);
 
-        playerMock.assertSaid("Message with Player2");
+        playerMock.assertSaid("§fMessage with Player2");
         playerMock.assertNoMoreSaid();
 
         otherPlayer.assertNoMoreSaid();
@@ -60,7 +62,7 @@ class MessengerTest {
     void send_WithExtra_Valid() {
         Messenger.send(playerMock, "message-with-extra", " like this");
 
-        playerMock.assertSaid("Something should be appended to this like this");
+        playerMock.assertSaid("§fSomething should be appended to this like this");
         playerMock.assertNoMoreSaid();
     }
 
@@ -69,7 +71,7 @@ class MessengerTest {
         PlayerMock otherPlayer = server.addPlayer("Player2");
         Messenger.send(playerMock, "message-with-all-features", otherPlayer, "mocked player");
 
-        playerMock.assertSaid("Player2 is a mocked player");
+        playerMock.assertSaid("§fPlayer2 is a mocked player");
         playerMock.assertNoMoreSaid();
 
         otherPlayer.assertNoMoreSaid();
@@ -83,7 +85,7 @@ class MessengerTest {
         // saids a "vanilla"
         // message on chat components
 
-        playerMock.assertSaid("This should be on your action bar");
+        playerMock.assertSaid("§fThis should be on your action bar");
         playerMock.assertNoMoreSaid();
     }
 

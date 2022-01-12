@@ -8,6 +8,7 @@ import be.seeseemelk.mockbukkit.entity.PlayerMock;
 
 import me.ohowe12.spectatormode.SpectatorMode;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -31,11 +32,13 @@ class StateHolderTest {
 
     private File fileLocation;
 
+    private SpectatorMode plugin;
+
     @BeforeEach
     void setUp() {
         server = MockBukkit.mock();
 
-        SpectatorMode plugin = MockBukkit.load(SpectatorMode.class);
+        plugin = MockBukkit.load(SpectatorMode.class);
         fileLocation = new File(plugin.getDataFolder(), "data.yml");
 
         stateHolder = plugin.getSpectatorManager().getStateHolder();
@@ -45,6 +48,7 @@ class StateHolderTest {
 
     @AfterEach
     void tearDown() {
+        Bukkit.getScheduler().cancelTasks(plugin);
         MockBukkit.unmock();
     }
 

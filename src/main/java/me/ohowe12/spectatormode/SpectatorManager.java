@@ -125,7 +125,7 @@ public class SpectatorManager {
     }
 
     public void toggleToSurvival(Player target, boolean messagesForcedSilenced) {
-        plugin.getPluginLogger().debugLog("Toggling" + target.getName() + " to survival mode");
+        plugin.getPluginLogger().debugLog("Toggling " + target.getName() + " to survival mode");
         if (stateHolder.hasPlayer(target)) {
             removeSpectatorEffects(target);
 
@@ -133,10 +133,15 @@ public class SpectatorManager {
             stateHolder.removePlayer(target);
 
             removeFromKicker(target);
-            target.setGameMode(GameMode.SURVIVAL);
+
+            String switchTo = plugin.getConfigManager().getString("switch-back-to");
+            switch (switchTo) {
+                case "adventure" -> target.setGameMode(GameMode.ADVENTURE);
+                case "creative" -> target.setGameMode(GameMode.CREATIVE);
+                default -> target.setGameMode(GameMode.SURVIVAL);
+            }
 
             stateHolder.save();
-
             sendMessageIfNotSilenced(target, GameMode.SURVIVAL, messagesForcedSilenced);
         } else {
             Messenger.send(target, "not-in-state-message");
@@ -202,8 +207,7 @@ public class SpectatorManager {
                         .map(entity -> (LivingEntity) entity)
                         .filter(LivingEntity::isLeashed)
                         .filter(entity -> entity.getLeashHolder() instanceof Player)
-                        .filter(entity -> entity.getLeashHolder().equals(target))
-                        .collect(Collectors.toList());
+                        .filter(entity -> entity.getLeashHolder().equals(target)).toList();
         for (LivingEntity entity : leads) {
             entity.setLeashHolder(null);
             HashMap<Integer, ItemStack> failedItems =

@@ -11,6 +11,7 @@ import me.ohowe12.spectatormode.SpectatorManager;
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.testutils.TestUtils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.potion.PotionEffectType;
 import org.junit.jupiter.api.AfterEach;
@@ -40,6 +41,7 @@ public class SpectatorCommandTest {
 
     @AfterEach
     void tearDown() {
+        Bukkit.getScheduler().cancelTasks(plugin);
         MockBukkit.unmock();
     }
 
@@ -171,7 +173,7 @@ public class SpectatorCommandTest {
     }
 
     private void assertPermissionMessageSent() {
-        TestUtils.assertEqualsColored(
+        TestUtils.assertEqualsColoredNoPrepend(
                 "&cI'm sorry, but you do not have permission to perform this command.",
                 playerMock.nextMessage());
     }

@@ -96,6 +96,9 @@ spectator-ticks: -1
 # if you don't want players to enter vanish when using spectator mode with /gamemode, disable watch-gamemode
 supervanish-hook: false
 
+# What game mode to change back to. options: survival, creative, adventure
+switch-back-to: survival
+
 ### Message section ###
 #Adding /actionbar/ in front of a message, will make it appear in the actionbar instead of the chat
 

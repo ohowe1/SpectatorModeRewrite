@@ -5,6 +5,7 @@ import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import me.ohowe12.spectatormode.SpectatorMode;
 import me.ohowe12.spectatormode.testutils.TestUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -42,6 +43,7 @@ class OnMoveListenerTest {
 
     @AfterEach
     void tearDown() {
+        Bukkit.getScheduler().cancelTasks(plugin);
         MockBukkit.unmock();
     }
 

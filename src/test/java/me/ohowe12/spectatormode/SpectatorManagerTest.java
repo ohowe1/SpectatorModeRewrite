@@ -32,6 +32,7 @@ import be.seeseemelk.mockbukkit.entity.PlayerMock;
 
 import me.ohowe12.spectatormode.testutils.TestUtils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.junit.jupiter.api.AfterEach;
@@ -65,6 +66,7 @@ class SpectatorManagerTest {
 
     @AfterEach
     void tearDown() {
+        Bukkit.getScheduler().cancelTasks(plugin);
         MockBukkit.unmock();
     }
 
@@ -289,5 +291,14 @@ class SpectatorManagerTest {
         serverMock.getScheduler().performOneTick();
         playerMock.assertGameMode(GameMode.SURVIVAL);
         playerMock.assertNoMoreSaid();
+    }
+
+    @Test
+    void togglePlayer_ToggleBackCreative_ToggledToCreative() {
+        TestUtils.setConfigFileOfPlugin(plugin, "togglebackc.yml");
+        spectatorManager.togglePlayer(playerMock);
+        playerMock.assertGameMode(GameMode.SPECTATOR);
+        spectatorManager.togglePlayer(playerMock);
+        playerMock.assertGameMode(GameMode.CREATIVE);
     }
 }

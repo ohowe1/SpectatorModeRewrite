@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public abstract class Messenger {
+public class Messenger {
 
     private static SpectatorMode plugin;
 
